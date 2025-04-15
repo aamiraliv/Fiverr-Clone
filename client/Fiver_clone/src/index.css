@@ -2,4 +2,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 @theme{
    --font-roboto: "Roboto", sans-serif; 
+   --font-poppins: "Poppins", sans-serif;
+   --font-grotesk:"SchibstedGrotesk", sans-serif;
 }
