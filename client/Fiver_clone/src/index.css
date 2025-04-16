@@ -1,15 +1,22 @@
 @import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
-@theme{
-   --font-roboto: "Roboto", sans-serif; 
-   --font-poppins: "Poppins", sans-serif;
-   --font-grotesk:"SchibstedGrotesk", sans-serif;
-   --text-nav: [#62646A]
+@theme {
+  --font-roboto: "Roboto", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-grotesk: "SchibstedGrotesk", sans-serif;
+  --text-nav: [#62646A];
 }
 
-body{
-   font-family: var(--font-poppins);
-   margin: 0;
-   padding: 0;
-   box-sizing: border-box;
+body {
+  font-family: var(--font-poppins);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

@@ -172,7 +172,7 @@ export const Navbar = () => {
           </p>
         </div>
 
-        <p className=" text-sm font-bold font-roboto text-gray-600 border border-black px-4 py-2 rounded-md">
+        <p className=" text-sm font-bold font-roboto text-gray-600 border border-black px-4 py-2 rounded-md hover:text-white hover:bg-gray-900 cursor-pointer transition duration-300 ">
           Join
         </p>
       </div>
