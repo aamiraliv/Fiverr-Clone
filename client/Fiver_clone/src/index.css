@@ -2,12 +2,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Aldrich&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&display=swap');
 @theme {
   --font-roboto: "Roboto", sans-serif;
   --font-poppins: "Poppins", sans-serif;
   --font-grotesk: "SchibstedGrotesk", sans-serif;
   --font-space-grotesk: "SpaceGrotesk";
   --font-aldrich: "Aldrich", sans-serif;
+  --font-cormorant: "Cormorant", serif;
   --text-nav: [#62646A];
 }
 
@@ -33,4 +35,22 @@ body {
       transparent 50%
     ),
     radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0) 0px, transparent 50%);
+}
+
+/* Add this in App.css or any global css file */
+.my-masonry-grid {
+  display: -webkit-box; /* Not needed if using flexbox */
+  display: -ms-flexbox;
+  display: flex;
+  margin-left: -16px; /* gutter size offset */
+  width: auto;
+}
+.my-masonry-grid_column {
+  padding-left: 16px; /* gutter size */
+  background-clip: padding-box;
+}
+
+/* Style each item */
+.my-masonry-grid_column > div {
+  margin-bottom: 16px;
 }

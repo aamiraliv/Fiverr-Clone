@@ -23,6 +23,12 @@ import PopularService from "../components/PopularService";
 import imagemodel from "../assets/Image model.mp4";
 import fiverPro from "../assets/fiverr-pro_2x.webp";
 import { BiSolidBadgeCheck } from "react-icons/bi";
+import vontellaFiver from "../assets/Vontelle Cutdown- Breakthrough V5.mp4";
+import catogary from "../assets/makeItHappen/categories.8badf97.svg";
+import happy from "../assets/makeItHappen/happy.42ed7bd.svg"; 
+import matching from "../assets/makeItHappen/matching.0eef7cc.svg";
+import quick from "../assets/makeItHappen/quickly.6879514.svg";
+import { MasonaryGrid } from "../components/MasonaryGrid";
 
 export const Home = () => {
   const videoRef = useRef(null);
@@ -255,12 +261,18 @@ export const Home = () => {
           <div className="radial-bg absolute bottom-0 left-0 h-[500px] w-full rounded-lg "></div>
         </div>
         <div className="grid lg:grid-cols-2 gap-4 p-4 rounded-lg bg-[#E8FAF4]">
-          <div>
-            <div>Fiverr Pro.</div>
-            <div>
-              The <span>premium</span> freelance solution for businesses
+          <div className="flex flex-col gap-8 py-8 px-12">
+            <div className="font-extrabold text-3xl">
+              fiverr <span className="font-normal">Pro.</span>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="font-normal text-2xl leading-normal lg:text-5xl lg:leading-16">
+              The{" "}
+              <span className="font-cormorant text-[#1DBF73] font-bold">
+                premium
+              </span>{" "}
+              freelance solution for businesses
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
                 <BiSolidBadgeCheck size={20} className="text-green-900" />
                 <p className="font-semibold text-gray-950">
@@ -271,18 +283,88 @@ export const Home = () => {
                   see to your project’s every need.
                 </p>
               </div>
+              <div className="flex flex-col gap-2">
+                <BiSolidBadgeCheck size={20} className="text-green-900" />
+                <p className="font-semibold text-gray-950">
+                  Satisfaction guarantee
+                </p>
+                <p className="text-gray-900 text-sm font-normal">
+                  Order confidently, with guaranteed refunds for
+                  less-than-satisfactory deliveries.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <BiSolidBadgeCheck size={20} className="text-green-900" />
+                <p className="font-semibold text-gray-950">
+                  Advanced management tools
+                </p>
+                <p className="text-gray-900 text-sm font-normal">
+                  Advanced management tools.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <BiSolidBadgeCheck size={20} className="text-green-900" />
+                <p className="font-semibold text-gray-950">
+                  Flexible payment models
+                </p>
+                <p className="text-gray-900 text-sm font-normal">
+                  Pay per project or opt for hourly rates to facilitate
+                  longer-term collaboration.
+                </p>
+              </div>
             </div>
             <div>
-              <button>Try Now</button>
+              <button className="rounded-md bg-gray-900 text-white py-2 px-4 font-semibold">Try Now</button>
             </div>
           </div>
           <div>
             <img
               src={fiverPro}
               alt=""
-              className=" w-full h-full object-cover"
+              className=" w-full h-full object-contain"
             />
           </div>
+        </div>
+        <div className="flex flex-col gap-6 ">
+          <h1 className="font-normal text-4xl text-gray-900">What success on Fiverr looks like</h1>
+          <p className="font-light text-sm text-gray-600">Vontélle Eyewear turns to Fiverr freelancers to bring their vision to life.</p>
+          <video src={vontellaFiver} muted autoPlay loop controls className="w-full h-full rounded-2xl"></video>
+        </div>
+        <div className="flex flex-col gap-8">
+          <div className="text-4xl font-normal text-gray-800 ">Make it all happen with freelancers</div>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="flex flex-col gap-4 ">
+              <div>
+                <img src={catogary} alt="" />
+              </div>
+              <p className="font-normal text-[16px] text-gray-600">Access a pool of top talent across 700 categories</p>
+            </div>
+            <div className="flex flex-col gap-4 ">
+              <div>
+                <img src={matching} alt="" />
+              </div>
+              <p className="font-normal text-[16px] text-gray-600">Enjoy a simple, easy-to-use matching experience</p>
+            </div>
+            <div className="flex flex-col gap-4 ">
+              <div>
+                <img src={quick} alt="" />
+              </div>
+              <p className="font-normal text-[16px] text-gray-600">Get quality work done quickly and within budget</p>
+            </div>
+            <div className="flex flex-col gap-4 ">
+              <div>
+                <img src={happy} alt="" />
+              </div>
+              <p className="font-normal text-[16px] text-gray-600">Only pay when you’re happy</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-start lg:justify-center">
+            <button className="font-semibold text-[17px] rounded-lg py-2 px-4 text-white bg-gray-800">Join Now</button>
+          </div>
+        </div>
+        <div className="flex flex-col gap-8">
+          <div className="text-lg font-semibold text-center">Find your inspiration</div>
+          <MasonaryGrid />
         </div>
       </div>
     </div>
