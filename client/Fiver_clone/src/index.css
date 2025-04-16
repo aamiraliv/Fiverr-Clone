@@ -4,4 +4,12 @@
    --font-roboto: "Roboto", sans-serif; 
    --font-poppins: "Poppins", sans-serif;
    --font-grotesk:"SchibstedGrotesk", sans-serif;
+   --text-nav: [#62646A]
+}
+
+body{
+   font-family: var(--font-poppins);
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
 }

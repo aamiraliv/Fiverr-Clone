@@ -1,11 +1,32 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { IoSearch } from "react-icons/io5";
+import introvideo from "../assets/Desktop Header new version.mp4";
+import { FaPause, FaPlay } from "react-icons/fa6";
 
 export const Home = () => {
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+
+  useEffect(() => {
+    videoRef.current?.play();
+  }, []);
+
+  const toggleVideo = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isPlaying) {
+      video.pause();
+    } else {
+      video.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
   return (
     <div>
       <div
-        className="flex flex-col justify-center pb-8 bg-gradient-to-b from-green-950 to-green-700
+        className=" lg:hidden flex flex-col justify-center pb-8 bg-gradient-to-b from-green-950 to-green-700
 "
       >
         <h1 className="text-3xl font-light font-poppins text-white text-center">
@@ -29,6 +50,23 @@ export const Home = () => {
           </div>
         </div>
       </div>
+      <div className="hidden lg:block relative">
+        <video
+          ref={videoRef}
+          src={introvideo}
+          className="w-full h-full object-cover"
+          autoPlay
+          muted
+          loop
+        />
+        <button
+          onClick={toggleVideo}
+          className="absolute bottom-4 right-4 bg-gray-700 text-white rounded-full p-3 shadow-lg hover:bg-gray-600 transition"
+        >
+          {isPlaying ? <FaPause /> : <FaPlay />}
+        </button>
+      </div>
+      
     </div>
   );
 };
