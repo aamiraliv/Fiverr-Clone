@@ -1,18 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import introvideo from "../assets/Desktop Header new version.mp4";
-import {
-  FaBuilding,
-  FaBullhorn,
-  FaCode,
-  FaMusic,
-  FaPause,
-  FaPenNib,
-  FaPlay,
-  FaRobot,
-  FaUserTie,
-  FaVideo,
-} from "react-icons/fa6";
+import { FaPause, FaPlay } from "react-icons/fa6";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import googleIcon from "../assets/google.e74f4d9.svg";
 import metaIcon from "../assets/meta.ff37dd3.svg";
@@ -20,7 +9,6 @@ import netflixIcon from "../assets/netflix.b310314.svg";
 import paypalIcon from "../assets/paypal.d398de5.svg";
 import pioneerIcon from "../assets/payoneer.7c1170d.svg";
 import pgIcon from "../assets/pg.22fca85.svg";
-import { FaPaintBrush } from "react-icons/fa";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import programming from "../assets/programming-tech-thin.56382a2.svg";
 import graphics from "../assets/graphics-design-thin.ff38893.svg";
@@ -32,6 +20,9 @@ import business from "../assets/business-thin.885e68e.svg";
 import consulting from "../assets/consulting-thin.d5547ff.svg";
 import aiserivce from "../assets/ai-services-thin.104f389.svg";
 import PopularService from "../components/PopularService";
+import imagemodel from "../assets/Image model.mp4";
+import fiverPro from "../assets/fiverr-pro_2x.webp";
+import { BiSolidBadgeCheck } from "react-icons/bi";
 
 export const Home = () => {
   const videoRef = useRef(null);
@@ -179,7 +170,7 @@ export const Home = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 px-8 py-10">
+      <div className="flex flex-col gap-10 px-8 py-10">
         <div className="w-full py-6">
           {/* Desktop Carousel */}
           <div className="hidden lg:flex gap-4 overflow-x-auto scrollbar-hide">
@@ -227,8 +218,71 @@ export const Home = () => {
           )}
         </div>
         <div className="flex flex-col gap-10 mt-5 ">
-          <h1 className="font-normal text-5xl text-[#404145]">Popular Services</h1>
+          <h1 className="font-normal text-3xl lg:text-5xl text-[#404145]">
+            Popular Services
+          </h1>
           <PopularService />
+        </div>
+        <div className=" relative flex flex-col lg:flex-row-reverse gap-4 rounded-lg bg-black p-8">
+          <div className="flex-1">
+            <video
+              src={imagemodel}
+              autoPlay
+              loop
+              muted
+              className="w-full h-full"
+            />
+          </div>
+          <div className="flex flex-col flex-1 gap-4 text-white lg:p-4">
+            <h1 className="font-bold text-2xl lg:text-4xl">
+              fiverr <span className="font-light">Go</span>
+            </h1>
+            <h2 className="font-light text-3xl font-aldrich lg:text-6xl">
+              Instant results. Top talent.
+            </h2>
+            <p className="font-normal text-[15px] z-10">
+              Get what you need faster from freelancers who trained their own
+              personal AI Creation Models. Now you can browse, prompt, and
+              generate instantly. And if you need a tweak or change, the
+              freelancer is always there to help you perfect it.
+            </p>
+            <div className="flex items-center justify-center lg:justify-start ">
+              <button className="text-black py-2 px-4 rounded-md bg-amber-50 z-10">
+                Get started
+              </button>
+            </div>
+          </div>
+          <div className="radial-bg absolute bottom-0 left-0 h-[500px] w-full rounded-lg "></div>
+        </div>
+        <div className="grid lg:grid-cols-2 gap-4 p-4 rounded-lg bg-[#E8FAF4]">
+          <div>
+            <div>Fiverr Pro.</div>
+            <div>
+              The <span>premium</span> freelance solution for businesses
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col gap-2">
+                <BiSolidBadgeCheck size={20} className="text-green-900" />
+                <p className="font-semibold text-gray-950">
+                  Dedicated hiring experts
+                </p>
+                <p className="text-gray-900 text-sm font-normal">
+                  Count on an account manager to find you the right talent and
+                  see to your project’s every need.
+                </p>
+              </div>
+            </div>
+            <div>
+              <button>Try Now</button>
+            </div>
+          </div>
+          <div>
+            <img
+              src={fiverPro}
+              alt=""
+              className=" w-full h-full object-cover"
+            />
+          </div>
         </div>
       </div>
     </div>

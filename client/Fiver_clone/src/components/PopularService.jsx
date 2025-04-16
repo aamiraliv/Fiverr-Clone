@@ -19,7 +19,7 @@ const PopularService = () => {
   const data = [
     {
       title: "Web Development",
-      icon: <img src={webdev} className="rounded-lg"  alt="" />,
+      icon: <img src={webdev} className="rounded-lg" alt="" />,
     },
     {
       title: "Logo Design",
@@ -27,55 +27,56 @@ const PopularService = () => {
     },
     {
       title: "SEO",
-      icon: <img src={SEO}  alt="" />,
+      icon: <img src={SEO} alt="" />,
     },
     {
       title: "Architecture & Interior Design",
-      icon: <img src={architecture}  alt="" />,
+      icon: <img src={architecture} alt="" />,
     },
-    { title: "Voice Over", icon: <img src={voice}  alt="" /> },
+    { title: "Voice Over", icon: <img src={voice} alt="" /> },
     {
       title: "Social media Marketing",
-      icon: <img src={social}  alt="" />,
+      icon: <img src={social} alt="" />,
     },
-    { title: "UGC Videos", icon: <img src={ugc}  alt="" /> },
+    { title: "UGC Videos", icon: <img src={ugc} alt="" /> },
     {
       title: "Software Development",
-      icon: <img src={software}  alt="" />,
+      icon: <img src={software} alt="" />,
     },
     {
       title: "Data Science & ML",
-      icon: <img src={science}  alt="" />,
+      icon: <img src={science} alt="" />,
     },
     {
       title: "Product Photography",
-      icon: <img src={product}  alt="" />,
+      icon: <img src={product} alt="" />,
     },
     {
       title: "E-Commerce marketing",
-      icon: <img src={ecommerce}  alt="" />,
+      icon: <img src={ecommerce} alt="" />,
     },
     {
       title: "Video Editing",
-      icon: <img src={videoedit}  alt="" />,
+      icon: <img src={videoedit} alt="" />,
     },
   ];
   return (
-    <div>
+    <div className="w-full">
       <Swiper
         spaceBetween={10}
-        slidesPerView={"auto"}
+        slidesPerView={5.5}
         breakpoints={{
-          640: { slidesPerView: 3 },
-          768: { slidesPerView: 4 },
+          320: { slidesPerView: 1.6},
+          640: { slidesPerView: 3},
+          768: { slidesPerView: 4},
           1024: { slidesPerView: 6 },
         }}
       >
         {data.map((item, idx) => (
           <SwiperSlide key={idx} className="w-auto">
             <div className="flex flex-col justify-between p-2 rounded-2xl bg-[#003912] w-[180px] min-h-[230px]">
-               <p className="font-bold text-white text-lg p-2">{item.title}</p>
-               <div >{item.icon}</div>
+              <p className="font-bold text-white text-lg p-2">{item.title}</p>
+              <div>{item.icon}</div>
             </div>
           </SwiperSlide>
         ))}

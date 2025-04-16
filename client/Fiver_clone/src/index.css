@@ -1,9 +1,13 @@
 @import "tailwindcss";
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Aldrich&display=swap");
 @theme {
   --font-roboto: "Roboto", sans-serif;
   --font-poppins: "Poppins", sans-serif;
   --font-grotesk: "SchibstedGrotesk", sans-serif;
+  --font-space-grotesk: "SpaceGrotesk";
+  --font-aldrich: "Aldrich", sans-serif;
   --text-nav: [#62646A];
 }
 
@@ -19,4 +23,14 @@ body {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.radial-bg {
+  background-color: hsla(0, 0%, 0%, 0);
+  background-image: radial-gradient(
+      at 0% 100%,
+      hsla(242, 100%, 70%, 1) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 0) 0px, transparent 50%);
 }
