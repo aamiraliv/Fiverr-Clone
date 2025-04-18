@@ -16,6 +16,7 @@ import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 @Component
 public class JwtService {
 

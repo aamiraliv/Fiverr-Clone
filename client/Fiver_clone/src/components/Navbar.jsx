@@ -28,7 +28,7 @@ export const Navbar = () => {
       </div>
       <div>
         <h1 className="text-3xl font-roboto font-extrabold text-gray-700">
-          fiverr<span className=" text-green-500">.</span>
+          Aiverr<span className=" text-green-500">.</span>
         </h1>
       </div>
       <div className="flex gap-6 items-center justify-center ">
