@@ -1,6 +1,6 @@
-package com.fiverr.auth_service.service;
+package com.microsevice.auth_service.service;
 
-import com.fiverr.auth_service.model.User;
+import com.microsevice.auth_service.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -16,7 +16,6 @@ import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
 
-@SuppressWarnings("unused")
 @Component
 public class JwtService {
 

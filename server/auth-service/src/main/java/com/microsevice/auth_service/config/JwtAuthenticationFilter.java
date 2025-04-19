@@ -1,7 +1,7 @@
-package com.fiverr.auth_service.config;
+package com.microsevice.auth_service.config;
 
-import com.fiverr.auth_service.service.CustomUserDetailsService;
-import com.fiverr.auth_service.service.JwtService;
+import com.microsevice.auth_service.service.CustomUserDetailsService;
+import com.microsevice.auth_service.service.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

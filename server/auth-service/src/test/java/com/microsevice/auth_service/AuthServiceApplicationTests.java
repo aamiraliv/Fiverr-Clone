@@ -1,4 +1,4 @@
-package com.fiverr.auth_service;
+package com.microsevice.auth_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
