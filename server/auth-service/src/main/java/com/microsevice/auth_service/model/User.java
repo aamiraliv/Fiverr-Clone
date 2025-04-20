@@ -20,11 +20,10 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private String picture;
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    private boolean blocked = false;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Token> tokens;

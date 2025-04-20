@@ -5,8 +5,10 @@ import CustomSidebar from "./sidebar";
 import { IoIosArrowDown } from "react-icons/io";
 import vector1 from "../assets/vector_1.svg";
 import vector2 from "../assets/vector_2.svg";
+import AuthModal from "./Login";
 
 export const Navbar = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
@@ -18,6 +20,7 @@ export const Navbar = () => {
 
   return (
     <div className="flex justify-between items-center bg-white pr-5 pt-5 pb-5 lg:px-5">
+      <AuthModal  isOpen={isOpen} onClose={() => setIsOpen(false)} />
       <div className="lg:hidden">
         <Button className="p-0" onClick={toggleDrawer(true)}>
           <FaBars className="text-2xl text-gray-900" />
@@ -167,12 +170,12 @@ export const Navbar = () => {
         </div>
 
         <div className="relative hidden lg:block cursor-pointer">
-          <p className=" text-[16px] font-medium text-[#62646A]">
+          <p onClick={() => setIsOpen(true)} className=" cursor-pointer text-[16px] font-medium text-[#62646A]">
            Sign in
           </p>
         </div>
 
-        <p className=" text-sm font-bold font-roboto text-gray-600 border border-black px-4 py-2 rounded-md hover:text-white hover:bg-gray-900 cursor-pointer transition duration-300 ">
+        <p onClick={() => setIsOpen(true)} className=" text-sm font-bold font-roboto text-gray-600 border border-black px-4 py-2 rounded-md hover:text-white hover:bg-gray-900 cursor-pointer transition duration-300 ">
           Join
         </p>
       </div>

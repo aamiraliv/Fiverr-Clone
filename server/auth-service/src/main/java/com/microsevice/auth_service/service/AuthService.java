@@ -65,11 +65,6 @@ public class AuthService {
 
             System.out.println("User Found: " + user.getEmail());
 
-            if (user.isBlocked()) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("your account has been blocked . contact admin.");
-            }
-
             System.out.println("Role: " + user.getRole());
             System.out.println("Role Class: " + user.getRole().getClass().getName());
 
@@ -114,11 +109,6 @@ public class AuthService {
                     .orElseThrow(() -> new RuntimeException("user not found"));
 
             System.out.println("User Found: " + user.getEmail());
-
-            if (user.isBlocked()) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("your account has been blocked . contact admin.");
-            }
 
             System.out.println("🔹 Received Login Request: " + request.getEmail());
 

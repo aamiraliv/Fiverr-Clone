@@ -26,24 +26,5 @@ public class AdminAuthController {
         return ResponseEntity.ok(service.getAllUsers());
     }
 
-    @PutMapping("/block/{userId}")
-    public ResponseEntity<?> blockUser(@PathVariable Long userId){
-        User user = repository.findById(userId)
-                .orElseThrow(()->new RuntimeException("user not found"));
-        user.setBlocked(true);
-        repository.save(user);
 
-        return ResponseEntity.ok("user blocked successfully");
-    }
-
-    @PutMapping("/unblock/{userId}")
-    public ResponseEntity<?> unblockUser(@PathVariable Long userId) {
-        User user = repository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        user.setBlocked(false);
-        repository.save(user);
-
-        return ResponseEntity.ok("User unblocked successfully.");
-    }
 }

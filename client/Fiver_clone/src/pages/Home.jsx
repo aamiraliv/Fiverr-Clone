@@ -29,8 +29,10 @@ import happy from "../assets/makeItHappen/happy.42ed7bd.svg";
 import matching from "../assets/makeItHappen/matching.0eef7cc.svg";
 import quick from "../assets/makeItHappen/quickly.6879514.svg";
 import { MasonaryGrid } from "../components/MasonaryGrid";
+import AuthModal from "../components/Login";
 
 export const Home = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showAll, setShowAll] = useState(false);
@@ -79,6 +81,7 @@ export const Home = () => {
 
   return (
     <div>
+      <AuthModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
       <div
         className=" lg:hidden flex flex-col justify-center pb-8 bg-gradient-to-b from-green-950 to-green-700
 "
@@ -253,7 +256,7 @@ export const Home = () => {
               freelancer is always there to help you perfect it.
             </p>
             <div className="flex items-center justify-center lg:justify-start ">
-              <button className="text-black py-2 px-4 rounded-md bg-amber-50 z-10">
+              <button onClick={() => setIsOpen(true)} className="text-black py-2 px-4 rounded-md bg-amber-50 z-10">
                 Get started
               </button>
             </div>
@@ -313,9 +316,6 @@ export const Home = () => {
                 </p>
               </div>
             </div>
-            <div>
-              <button className="rounded-md bg-gray-900 text-white py-2 px-4 font-semibold">Try Now</button>
-            </div>
           </div>
           <div>
             <img
@@ -359,7 +359,7 @@ export const Home = () => {
             </div>
           </div>
           <div className="flex items-center justify-start lg:justify-center">
-            <button className="font-semibold text-[17px] rounded-lg py-2 px-4 text-white bg-gray-800">Join Now</button>
+            <button onClick={() => setIsOpen(true)} className="font-semibold text-[17px] rounded-lg py-2 px-4 text-white bg-gray-800">Join Now</button>
           </div>
         </div>
         <div className="flex flex-col gap-8">
