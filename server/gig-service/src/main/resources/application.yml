@@ -2,7 +2,7 @@ spring:
   application:
     name: gig-service
   datasource:
-    url: jdbc:mysql://localhost:3306/fiver_clone
+    url: jdbc:mysql://localhost:3306/fiverr_gig
     username: root
     password: 8129057270
     driver-class-name: com.mysql.cj.jdbc.Driver
