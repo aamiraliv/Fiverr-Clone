@@ -84,7 +84,7 @@ public class GigService {
 
 
     public List<GigDTO> filterGigs(String category) {
-        return repository.findByCategoryAndPriceBetweenAndDeliveryTimeLessThanEqual(category)
+        return repository.findByCategoryContainingIgnoreCase(category)
                 .stream()
                 .map(mapperService::convertToDTO)
                 .toList();
