@@ -15,6 +15,7 @@ public class Gig {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long userId;
 
     private String title;
 
@@ -22,7 +23,6 @@ public class Gig {
     private String description;
 
     private Double price;
-
     private String category;
 
     @ElementCollection
@@ -31,18 +31,11 @@ public class Gig {
     private String imageUrl1;
     private String imageUrl2;
     private String imageUrl3;
-
     private String videoUrl;
     private String thumbnailUrl;
-
     private Integer deliveryTime;
-
     private Integer revisions;
-
     private boolean isActive = true;
-
-    private Long UserId;
-
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

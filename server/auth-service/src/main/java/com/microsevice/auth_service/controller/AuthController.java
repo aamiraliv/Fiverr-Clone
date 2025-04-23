@@ -89,6 +89,11 @@ public class AuthController {
         return ResponseEntity.ok(service.updateRole(id,role));
     }
 
+    @GetMapping("/{id}")
+    public boolean doesUserExist(@PathVariable Long id) {
+        return service.existsById(id);
+    }
+
 //    @PutMapping("/validate")
 //    public ResponseEntity<?> ValidteToken(@RequestHeader("Authorization") String token){
 //        if (jwtUtil.validateToken(token.replace("Bearer ", ""))){

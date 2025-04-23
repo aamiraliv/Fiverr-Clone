@@ -203,4 +203,8 @@ public class AuthService {
         user.setRole(Role.valueOf(role));
         return repository.save(user);
     }
+
+    public boolean existsById(Long id) {
+        return repository.existsById(id);
+    }
 }

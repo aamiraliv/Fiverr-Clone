@@ -26,5 +26,5 @@ public class GigDTO {
     private Integer deliveryTime;
     private Integer revisions;
 
-    private Long UserId;
+    private Long userId;
 }
