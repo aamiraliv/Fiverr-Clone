@@ -17,7 +17,8 @@ public class MediaUploadService {
 
     public String uploadMedia(MultipartFile file) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
-                "folder", "Fiverr-Clone"
+                "folder", "Fiverr-Clone",
+                "resource_type", "auto"
         ));
         return uploadResult.get("secure_url").toString();
     }
