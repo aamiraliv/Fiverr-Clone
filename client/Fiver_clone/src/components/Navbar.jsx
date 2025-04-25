@@ -41,7 +41,7 @@ export const Navbar = () => {
             className="flex gap-1 items-center justify-center text-gray-950 font-roboto font-semibold text-[17px] "
           >
             <p className=" text-[16px] font-medium text-[#62646A]">
-              Fiverr Pro
+              Aiverr Pro
             </p>
             {menuOpen === 1 ? (
               <IoIosArrowDown className="rotate-180 transition duration-500 text-[#62646A]" />
@@ -114,7 +114,7 @@ export const Navbar = () => {
                   Answers
                 </h1>
                 <p className="font-normal text-gray-600 text-sm">
-                  Powered by AI, answered by Fiverr freelancers
+                  Powered by AI, answered by Aiverr freelancers
                 </p>
               </div>
               <div className="flex flex-col gap-1 hover:bg-gray-100 p-2 rounded-md cursor-pointer">
@@ -122,7 +122,7 @@ export const Navbar = () => {
                   Community
                 </h1>
                 <p className="font-normal text-gray-600 text-sm">
-                  Connect with Fiverrs team and community
+                  Connect with Aiverrs team and community
                 </p>
               </div>
               <div className="flex flex-col gap-1 hover:bg-gray-100 p-2 rounded-md cursor-pointer">

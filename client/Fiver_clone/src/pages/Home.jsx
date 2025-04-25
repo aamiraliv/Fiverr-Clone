@@ -244,7 +244,7 @@ export const Home = () => {
           </div>
           <div className="flex flex-col flex-1 gap-4 text-white lg:p-4">
             <h1 className="font-bold text-2xl lg:text-4xl">
-              fiverr <span className="font-light">Go</span>
+              Aiverr <span className="font-light">Go</span>
             </h1>
             <h2 className="font-light text-3xl font-aldrich lg:text-6xl">
               Instant results. Top talent.
@@ -266,7 +266,7 @@ export const Home = () => {
         <div className="grid lg:grid-cols-2 gap-4 p-4 rounded-lg bg-[#E8FAF4]">
           <div className="flex flex-col gap-8 py-8 px-12">
             <div className="font-extrabold text-3xl">
-              fiverr <span className="font-normal">Pro.</span>
+              Aiverr <span className="font-normal">Pro.</span>
             </div>
             <div className="font-normal text-2xl leading-normal lg:text-5xl lg:leading-16">
               The{" "}
@@ -326,8 +326,8 @@ export const Home = () => {
           </div>
         </div>
         <div className="flex flex-col gap-6 ">
-          <h1 className="font-normal text-4xl text-gray-900">What success on Fiverr looks like</h1>
-          <p className="font-light text-sm text-gray-600">Vontélle Eyewear turns to Fiverr freelancers to bring their vision to life.</p>
+          <h1 className="font-normal text-4xl text-gray-900">What success on Aiverr looks like</h1>
+          <p className="font-light text-sm text-gray-600">Vontélle Eyewear turns to Aiverr freelancers to bring their vision to life.</p>
           <video src={vontellaFiver} muted autoPlay loop controls className="w-full h-full rounded-2xl"></video>
         </div>
         <div className="flex flex-col gap-8">

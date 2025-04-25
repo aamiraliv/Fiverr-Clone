@@ -1,9 +1,9 @@
 import React from 'react'
 
-export const landingPage = () => {
+export const GigCard = () => {
   return (
     <div>
-      
+      <div></div>
     </div>
   )
 }

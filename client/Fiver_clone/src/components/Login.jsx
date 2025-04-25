@@ -171,7 +171,7 @@ export default function AuthModal({ isOpen, onClose }) {
                     </div>
                     <div>
                       <p className="text-[12px] text-gray-500 mt-4">
-                        By joining, you agree to the Fiverr Terms of Service and
+                        By joining, you agree to the Aiverr Terms of Service and
                         to occasionally receive emails from us. Please read our
                         Privacy Policy to learn how we use your personal data.
                       </p>

@@ -3,8 +3,8 @@ import React from "react";
 export const Footer = () => {
   return (
     <div className="flex flex-col gap-4 lg:flex-row justify-between items-center text-[#B5B6BA] mt-5 border-t-2 border-[#B5B6BA] p-6">
-      <div className="font-bold text-lg">Fiverr.</div>
-      <div>© Fiverr International Ltd. 2025</div>
+      <div className="font-bold text-lg">Aiverr.</div>
+      <div>© Aiverr International Ltd. 2025</div>
       <div className="flex gap-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
