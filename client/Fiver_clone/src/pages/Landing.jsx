@@ -1,4 +1,7 @@
 import React from "react";
+import { GigCard } from "../components/GigCard";
+import gigs from "../../json/gigmockdata";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 export const Landing = () => {
   return (
@@ -77,8 +80,21 @@ export const Landing = () => {
         </div>
       </div>
       <div className="flex flex-col gap-4 mt-12 p-8">
-        <div className="Based-on-what-you-might-be-looking-for">
-          <h1 className="font-semibold text-black text-2xl">Based on what you might be looking for</h1>
+        <div className="Based-on-what-you-might-be-looking-for flex flex-col gap-8">
+          <h1 className=" relative font-semibold text-black text-2xl">
+            Based on what you might be looking for
+            <div className="z-10 absolute flex right-0 top-0 items-center gap-3">
+              <button className="prev-btn flex items-center justify-center transform w-8 h-8 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out">
+                <IoIosArrowBack size={20} />
+              </button>
+              <button className="next-btn flex items-center justify-center transform w-8 h-8 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out ">
+                <IoIosArrowForward size={20} />
+              </button>
+            </div>
+          </h1>
+          <div>
+            <GigCard data={gigs} />
+          </div>
         </div>
       </div>
     </div>
