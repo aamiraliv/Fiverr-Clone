@@ -1,8 +1,7 @@
 import React from "react";
 import Masonry from "react-masonry-css";
-import masonary from "../../json/masonary";
 
-export const MasonaryGrid = () => {
+export const MasonaryGrid = ({masonary}) => {
   const breakpointColumnsObj = {
     default: 4,
     1100: 3,

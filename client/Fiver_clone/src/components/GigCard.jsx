@@ -2,9 +2,9 @@ import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
-import { IoIosArrowBack, IoIosArrowForward, IoIosStar } from "react-icons/io";
+import { IoIosStar } from "react-icons/io";
 
-export const GigCard = ({ data }) => {
+export const GigCard = ({ data , nextBtn , prevBtn}) => {
   return (
     <div className="w-full relative">
       
@@ -14,8 +14,8 @@ export const GigCard = ({ data }) => {
         spaceBetween={10}
         slidesPerView={5.5}
         navigation={{
-          nextEl: ".next-btn",
-          prevEl: ".prev-btn",
+          nextEl: nextBtn,
+          prevEl: prevBtn,
         }}
         breakpoints={{
           320: { slidesPerView: 1.6 },

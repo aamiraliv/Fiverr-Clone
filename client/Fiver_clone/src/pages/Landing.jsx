@@ -2,6 +2,10 @@ import React from "react";
 import { GigCard } from "../components/GigCard";
 import gigs from "../../json/gigmockdata";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import { MasonaryGrid } from "../components/MasonaryGrid";
+import masonary from "../../json/masonary";
+import { BiArrowToRight } from "react-icons/bi";
+import { MdKeyboardArrowRight } from "react-icons/md";
 
 export const Landing = () => {
   return (
@@ -93,8 +97,54 @@ export const Landing = () => {
             </div>
           </h1>
           <div>
-            <GigCard data={gigs} />
+            <GigCard data={gigs} nextBtn={".next-btn"} prevBtn={".prev-btn"} />
           </div>
+        </div>
+        <div className="Gigs-you-may-like  flex flex-col gap-8 mt-16">
+          <h1 className="font-semibold text-black text-2xl">Gigs you ma</h1>
+          <div className=" relative">
+            <GigCard
+              data={gigs}
+              nextBtn={".next-btn2"}
+              prevBtn={".prev-btn2"}
+            />
+            <button className="prev-btn2 absolute top-1/2 -left-5 z-10 flex items-center justify-center transform w-12 h-12 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out">
+              <IoIosArrowBack size={20} />
+            </button>
+            <button className="next-btn2 absolute top-1/2 -right-5 z-10 flex items-center justify-center transform w-12 h-12 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out ">
+              <IoIosArrowForward size={20} />
+            </button>
+          </div>
+        </div>
+        <div className="most-popular-in-web  flex flex-col gap-8 mt-16">
+          <div className=" flex justify-between items-center">
+            <h1 className="font-semibold text-black text-2xl">
+              Most popular Gigs in Website Development
+            </h1>
+            <p className="flex items-center underline text-sm font-semibold text-gray-500 cursor-pointer">
+              Show All <MdKeyboardArrowRight size={20} />
+            </p>
+          </div>
+
+          <div className=" relative">
+            <GigCard
+              data={gigs}
+              nextBtn={".next-btn3"}
+              prevBtn={".prev-btn3"}
+            />
+            <button className="prev-btn3 absolute top-1/2 -left-5 z-10 flex items-center justify-center transform w-12 h-12 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out">
+              <IoIosArrowBack size={20} />
+            </button>
+            <button className="next-btn3 absolute top-1/2 -right-5 z-10 flex items-center justify-center transform w-12 h-12 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out ">
+              <IoIosArrowForward size={20} />
+            </button>
+          </div>
+        </div>
+        <div className="flex flex-col gap-8 mt-16">
+          <h1 className="font-semibold text-black text-2xl">
+            Get inspired by work done on Fiverr
+          </h1>
+          <MasonaryGrid masonary={masonary} />
         </div>
       </div>
     </div>

@@ -14,8 +14,9 @@ import science from "../assets/data-science.webp";
 import product from "../assets/product-photography.webp";
 import ecommerce from "../assets/e-commerce.webp";
 import videoedit from "../assets/video-editing.webp";
+import { Navigation } from "swiper/modules";
 
-const PopularService = () => {
+const PopularService = ({ nextBtn, prevBtn }) => {
   const data = [
     {
       title: "Web Development",
@@ -63,18 +64,23 @@ const PopularService = () => {
   return (
     <div className="w-full">
       <Swiper
+        modules={[Navigation]}
         spaceBetween={10}
         slidesPerView={5.5}
+        navigation={{
+          nextEl: nextBtn,
+          prevEl: prevBtn,
+        }}
         breakpoints={{
-          320: { slidesPerView: 1.6},
-          640: { slidesPerView: 3},
-          768: { slidesPerView: 4},
+          320: { slidesPerView: 1.6 },
+          640: { slidesPerView: 3 },
+          768: { slidesPerView: 4 },
           1024: { slidesPerView: 6 },
         }}
       >
         {data.map((item, idx) => (
           <SwiperSlide key={idx} className="w-auto">
-            <div className="flex flex-col justify-between p-2 rounded-2xl bg-[#003912] w-[180px] min-h-[230px]">
+            <div className=" relative flex flex-col justify-between p-2 rounded-2xl bg-[#003912] w-[180px] min-h-[230px]">
               <p className="font-bold text-white text-lg p-2">{item.title}</p>
               <div>{item.icon}</div>
             </div>

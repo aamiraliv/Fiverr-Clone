@@ -2,7 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { IoSearch } from "react-icons/io5";
 import introvideo from "../assets/Desktop Header new version.mp4";
 import { FaPause, FaPlay } from "react-icons/fa6";
-import { IoIosArrowRoundForward } from "react-icons/io";
+import {
+  IoIosArrowBack,
+  IoIosArrowForward,
+  IoIosArrowRoundForward,
+} from "react-icons/io";
 import googleIcon from "../assets/google.e74f4d9.svg";
 import metaIcon from "../assets/meta.ff37dd3.svg";
 import netflixIcon from "../assets/netflix.b310314.svg";
@@ -25,11 +29,12 @@ import fiverPro from "../assets/fiverr-pro_2x.webp";
 import { BiSolidBadgeCheck } from "react-icons/bi";
 import vontellaFiver from "../assets/Vontelle Cutdown- Breakthrough V5.mp4";
 import catogary from "../assets/makeItHappen/categories.8badf97.svg";
-import happy from "../assets/makeItHappen/happy.42ed7bd.svg"; 
+import happy from "../assets/makeItHappen/happy.42ed7bd.svg";
 import matching from "../assets/makeItHappen/matching.0eef7cc.svg";
 import quick from "../assets/makeItHappen/quickly.6879514.svg";
 import { MasonaryGrid } from "../components/MasonaryGrid";
 import AuthModal from "../components/Login";
+import masonary from "../../json/masonary";
 
 export const Home = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -230,7 +235,15 @@ export const Home = () => {
           <h1 className="font-normal text-3xl lg:text-5xl text-[#404145]">
             Popular Services
           </h1>
-          <PopularService />
+          <div className=" relative">
+            <PopularService nextBtn={".next-Btn"} prevBtn={".prev-Btn"} />
+            <button className="prev-Btn absolute top-[40%] -left-5 z-10 flex items-center justify-center transform w-12 h-12 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out">
+              <IoIosArrowBack size={20} />
+            </button>
+            <button className="next-Btn absolute top-[40%] -right-5 z-10 flex items-center justify-center transform w-12 h-12 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out ">
+              <IoIosArrowForward size={20} />
+            </button>
+          </div>
         </div>
         <div className=" relative flex flex-col lg:flex-row-reverse gap-4 rounded-lg bg-black p-8">
           <div className="flex-1">
@@ -256,7 +269,10 @@ export const Home = () => {
               freelancer is always there to help you perfect it.
             </p>
             <div className="flex items-center justify-center lg:justify-start ">
-              <button onClick={() => setIsOpen(true)} className="text-black py-2 px-4 rounded-md bg-amber-50 z-10">
+              <button
+                onClick={() => setIsOpen(true)}
+                className="text-black py-2 px-4 rounded-md bg-amber-50 z-10"
+              >
                 Get started
               </button>
             </div>
@@ -326,45 +342,74 @@ export const Home = () => {
           </div>
         </div>
         <div className="flex flex-col gap-6 ">
-          <h1 className="font-normal text-4xl text-gray-900">What success on Aiverr looks like</h1>
-          <p className="font-light text-sm text-gray-600">Vontélle Eyewear turns to Aiverr freelancers to bring their vision to life.</p>
-          <video src={vontellaFiver} muted autoPlay loop controls className="w-full h-full rounded-2xl"></video>
+          <h1 className="font-normal text-4xl text-gray-900">
+            What success on Aiverr looks like
+          </h1>
+          <p className="font-light text-sm text-gray-600">
+            Vontélle Eyewear turns to Aiverr freelancers to bring their vision
+            to life.
+          </p>
+          <video
+            src={vontellaFiver}
+            muted
+            autoPlay
+            loop
+            controls
+            className="w-full h-full rounded-2xl"
+          ></video>
         </div>
         <div className="flex flex-col gap-8">
-          <div className="text-4xl font-normal text-gray-800 ">Make it all happen with freelancers</div>
+          <div className="text-4xl font-normal text-gray-800 ">
+            Make it all happen with freelancers
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="flex flex-col gap-4 ">
               <div>
                 <img src={catogary} alt="" />
               </div>
-              <p className="font-normal text-[16px] text-gray-600">Access a pool of top talent across 700 categories</p>
+              <p className="font-normal text-[16px] text-gray-600">
+                Access a pool of top talent across 700 categories
+              </p>
             </div>
             <div className="flex flex-col gap-4 ">
               <div>
                 <img src={matching} alt="" />
               </div>
-              <p className="font-normal text-[16px] text-gray-600">Enjoy a simple, easy-to-use matching experience</p>
+              <p className="font-normal text-[16px] text-gray-600">
+                Enjoy a simple, easy-to-use matching experience
+              </p>
             </div>
             <div className="flex flex-col gap-4 ">
               <div>
                 <img src={quick} alt="" />
               </div>
-              <p className="font-normal text-[16px] text-gray-600">Get quality work done quickly and within budget</p>
+              <p className="font-normal text-[16px] text-gray-600">
+                Get quality work done quickly and within budget
+              </p>
             </div>
             <div className="flex flex-col gap-4 ">
               <div>
                 <img src={happy} alt="" />
               </div>
-              <p className="font-normal text-[16px] text-gray-600">Only pay when you’re happy</p>
+              <p className="font-normal text-[16px] text-gray-600">
+                Only pay when you’re happy
+              </p>
             </div>
           </div>
           <div className="flex items-center justify-start lg:justify-center">
-            <button onClick={() => setIsOpen(true)} className="font-semibold text-[17px] rounded-lg py-2 px-4 text-white bg-gray-800">Join Now</button>
+            <button
+              onClick={() => setIsOpen(true)}
+              className="font-semibold text-[17px] rounded-lg py-2 px-4 text-white bg-gray-800"
+            >
+              Join Now
+            </button>
           </div>
         </div>
         <div className="flex flex-col gap-8">
-          <div className="text-lg font-semibold text-center">Find your inspiration</div>
-          <MasonaryGrid />
+          <div className="text-lg font-semibold text-center">
+            Find your inspiration
+          </div>
+          <MasonaryGrid masonary={masonary} />
         </div>
       </div>
     </div>
