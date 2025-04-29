@@ -28,7 +28,7 @@ export const Landing = () => {
           muted
           playsInline
         />
-        <div className=" absolute w-full -bottom-25 m-auto grid grid-cols-2 gap-4 p-10">
+        <div className=" absolute w-full -bottom-25 m-auto  hidden lg:grid lg:grid-cols-2 gap-4 p-10">
           <div className="flex flex-col gap-2 p-4 rounded-lg bg-white shadow-lg">
             <h1 className="font-normal text-gray-500 text-sm">
               RECOMMENDED FOR YOU
@@ -85,9 +85,9 @@ export const Landing = () => {
       </div>
       <div className="flex flex-col gap-4 mt-12 p-8">
         <div className="Based-on-what-you-might-be-looking-for flex flex-col gap-8">
-          <h1 className=" relative font-semibold text-black text-2xl">
+          <h1 className=" relative font-semibold text-black text-xl lg:text-2xl">
             Based on what you might be looking for
-            <div className="z-10 absolute flex right-0 top-0 items-center gap-3">
+            <div className="z-10 absolute flex right-0 top-10 lg:top-0 items-center gap-3">
               <button className="prev-btn flex items-center justify-center transform w-8 h-8 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out">
                 <IoIosArrowBack size={20} />
               </button>
@@ -101,7 +101,7 @@ export const Landing = () => {
           </div>
         </div>
         <div className="Gigs-you-may-like  flex flex-col gap-8 mt-16">
-          <h1 className="font-semibold text-black text-2xl">Gigs you ma</h1>
+          <h1 className="font-semibold text-black text-xl lg:text-2xl">Gigs you ma</h1>
           <div className=" relative">
             <GigCard
               data={gigs}
@@ -118,10 +118,10 @@ export const Landing = () => {
         </div>
         <div className="most-popular-in-web  flex flex-col gap-8 mt-16">
           <div className=" flex justify-between items-center">
-            <h1 className="font-semibold text-black text-2xl">
+            <h1 className="font-semibold text-black text-xl lg:text-2xl">
               Most popular Gigs in Website Development
             </h1>
-            <p className="flex items-center underline text-sm font-semibold text-gray-500 cursor-pointer">
+            <p className="flex items-center underline lg:text-sm font-semibold text-gray-500 cursor-pointer">
               Show All <MdKeyboardArrowRight size={20} />
             </p>
           </div>
@@ -141,7 +141,7 @@ export const Landing = () => {
           </div>
         </div>
         <div className="flex flex-col gap-8 mt-16">
-          <h1 className="font-semibold text-black text-2xl">
+          <h1 className="font-semibold text-black text-xl lg:text-2xl">
             Get inspired by work done on Fiverr
           </h1>
           <MasonaryGrid masonary={masonary} />

@@ -18,7 +18,7 @@ export const GigCard = ({ data , nextBtn , prevBtn}) => {
           prevEl: prevBtn,
         }}
         breakpoints={{
-          320: { slidesPerView: 1.6 },
+          320: { slidesPerView: 1.1 },
           640: { slidesPerView: 3 },
           768: { slidesPerView: 4 },
           1024: { slidesPerView: 4 },

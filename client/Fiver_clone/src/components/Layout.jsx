@@ -12,7 +12,7 @@ export const Layout = () => {
         <Navbar />
       </div>
 
-      <main className="flex-grow pt-[80px]">
+      <main className="flex-grow pt-[80px] ">
         <Outlet />
       </main>
       {!noFooterPages.includes(location.pathname) && <Footer />}
