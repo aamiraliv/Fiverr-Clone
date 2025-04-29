@@ -81,7 +81,7 @@ export const StepOne = ({ title, onChange, value, tags, setStep }) => {
         <div className="flex flex-col gap-2">
           <h1 className="text-[17px] font-medium text-black">Category</h1>
           <p className="text-sm text-gray-500">
-            Choose the category and sub-category most suitable for your Gig.
+            Choose the category most suitable for your Gig.
           </p>
         </div>
         <div>
@@ -170,8 +170,13 @@ export const StepOne = ({ title, onChange, value, tags, setStep }) => {
       </div>
       <div className="mt-4 flex justify-end gap-4">
         <button
+          disabled={title.length < 20 || tags.length < 1 || !value}
           onClick={() => setStep(2)}
-          className="text-[16px] font-semibold text-white bg-gray-900 py-3 px-4 rounded-md"
+          className={`text-[16px] font-semibold text-white py-3 px-4 rounded-md ${
+            title.length < 20 || tags.length < 1 || !value
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-gray-900"
+          }`}
         >
           Save & Continue
         </button>

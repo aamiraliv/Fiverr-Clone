@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { MdArrowForwardIos } from "react-icons/md";
 import { StepOne } from "../components/GigComp/StepOne";
+import { StepTwo } from "../components/GigComp/StepTwo";
 
 export const GigForm = () => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
   const [formData, setFormData] = useState({
     title: "",
     price: null,
     category: "",
+    description: "",
     tags: [],
     imageUrl1: "",
     imageUrl2: "",
@@ -74,6 +76,7 @@ export const GigForm = () => {
           </p>
         </div>
         <MdArrowForwardIos className="hidden lg:block" />
+      
         <div className="flex items-center gap-4">
           <p
             className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white ${
@@ -91,7 +94,7 @@ export const GigForm = () => {
                 : "text-stone-400"
             }`}
           >
-            Description
+            Gallery
           </p>
         </div>
         <MdArrowForwardIos className="hidden lg:block" />
@@ -112,49 +115,7 @@ export const GigForm = () => {
                 : "text-stone-400"
             }`}
           >
-            Requirements
-          </p>
-        </div>
-        <MdArrowForwardIos className="hidden lg:block" />
-        <div className="flex items-center gap-4">
-          <p
-            className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white ${
-              step >= 5 ? "bg-green-500" : "bg-stone-400"
-            }`}
-          >
-            5
-          </p>
-          <p
-            className={`text-sm font-bold ${
-              step === 5
-                ? "text-black"
-                : step > 5
-                ? "text-green-500"
-                : "text-stone-400"
-            }`}
-          >
-            Gallery
-          </p>
-        </div>
-        <MdArrowForwardIos className="hidden lg:block" />
-        <div className="flex items-center gap-4">
-          <p
-            className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white ${
-              step >= 6 ? "bg-green-500" : "bg-stone-400"
-            }`}
-          >
-            6
-          </p>
-          <p
-            className={`text-sm font-bold ${
-              step === 6
-                ? "text-black"
-                : step > 6
-                ? "text-green-500"
-                : "text-stone-400"
-            }`}
-          >
-            Gallery
+            Publish
           </p>
         </div>
       </div>
@@ -166,6 +127,16 @@ export const GigForm = () => {
             title={formData.title}
             value={formData.category}
             tags={formData.tags}
+          />
+        )}
+        {step === 2 && (
+          <StepTwo
+            onChange={handleChange}
+            rev={formData.revisions}
+            del={formData.deliveryTime}
+            price={formData.price}
+            description={formData.description}
+            setStep={setStep}
           />
         )}
       </div>
