@@ -31,7 +31,7 @@ export const StepTwo = ({
       <h1 className="text-black/65 font-normal text-3xl border-b border-b-gray-400 pb-5 mb-5">
         Scope & Pricing
       </h1>
-      <div className="grid grid-cols-[300px_1fr] rounded-sm border border-gray-300 p-8 gap-8 bg-white">
+      <div className="grid lg:grid-cols-[300px_1fr] rounded-sm border border-gray-300 p-8 gap-8 bg-white">
         <div className="flex flex-col gap-2">
           <h1 className="text-black/70 font-semibold text-sm">Gig Description</h1>
           <p className="text-sm text-gray-500">
@@ -50,17 +50,18 @@ export const StepTwo = ({
             onChange={(e) => onChange("description", e.target.value)}
             rows="3"
             maxLength={120}
-            minLength={30}
+            minLength={50}
+            value={description}
           ></textarea>
-          {description.length > 0 && description.length < 30 && (
+          {description.length > 0 && description.length < 50 && (
             <p className="float-end text-red-500 text-sm mt-1">
               description must be at least 30 characters.
             </p>
           )}
 
-          {description.length >= 30 && (
+          {description.length >= 50 && (
             <p className="float-end text-green-500 text-sm mt-1">
-              Looks good! ({description.length} / 100)
+              Looks good! ({description.length} / 120)
             </p>
           )}
         </div>
@@ -160,19 +161,20 @@ export const StepTwo = ({
         <div className="flex items-center gap-2">
           <p className="text-2xl">₹</p>
           <input
-            type="number"
+            type="text"
             className="w-full border border-black/50 rounded-lg px-4 py-2 cursor-pointer  hover:border-green-500 transition outline-none"
             placeholder="0.00"
             onChange={(e) => onChange("price", parseFloat(e.target.value))}
+            value={price}
           />
         </div>
       </div>
       <div className="mt-4 flex items-center justify-end gap-4">
         <button
-          disabled={!price || price <= 0 || del === null || rev === null || description.length < 30}
+          disabled={!price || price <= 0 || del === null || rev === null || description.length < 50}
           onClick={() => setStep(3)}
           className={`text-[16px] font-semibold text-white py-3 px-4 rounded-md ${
-            !price || price <= 0 || del === null || rev === null || description.length < 30
+            !price || price <= 0 || del === null || rev === null || description.length < 50
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-gray-900"
           }`}

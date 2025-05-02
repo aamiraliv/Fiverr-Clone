@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { MdArrowForwardIos } from "react-icons/md";
 import { StepOne } from "../components/GigComp/StepOne";
 import { StepTwo } from "../components/GigComp/StepTwo";
+import { StepThree } from "../components/GigComp/StepThree";
+import { StepFour } from "../components/GigComp/StepFour";
 
 export const GigForm = () => {
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     title: "",
     price: null,
@@ -33,7 +35,7 @@ export const GigForm = () => {
 
   return (
     <div>
-      <div className="flex lg:flex-row flex-col w-full px-12 py-4 justify-center gap-5 items-center bg-white border-b border-gray-300 border-t">
+      <div className="flex lg:flex-row w-full px-12 py-4 justify-center gap-5 items-center bg-white border-b border-gray-300 border-t">
         <div className="flex items-center gap-2">
           <p
             className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white ${
@@ -43,7 +45,7 @@ export const GigForm = () => {
             1
           </p>
           <p
-            className={`text-sm font-bold ${
+            className={` hidden lg:block text-sm font-bold ${
               step === 1
                 ? "text-black"
                 : step > 1
@@ -54,7 +56,7 @@ export const GigForm = () => {
             Overview
           </p>
         </div>
-        <MdArrowForwardIos className="hidden lg:block" />
+        <MdArrowForwardIos />
         <div className="flex items-center gap-4">
           <p
             className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white ${
@@ -64,7 +66,7 @@ export const GigForm = () => {
             2
           </p>
           <p
-            className={`text-sm font-bold ${
+            className={`hidden lg:block text-sm font-bold ${
               step === 2
                 ? "text-black"
                 : step > 2
@@ -75,8 +77,8 @@ export const GigForm = () => {
             Pricing
           </p>
         </div>
-        <MdArrowForwardIos className="hidden lg:block" />
-      
+        <MdArrowForwardIos />
+
         <div className="flex items-center gap-4">
           <p
             className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white ${
@@ -86,7 +88,7 @@ export const GigForm = () => {
             3
           </p>
           <p
-            className={`text-sm font-bold ${
+            className={`hidden lg:block text-sm font-bold ${
               step === 3
                 ? "text-black"
                 : step > 3
@@ -97,7 +99,7 @@ export const GigForm = () => {
             Gallery
           </p>
         </div>
-        <MdArrowForwardIos className="hidden lg:block" />
+        <MdArrowForwardIos />
         <div className="flex items-center gap-4">
           <p
             className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white ${
@@ -107,7 +109,7 @@ export const GigForm = () => {
             4
           </p>
           <p
-            className={`text-sm font-bold ${
+            className={`hidden lg:block text-sm font-bold ${
               step === 4
                 ? "text-black"
                 : step > 4
@@ -139,6 +141,17 @@ export const GigForm = () => {
             setStep={setStep}
           />
         )}
+        {step === 3 && (
+          <StepThree
+            onChange={handleChange}
+            image1={formData.imageUrl1}
+            image2={formData.imageUrl2}
+            image3={formData.imageUrl3}
+            thumbnail={formData.thumbnailUrl}
+            setStep={setStep}
+          />
+        )}
+        {step === 4 && <StepFour gigdata={formData} setStep={setStep} />}
       </div>
     </div>
   );

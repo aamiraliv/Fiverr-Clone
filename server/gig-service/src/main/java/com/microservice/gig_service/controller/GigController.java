@@ -15,6 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/gig")
+@CrossOrigin(origins = "http://localhost:5173",allowCredentials = "true")
 public class GigController {
 
     @Autowired
@@ -30,7 +31,7 @@ public class GigController {
 
     @PutMapping("/{id}")
     public ResponseEntity<GigDTO> updateGig(@PathVariable Long id, @RequestBody GigDTO dto) {
-        return ResponseEntity.ok(service.updateGig(id,dto));
+        return ResponseEntity.ok(service.updateGig(id, dto));
     }
 
     @DeleteMapping("/{id}")
@@ -65,10 +66,10 @@ public class GigController {
     }
 
     @PostMapping("/freelancer/upload")
-    public ResponseEntity<?> uploadMedial(@RequestParam("file") MultipartFile file){
+    public ResponseEntity<?> uploadMedial(@RequestParam("file") MultipartFile file) {
         try {
             String media_url = uploadService.uploadMedia(file);
-            return ResponseEntity.ok().body(Map.of("media_url",media_url));
+            return ResponseEntity.ok().body(Map.of("media_url", media_url));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("error", "Image upload failed"));
         }

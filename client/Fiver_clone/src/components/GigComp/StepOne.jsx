@@ -45,7 +45,7 @@ export const StepOne = ({ title, onChange, value, tags, setStep }) => {
 
   return (
     <div>
-      <div className="grid grid-cols-[300px_1fr] rounded-sm border border-gray-300 p-8 gap-8 bg-white">
+      <div className="grid lg:grid-cols-[300px_1fr] rounded-sm border border-gray-300 p-8 gap-8 bg-white">
         <div className="flex flex-col gap-2">
           <h1 className="text-[17px] font-medium text-black">Gig Title</h1>
           <p className="text-sm text-gray-500">
@@ -64,15 +64,16 @@ export const StepOne = ({ title, onChange, value, tags, setStep }) => {
             onChange={(e) => onChange("title", e.target.value)}
             rows="3"
             maxLength={100}
-            minLength={20}
+            minLength={40}
+            value={title}
           ></textarea>
-          {title.length > 0 && title.length < 20 && (
+          {title.length > 0 && title.length < 40 && (
             <p className="float-end text-red-500 text-sm mt-1">
               title must be at least 20 characters.
             </p>
           )}
 
-          {title.length >= 20 && (
+          {title.length >= 40 && (
             <p className="float-end text-green-500 text-sm mt-1">
               Looks good! ({title.length} / 100)
             </p>
@@ -170,10 +171,10 @@ export const StepOne = ({ title, onChange, value, tags, setStep }) => {
       </div>
       <div className="mt-4 flex justify-end gap-4">
         <button
-          disabled={title.length < 20 || tags.length < 1 || !value}
+          disabled={title.length < 40 || tags.length < 1 || !value}
           onClick={() => setStep(2)}
           className={`text-[16px] font-semibold text-white py-3 px-4 rounded-md ${
-            title.length < 20 || tags.length < 1 || !value
+            title.length < 40 || tags.length < 1 || !value
               ? "bg-gray-400 cursor-not-allowed"
               : "bg-gray-900"
           }`}

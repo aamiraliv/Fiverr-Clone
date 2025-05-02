@@ -74,3 +74,11 @@ body::-webkit-scrollbar {
 .my-masonry-grid_column > div {
   margin-bottom: 16px;
 }
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.custom-scrollbar {
+  -ms-overflow-style: none; 
+  scrollbar-width: none; 
+}
