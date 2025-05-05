@@ -19,12 +19,17 @@ public class Order {
     private Long id;
 
     private Long gigId;
+
     private Long buyerId;
+
     private Long sellerId;
+
     private String status;
+
     private double price;
 
     private LocalDateTime createdAt;
+
     private LocalDateTime updatedAt;
 
     @PrePersist

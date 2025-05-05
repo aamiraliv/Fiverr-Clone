@@ -4,11 +4,10 @@ import com.microservice.order_serivce.dto.OrderRequestDto;
 import com.microservice.order_serivce.dto.OrderResponseDto;
 import com.microservice.order_serivce.model.Order;
 import com.microservice.order_serivce.repository.OrderRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,23 +17,47 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private MapperService mapperService;
 
 
-    public Order placeOrder(Order order) {
-        Order order1 = new Order();
-        order1.se
-    }
+//    public OrderResponseDto placeOrder(Order order) {
+//        order.setCreatedAt(LocalDateTime.now());
+//        order.setUpdatedAt(LocalDateTime.now());
+//        order.setStatus("PENDING");
+//        return mapperService.toOrderResponse(orderRepository.save(order));
+//    }
 
     public Order getOrder(Long id) {
+        return orderRepository.findById(id).orElseThrow(
+                () -> new RuntimeException("order not found")
+        );
     }
 
     public List<Order> getOrdersByBuyer(Long buyerId) {
+        return orderRepository.findByBuyerId(buyerId);
     }
 
     public Order updateOrderStatus(Long id, String status) {
+        Order order = orderRepository.findById(id).orElseThrow(
+                ()-> new RuntimeException("order not found")
+        );
+        order.setStatus(status);
+        return  orderRepository.save(order);
     }
 
     public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    public List<Order> getOrdersBySeller(Long sellerId) {
+        return orderRepository.findBySellerId(sellerId);
+    }
+
+    public Order placeOrder(OrderRequestDto dto) {
+        Order order = mapperService.toOrderEntity(dto);
+        order.setCreatedAt(LocalDateTime.now());
+        order.setUpdatedAt(LocalDateTime.now());
+        order.setStatus("PENDING");
+        return  orderRepository.save(order);
     }
 }

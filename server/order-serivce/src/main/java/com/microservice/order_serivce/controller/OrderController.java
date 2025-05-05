@@ -26,8 +26,7 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<OrderResponseDto> placeOrder(@RequestBody OrderRequestDto dto) {
-        Order order = mapperService.toOrderEntity(dto);
-        Order placeOrder = orderService.placeOrder(order);
+        Order order = orderService.placeOrder(dto);
         return ResponseEntity.ok(mapperService.toOrderResponse(order));
     }
 
