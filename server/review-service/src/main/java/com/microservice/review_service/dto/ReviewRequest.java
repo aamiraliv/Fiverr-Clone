@@ -10,9 +10,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewRequest {
-    private Long gigId;
-    private Long buyerId;
-    private Long sellerId;
+    private int gigId;
+    private int buyerId;
+    private int sellerId;
     private String comment;
     private int rating;
 }

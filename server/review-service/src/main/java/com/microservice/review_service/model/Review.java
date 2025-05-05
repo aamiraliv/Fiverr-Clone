@@ -23,9 +23,9 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long gigId;
-    private Long buyerId;
-    private Long sellerId;
+    private int gigId;
+    private int buyerId;
+    private int sellerId;
 
     @Column(nullable = false)
     private String comment;
