@@ -74,4 +74,9 @@ public class GigController {
             return ResponseEntity.status(500).body(Map.of("error", "Image upload failed"));
         }
     }
+
+    @GetMapping("/check/{id}")
+    public boolean doesGigExist(@PathVariable Long id) {
+        return service.existsById(id);
+    }
 }

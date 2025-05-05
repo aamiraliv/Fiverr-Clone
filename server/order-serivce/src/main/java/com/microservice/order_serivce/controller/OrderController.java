@@ -7,7 +7,6 @@ import com.microservice.order_serivce.model.Order;
 import com.microservice.order_serivce.model.OrderStatus;
 import com.microservice.order_serivce.service.MapperService;
 import com.microservice.order_serivce.service.OrderService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

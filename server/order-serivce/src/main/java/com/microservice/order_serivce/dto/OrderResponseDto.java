@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @Builder
 public class OrderResponseDto {
     private Long id;
-    private int gigId;
-    private int buyerId;
-    private int sellerId;
+    private Long gigId;
+    private Long buyerId;
+    private Long sellerId;
     private OrderStatus status;
     private double price;
     private LocalDateTime createdAt;

@@ -96,4 +96,8 @@ public class GigService {
                 .map(mapperService::convertToDTO)
                 .toList();
     }
+
+    public boolean existsById(Long id) {
+        return repository.existsById(id);
+    }
 }

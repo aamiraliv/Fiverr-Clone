@@ -2,6 +2,8 @@ package com.microservice.order_serivce.service;
 
 import com.microservice.order_serivce.dto.OrderRequestDto;
 import com.microservice.order_serivce.dto.OrderResponseDto;
+import com.microservice.order_serivce.feign.AuthClient;
+import com.microservice.order_serivce.feign.GigClient;
 import com.microservice.order_serivce.model.Order;
 import com.microservice.order_serivce.model.OrderStatus;
 import com.microservice.order_serivce.repository.OrderRepository;
@@ -20,7 +22,11 @@ public class OrderService {
     @Autowired
     private MapperService mapperService;
 
+    @Autowired
+    private AuthClient authClient;
 
+    @Autowired
+    private GigClient gigClient;
 
     public Order getOrder(Long id) {
         return orderRepository.findById(id).orElseThrow(
@@ -49,6 +55,20 @@ public class OrderService {
     }
 
     public Order placeOrder(OrderRequestDto dto) {
+
+        if (!authClient.doesUserExist(dto.getBuyerId())) {
+            throw new RuntimeException("Buyer does not exist");
+        }
+
+        if (!authClient.doesUserExist(dto.getSellerId())) {
+            throw new RuntimeException("Seller does not exist");
+        }
+
+        if (!gigClient.doesGigExist(dto.getGigId())) {
+            throw new RuntimeException("Gig does not exist");
+        }
+
+
         Order order = new Order();
         order.setBuyerId(dto.getBuyerId());
         order.setSellerId(dto.getSellerId());

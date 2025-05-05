@@ -14,9 +14,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReviewResponse {
     private Long id;
-    private int gigId;
-    private int buyerId;
-    private int sellerId;
+    private Long gigId;
+    private Long buyerId;
+    private Long sellerId;
     private String comment;
     private int rating;
     private LocalDateTime createdAt;
