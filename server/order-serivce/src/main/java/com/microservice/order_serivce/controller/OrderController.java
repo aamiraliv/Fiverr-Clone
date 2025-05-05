@@ -4,6 +4,7 @@ package com.microservice.order_serivce.controller;
 import com.microservice.order_serivce.dto.OrderRequestDto;
 import com.microservice.order_serivce.dto.OrderResponseDto;
 import com.microservice.order_serivce.model.Order;
+import com.microservice.order_serivce.model.OrderStatus;
 import com.microservice.order_serivce.service.MapperService;
 import com.microservice.order_serivce.service.OrderService;
 import org.modelmapper.ModelMapper;
@@ -50,7 +51,7 @@ public class OrderController {
 
     @PutMapping("/freelancer/{id}/status")
     public ResponseEntity<OrderResponseDto> updateOrderStatus(
-            @PathVariable Long id, @RequestParam String status) {
+            @PathVariable Long id, @RequestParam OrderStatus status) {
         Order updated = orderService.updateOrderStatus(id,status);
         return ResponseEntity.ok(mapperService.toOrderResponse(updated));
     }

@@ -18,13 +18,14 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long gigId;
+    private int gigId;
 
-    private Long buyerId;
+    private int buyerId;
 
-    private Long sellerId;
+    private int sellerId;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     private double price;
 

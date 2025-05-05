@@ -7,8 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class OrderRequestDto {
-    private Long gigId;
-    private Long buyerId;
-    private Long sellerId;
+    private int gigId;
+    private int buyerId;
+    private int sellerId;
     private double price;
 }

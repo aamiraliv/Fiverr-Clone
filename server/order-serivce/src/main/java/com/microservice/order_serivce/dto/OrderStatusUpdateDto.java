@@ -1,5 +1,6 @@
 package com.microservice.order_serivce.dto;
 
+import com.microservice.order_serivce.model.OrderStatus;
 import lombok.*;
 
 @Getter
@@ -7,5 +8,5 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderStatusUpdateDto {
-    private String status;
+    private OrderStatus status;
 }

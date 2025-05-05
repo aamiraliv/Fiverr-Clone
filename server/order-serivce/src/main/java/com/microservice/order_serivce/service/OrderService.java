@@ -3,6 +3,7 @@ package com.microservice.order_serivce.service;
 import com.microservice.order_serivce.dto.OrderRequestDto;
 import com.microservice.order_serivce.dto.OrderResponseDto;
 import com.microservice.order_serivce.model.Order;
+import com.microservice.order_serivce.model.OrderStatus;
 import com.microservice.order_serivce.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,6 @@ public class OrderService {
     private MapperService mapperService;
 
 
-//    public OrderResponseDto placeOrder(Order order) {
-//        order.setCreatedAt(LocalDateTime.now());
-//        order.setUpdatedAt(LocalDateTime.now());
-//        order.setStatus("PENDING");
-//        return mapperService.toOrderResponse(orderRepository.save(order));
-//    }
 
     public Order getOrder(Long id) {
         return orderRepository.findById(id).orElseThrow(
@@ -37,12 +32,12 @@ public class OrderService {
         return orderRepository.findByBuyerId(buyerId);
     }
 
-    public Order updateOrderStatus(Long id, String status) {
+    public Order updateOrderStatus(Long id, OrderStatus status) {
         Order order = orderRepository.findById(id).orElseThrow(
-                ()-> new RuntimeException("order not found")
+                () -> new RuntimeException("order not found")
         );
         order.setStatus(status);
-        return  orderRepository.save(order);
+        return orderRepository.save(order);
     }
 
     public List<Order> getAllOrders() {
@@ -54,10 +49,14 @@ public class OrderService {
     }
 
     public Order placeOrder(OrderRequestDto dto) {
-        Order order = mapperService.toOrderEntity(dto);
+        Order order = new Order();
+        order.setBuyerId(dto.getBuyerId());
+        order.setSellerId(dto.getSellerId());
+        order.setPrice(dto.getPrice());
+        order.setGigId(dto.getGigId());
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
-        order.setStatus("PENDING");
-        return  orderRepository.save(order);
+        order.setStatus(OrderStatus.PENDING);
+        return orderRepository.save(order);
     }
 }
