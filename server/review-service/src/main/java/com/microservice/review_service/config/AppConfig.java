@@ -10,9 +10,6 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfig {
     @Bean
     public ModelMapper modelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
-        modelMapper.typeMap(ReviewRequest.class, Review.class)
-                .addMappings(mapper -> mapper.skip(Review::setId));
-        return modelMapper;
+        return new ModelMapper();
     }
 }
