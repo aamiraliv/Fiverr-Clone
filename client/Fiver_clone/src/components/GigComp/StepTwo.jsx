@@ -74,7 +74,7 @@ export const StepTwo = ({
             onClick={() => setOpen(!open)}
           >
             <span className={`text-sm ${rev ? "text-black" : "text-gray-400"}`}>
-              {rev || "Select a category"}
+              {rev || "Select revisions ( in days )"}
             </span>
             <svg
               className={`w-4 h-4 transform transition-transform ${
@@ -119,7 +119,7 @@ export const StepTwo = ({
             onClick={() => setOpenDelivery(!opendelivery)}
           >
             <span className={`text-sm ${del ? "text-black" : "text-gray-400"}`}>
-              {del || "Select a category"}
+              {del || "Select delivery time (in days)"}
             </span>
             <svg
               className={`w-4 h-4 transform transition-transform ${

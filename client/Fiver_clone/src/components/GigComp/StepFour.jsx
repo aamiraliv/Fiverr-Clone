@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import publishGig from "../../assets/publish-page.svg";
 
 export const StepFour = ({ gigdata, setStep }) => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-gray-700">Publish Your Gig</h1>
@@ -34,7 +38,10 @@ export const StepFour = ({ gigdata, setStep }) => {
               <h1 className=" font-bold text-2xl">₹{gigdata.price}</h1>
               <div className="flex gap-2 w-full overflow-x-scroll custom-scrollbar">
                 {gigdata.tags.map((tag, index) => (
-                  <p key={index} className=" text-[8px] lg:text-[10px] font-semibold text-gray-500 px-4 py-2 rounded-full border border-gray-300 w-fit">
+                  <p
+                    key={index}
+                    className=" text-[8px] lg:text-[10px] font-semibold text-gray-500 px-4 py-2 rounded-full border border-gray-300 w-fit"
+                  >
                     {tag}
                   </p>
                 ))}
