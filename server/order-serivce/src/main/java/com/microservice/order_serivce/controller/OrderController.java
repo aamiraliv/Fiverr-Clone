@@ -48,17 +48,6 @@ public class OrderController {
         return ResponseEntity.ok(orders.stream().map(mapperService::toOrderResponse).toList());
     }
 
-    @PutMapping("/freelancer/{id}/status")
-    public ResponseEntity<OrderResponseDto> updateOrderStatus(
-            @PathVariable Long id, @RequestParam OrderStatus status) {
-        Order updated = orderService.updateOrderStatus(id,status);
-        return ResponseEntity.ok(mapperService.toOrderResponse(updated));
-    }
 
 
-    @GetMapping("/admin")
-    public ResponseEntity<List<OrderResponseDto>> getAllOrders() {
-        List<Order> orders = orderService.getAllOrders();
-        return ResponseEntity.ok(orders.stream().map(mapperService::toOrderResponse).toList());
-    }
 }

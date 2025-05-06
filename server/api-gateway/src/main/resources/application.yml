@@ -3,11 +3,30 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
       routes:
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/api/auth/**
+
+        - id: gig-service
+          uri: lb://GIG-SERVICE
+          predicates:
+            - Path=/api/gig/**
+
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/order/**
+
+        - id: review-service
+          uri: lb://REVIEW-SERVICE
+          predicates:
+            - Path=/api/review/**
 
 server:
   port: 8080
@@ -21,3 +40,4 @@ eureka:
 logging:
   level:
     root: info
+
