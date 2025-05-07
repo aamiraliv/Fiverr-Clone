@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "GIG-SERVICE")
 public interface GigClient {
-    @GetMapping("/check/{id}")
+    @GetMapping("/api/gig/check/{id}")
     boolean doesGigExist(@PathVariable("id") Long id);
 }

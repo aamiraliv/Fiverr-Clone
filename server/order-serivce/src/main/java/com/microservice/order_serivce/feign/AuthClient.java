@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "AUTH-SERVICE")
 public interface AuthClient {
-    @GetMapping("/{id}")
+    @GetMapping("/api/auth/{id}")
     boolean doesUserExist(@PathVariable("id") Long id);
 }
