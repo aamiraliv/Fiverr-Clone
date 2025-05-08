@@ -90,7 +90,12 @@ public class AuthService {
             addCookie(response, "jwt", accessToken, 3600);
             addCookie(response, "refreshToken", refreshToken, 86400);
 
-            return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
+            return ResponseEntity.ok(new AuthResponse(
+                    accessToken,
+                    refreshToken,
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getRole()));
         } catch (Exception e) {
             System.out.println("❌ Admin Authentication Failed: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid admin credentials");
@@ -127,7 +132,12 @@ public class AuthService {
             addCookie(response, "jwt", accessToken, 3600);
             addCookie(response, "refreshToken", refreshToken, 86400);
 
-            return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
+            return ResponseEntity.ok(new AuthResponse(
+                    accessToken,
+                    refreshToken,
+                    user.getUsername(),
+                    user.getEmail(),
+                    user.getRole()));
         } catch (Exception e) {
             System.out.println("❌ Authentication Failed: " + e.getMessage());
             return ResponseEntity.status(401).body("Invalid credentials");
@@ -155,15 +165,15 @@ public class AuthService {
                 String email = jwtService.extractEmail(refreshToken);
 
                 User user = repository.findByEmail(email)
-                        .orElseThrow(()->new UsernameNotFoundException("user not found"));
+                        .orElseThrow(() -> new UsernameNotFoundException("user not found"));
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-                if (jwtService.validateToken(refreshToken,userDetails)){
+                if (jwtService.validateToken(refreshToken, userDetails)) {
                     String newAccessToken = jwtService.generateToken(user);
-                    addCookie(response,"jwt",newAccessToken,3600);
+                    addCookie(response, "jwt", newAccessToken, 3600);
                     System.out.println("Generated new access token: " + newAccessToken);
-                }else {
+                } else {
                     response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid Refresh Token");
                 }
                 return;
@@ -198,7 +208,7 @@ public class AuthService {
 
     public User updateRole(Long id, String role) {
         User user = repository.findById(id).orElseThrow(
-                ()-> new UsernameNotFoundException("user not found")
+                () -> new UsernameNotFoundException("user not found")
         );
         user.setRole(Role.valueOf(role));
         return repository.save(user);

@@ -5,12 +5,20 @@ import { FaArrowLeft, FaRegEnvelope } from "react-icons/fa6";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import freelacerVector from "../assets/freelancerVector.svg";
 import userVector from "../assets/userVector.svg";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser, registerUser } from "../redux/AuthSlice/authSlice";
+import toast from "react-hot-toast";
 
-export default function AuthModal({ isOpen, onClose }) {
+export default function AuthModal({ isOpen, onClose, closeDialog }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.auth);
+
   const [regForm, setRegForm] = useState({
     email: "",
     password: "",
-    name: "",
+    username: "",
     role: "",
   });
   const [loginForm, setLoginForm] = useState({
@@ -41,8 +49,82 @@ export default function AuthModal({ isOpen, onClose }) {
     }));
   };
 
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      await toast.promise(
+        dispatch(registerUser(regForm)).unwrap(),
+        {
+          loading: "Registering...",
+          success: "You are registered successfully!",
+          error: (err) =>
+            typeof err === "string" ? err : "Registration failed!",
+        },
+        {
+          position: "top-center",
+          style: {
+            fontSize: "12px",
+            padding: "6px 12px",
+            background: "white",
+            color: "black",
+            border: "1px solid #ccc",
+          },
+        }
+      );
+
+      setTimeout(() => {
+        setStep("login");
+        setRegStep("null");
+        setRegForm({
+          email: "",
+          password: "",
+          username: "",
+          role: "",
+        });
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await toast.promise(
+        dispatch(loginUser(loginForm)).unwrap(),
+        {
+          loading: "Login...",
+          success: "You are Logined successfully!",
+          error: (err) => (typeof err === "string" ? err : "Login failed!"),
+        },
+        {
+          position: "top-center",
+          style: {
+            fontSize: "12px",
+            padding: "6px 12px",
+            background: "white",
+            color: "black",
+            border: "1px solid #ccc",
+          },
+        }
+      );
+
+      setTimeout(() => {
+        setLoginForm({
+          email: "",
+          password: "",
+        });
+        setStep("signup");
+        navigate("/home", { replace: true });
+
+      }, 500);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <Transition show={isOpen} as={Fragment}>
+    <Transition show={isOpen} as={Fragment} set>
       <Dialog onClose={onClose} className="fixed inset-0 z-50">
         {/* Overlay */}
         <Transition.Child
@@ -180,7 +262,7 @@ export default function AuthModal({ isOpen, onClose }) {
                 )}
                 {/* login page */}
                 {regStep === "email" && (
-                  <form>
+                  <form onSubmit={handleLogin}>
                     <div className="flex flex-col m-auto mt-5 p-10 bg-white">
                       <div
                         onClick={() => setRegStep("null")}
@@ -231,6 +313,7 @@ export default function AuthModal({ isOpen, onClose }) {
                         </p>
                       </div>
                       <button
+                        type="submit"
                         disabled={isLogDisabled}
                         className={`rounded-md   w-full p-2 mt-5 font-semibold ${
                           isLogDisabled
@@ -373,20 +456,20 @@ export default function AuthModal({ isOpen, onClose }) {
                         onChange={(e) =>
                           setRegForm({
                             ...regForm,
-                            name: e.target.value,
+                            username: e.target.value,
                           })
                         }
                         type="text"
                         className="border border-black/30 rounded-md px-4 py-2"
                         name="email"
-                        value={regForm.name}
+                        value={regForm.username}
                       />
                     </div>
                     <button
                       onClick={() => setRegStep("createFinal")}
-                      disabled={regForm.name.length < 3}
+                      disabled={regForm.username.length < 3}
                       className={`rounded-md   w-full p-2 mt-5 font-semibold ${
-                        regForm.name.length < 3
+                        regForm.username.length < 3
                           ? "bg-gray-200 text-gray-400"
                           : "bg-gray-900 text-white"
                       }`}
@@ -398,72 +481,91 @@ export default function AuthModal({ isOpen, onClose }) {
                 {/* case "createFinal": */}
                 {regStep === "createFinal" && (
                   <div className="flex flex-col p-10 bg-white">
-                    <div
-                      onClick={() => setRegStep("createName")}
-                      className="flex gap-2 cursor-pointer items-center w-fit rounded-lg p-4 hover:bg-gray-100"
-                    >
-                      <FaArrowLeft />
-                      <p>Back</p>
-                    </div>
-                    <h2 className="text-2xl font-bold mb-5 border-b border-gray-300 pb-5">
-                      Get your Role in Aiverr
-                    </h2>
-                    <div className="flex flex-col gap-2 w-full mb-4 mt-2">
+                    <form onSubmit={handleRegister}>
                       <div
-                        onClick={() => handleSelect("USER")}
-                        className={`flex gap-2 items-center rounded-lg p-4 border border-black/40  cursor-pointer ${
-                          regForm.role === "USER"
-                            ? "border-green-500 bg-green-100 hover:"
-                            : "border-black/40"
-                        }`}
+                        onClick={() => setRegStep("createName")}
+                        className="flex gap-2 cursor-pointer items-center w-fit rounded-lg p-4 hover:bg-gray-100"
                       >
-                        <img
-                          src={userVector}
-                          alt=""
-                          className="h-14 pr-2 border-r border-black/40"
-                        />
-                        <div className="flex flex-col gap-1">
-                          <h1 className="text-sm font-bold text-gray-900">
-                            USER
-                          </h1>
-                          <p className="text-[12px] font-normal text-gray-800">
-                            I want to hire freelancers for services.
-                          </p>
+                        <FaArrowLeft />
+                        <p>Back</p>
+                      </div>
+                      <h2 className="text-2xl font-bold mb-5 border-b border-gray-300 pb-5">
+                        Get your Role in Aiverr
+                      </h2>
+                      <div className="flex flex-col gap-2 w-full mb-4 mt-2">
+                        <div
+                          onClick={() => handleSelect("USER")}
+                          className={`flex gap-2 items-center rounded-lg p-4 border border-black/40  cursor-pointer ${
+                            regForm.role === "USER"
+                              ? "border-green-500 bg-green-100 hover:"
+                              : "border-black/40"
+                          }`}
+                        >
+                          <img
+                            src={userVector}
+                            alt=""
+                            className="h-14 pr-2 border-r border-black/40"
+                          />
+                          <div className="flex flex-col gap-1">
+                            <h1 className="text-sm font-bold text-gray-900">
+                              USER
+                            </h1>
+                            <p className="text-[12px] font-normal text-gray-800">
+                              I want to hire freelancers for services.
+                            </p>
+                          </div>
+                        </div>
+                        <div
+                          onClick={() => handleSelect("FREELANCER")}
+                          className={`flex gap-2 items-center rounded-lg p-4 border border-black/40  cursor-pointer ${
+                            regForm.role === "FREELANCER"
+                              ? "border-green-500 bg-green-100 hover:"
+                              : "border-black/40"
+                          }`}
+                        >
+                          <img
+                            src={freelacerVector}
+                            alt=""
+                            className="h-14 pr-2 border-r border-black/40"
+                          />
+                          <div className="flex flex-col gap-1">
+                            <h1 className="text-sm font-bold text-gray-900">
+                              FREELANCER
+                            </h1>
+                            <p className="text-[12px] font-normal text-gray-800">
+                              I want to offer services and earn money.
+                            </p>
+                          </div>
                         </div>
                       </div>
-                      <div
-                        onClick={() => handleSelect("FREELANCER")}
-                        className={`flex gap-2 items-center rounded-lg p-4 border border-black/40  cursor-pointer ${
-                          regForm.role === "FREELANCER"
-                            ? "border-green-500 bg-green-100 hover:"
-                            : "border-black/40"
+                      <button
+                        type="submit"
+                        disabled={loading || regForm.role.length < 1}
+                        className={`rounded-md   w-full p-2 mt-5 font-semibold ${
+                          regForm.role.length < 1 || loading
+                            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                            : "bg-gray-900 text-white"
                         }`}
                       >
-                        <img
-                          src={freelacerVector}
-                          alt=""
-                          className="h-14 pr-2 border-r border-black/40"
-                        />
-                        <div className="flex flex-col gap-1">
-                          <h1 className="text-sm font-bold text-gray-900">
-                            FREELANCER
-                          </h1>
-                          <p className="text-[12px] font-normal text-gray-800">
-                            I want to offer services and earn money.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      disabled={regForm.role.length < 1}
-                      className={`rounded-md   w-full p-2 mt-5 font-semibold ${
-                        regForm.role.length < 1
-                          ? "bg-gray-200 text-gray-400"
-                          : "bg-gray-900 text-white"
-                      }`}
-                    >
-                      Sign Up
-                    </button>
+                        {loading ? (
+                          <svg
+                            className="animate-spin h-5 w-5 mr-3 text-white"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                              fill="none"
+                            />
+                          </svg>
+                        ) : (
+                          "Sign Up"
+                        )}
+                      </button>
+                    </form>
                   </div>
                 )}
               </div>

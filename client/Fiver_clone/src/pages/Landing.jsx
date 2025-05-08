@@ -4,7 +4,6 @@ import gigs from "../../json/gigmockdata";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { MasonaryGrid } from "../components/MasonaryGrid";
 import masonary from "../../json/masonary";
-import { BiArrowToRight } from "react-icons/bi";
 import { MdKeyboardArrowRight } from "react-icons/md";
 
 export const Landing = () => {

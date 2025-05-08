@@ -1,12 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import api from "../../services/api";
+import api from "../../../service/api";
+import storage from "redux-persist/lib/storage";
+import { persistReducer } from "redux-persist";
 
 const INITIAL_STATE = {
+  isAuth: false,
+  userId: null,
+  username: null,
+  email: null,
+  role: null,
+
   users: [],
   usersError: null,
   usersLoading: false,
 
-  isAuth: false,
   userDetails: null,
   userDetailsLoding: false,
   loggeduser: null,
@@ -80,7 +87,7 @@ export const refreshAccessToken = createAsyncThunk(
     try {
       console.log("🔄 Refreshing access token...");
       const response = await api.post("/auth/refresh-token");
-      console.log("🔄 Access token refreshed successfully!")
+      console.log("🔄 Access token refreshed successfully!");
       console.log("New access token:", response.data);
       return response.data;
     } catch (error) {
@@ -163,9 +170,13 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.fulfilled, (state, action) => {
+        const { accessToken, username, email, role } = action.payload;
         state.isAuth = true;
+        state.username = username;
+        state.email = email;
+        state.role = role;
         state.isAdmin = false;
-        state.token = action.payload.accessToken;
+        state.token = accessToken;
         state.error = null;
         state.loading = false;
       })
@@ -173,12 +184,20 @@ const authSlice = createSlice({
         state.error = state.error || "Invalid credentials";
         state.isAuth = false;
         state.token = null;
+        state.loading = false;
+        state.isAuth = false;
+        state.token = null;
+        state.username = null;
+        state.email = null;
+        state.role = null;
+        state.isAdmin = false;
       })
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.isAuth = false;
         state.token = null;
       })
+
       .addCase(adminLogin.fulfilled, (state, action) => {
         state.isAdmin = true;
         state.isAuth = true;
@@ -238,5 +257,11 @@ const authSlice = createSlice({
       });
   },
 });
-// export const { logout } = authSlice.actions;
-export default authSlice.reducer;
+
+const presistConfig = {
+  key: "auth",
+  storage,
+  whitelist: ["isAuth", "isAdmin", "username", "email", "role"],
+};
+
+export default persistReducer(presistConfig, authSlice.reducer);

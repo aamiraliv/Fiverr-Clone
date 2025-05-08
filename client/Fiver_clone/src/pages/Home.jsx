@@ -83,10 +83,11 @@ export const Home = () => {
   ];
 
   const visibleItems = showAll ? categories : categories.slice(0, 6);
+  const closeDialog = () => { setIsOpen(false); };
 
   return (
     <div>
-      <AuthModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <AuthModal isOpen={isOpen} closeDialog={closeDialog} onClose={() => setIsOpen(false)} />
       <div
         className=" lg:hidden flex flex-col justify-center pb-8 bg-gradient-to-b from-green-950 to-green-700
 "
