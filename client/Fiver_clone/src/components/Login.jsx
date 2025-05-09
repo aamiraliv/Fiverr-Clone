@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser, registerUser } from "../redux/AuthSlice/authSlice";
 import toast from "react-hot-toast";
 
-export default function AuthModal({ isOpen, onClose, closeDialog }) {
+export default function AuthModal({ isOpen, onClose }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.auth);
