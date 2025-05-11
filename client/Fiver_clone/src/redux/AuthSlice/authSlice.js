@@ -9,6 +9,7 @@ const INITIAL_STATE = {
   username: null,
   email: null,
   role: null,
+  picture: null,
 
   users: [],
   usersError: null,
@@ -59,6 +60,7 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await api.post("/auth/login", credentials);
       thunkAPI.dispatch(getCurrentUser());
+      thunkAPI.dispatch(getUserDetails(response.data.email));
       return response.data;
     } catch (error) {
       console.log("API Error Response:", error.response?.data);
@@ -150,6 +152,21 @@ export const blockUser = createAsyncThunk(
   }
 );
 
+export const updateProfle = createAsyncThunk(
+  "auth/updateProfle",
+  async ({ userId, url, email }, thunkAPI) => {
+    try {
+      const response = await api.put(
+        `auth/user/profile/${userId}?picture=${url}`
+      );
+      thunkAPI.dispatch(getUserDetails(email));
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 export const unBlockUser = createAsyncThunk(
   "auth/unBlockUser",
   async (userId, thunkAPI) => {
@@ -170,9 +187,10 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.fulfilled, (state, action) => {
-        const { accessToken, username, email, role } = action.payload;
+        const { picture, accessToken, username, email, role } = action.payload;
         state.isAuth = true;
         state.username = username;
+        state.picture = picture;
         state.email = email;
         state.role = role;
         state.isAdmin = false;
@@ -261,7 +279,15 @@ const authSlice = createSlice({
 const presistConfig = {
   key: "auth",
   storage,
-  whitelist: ["isAuth", "isAdmin", "username", "email", "role"],
+  whitelist: [
+    "isAuth",
+    "isAdmin",
+    "username",
+    "email",
+    "role",
+    "picture",
+    "userDetails",
+  ],
 };
 
 export default persistReducer(presistConfig, authSlice.reducer);

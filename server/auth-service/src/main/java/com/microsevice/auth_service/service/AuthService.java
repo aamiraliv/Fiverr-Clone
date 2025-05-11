@@ -95,7 +95,8 @@ public class AuthService {
                     refreshToken,
                     user.getUsername(),
                     user.getEmail(),
-                    user.getRole()));
+                    user.getRole(),
+                    user.getPicture()));
         } catch (Exception e) {
             System.out.println("❌ Admin Authentication Failed: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid admin credentials");
@@ -137,7 +138,8 @@ public class AuthService {
                     refreshToken,
                     user.getUsername(),
                     user.getEmail(),
-                    user.getRole()));
+                    user.getRole(),
+                    user.getPicture()));
         } catch (Exception e) {
             System.out.println("❌ Authentication Failed: " + e.getMessage());
             return ResponseEntity.status(401).body("Invalid credentials");
@@ -205,16 +207,15 @@ public class AuthService {
         response.addCookie(cookie);
     }
 
+    public boolean existsById(Long id) {
+        return repository.existsById(id);
+    }
 
-    public User updateRole(Long id, String role) {
+    public User updateProfile(Long id, String picture) {
         User user = repository.findById(id).orElseThrow(
                 () -> new UsernameNotFoundException("user not found")
         );
-        user.setRole(Role.valueOf(role));
+        user.setPicture(picture);
         return repository.save(user);
-    }
-
-    public boolean existsById(Long id) {
-        return repository.existsById(id);
     }
 }

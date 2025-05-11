@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 
 const FileUpload = ({
   onUpload,
+  hide = "",
   accept = "image/*",
   previewType = "image",
 }) => {
@@ -42,7 +43,7 @@ const FileUpload = ({
   const { getRootProps, getInputProps } = useDropzone({ onDrop, accept });
 
   return (
-    <div>
+    <div className={`${hide}`}>
       <div
         {...getRootProps()}
         style={{

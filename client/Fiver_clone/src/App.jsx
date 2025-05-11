@@ -6,6 +6,7 @@ import { Landing } from "./pages/Landing";
 import { GigForm } from "./pages/GigForm";
 import { Toaster } from "react-hot-toast";
 import PrivateRoute from "./utils/PrivateRoute";
+import { UserProfile } from "./pages/UserProfile";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
             path: "/gigform",
             element: <GigForm />,
           },
+          {
+            path: "/user",
+            element: <UserProfile />,
+          }
         ],
       },
     ],

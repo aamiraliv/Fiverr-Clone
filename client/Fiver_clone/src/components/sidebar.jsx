@@ -28,7 +28,6 @@ export const CustomSidebar = () => {
           <MenuItem> Learn</MenuItem>
           <MenuItem> Logo Maker</MenuItem>
         </SubMenu>
-        <SubMenu className="font-semibold text-gray-800 font-grotesk" label="Fiverr Pro" ></SubMenu>
         <br />
         <MenuItem className="text-gray-800 font-grotesk font-semibold"> General </MenuItem>
         <MenuItem className="text-gray-800 font-grotesk"> Home </MenuItem>  

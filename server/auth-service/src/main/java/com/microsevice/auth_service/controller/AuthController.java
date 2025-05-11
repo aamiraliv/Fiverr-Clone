@@ -3,6 +3,7 @@ package com.microsevice.auth_service.controller;
 
 import com.microsevice.auth_service.Exception.UserAlredyExistException;
 import com.microsevice.auth_service.dto.AuthRequest;
+import com.microsevice.auth_service.dto.AuthResponse;
 import com.microsevice.auth_service.model.User;
 import com.microsevice.auth_service.repository.UserRepository;
 import com.microsevice.auth_service.service.AuthService;
@@ -84,9 +85,9 @@ public class AuthController {
         return ResponseEntity.ok(user);
     }
 
-    @PutMapping("/update-role/{id}/{role}")
-    public ResponseEntity<User> updateRole(@PathVariable Long id,@PathVariable String role){
-        return ResponseEntity.ok(service.updateRole(id,role));
+    @PutMapping("/user/profile/{id}")
+    public ResponseEntity<User> updateProfile(@PathVariable Long id,@RequestParam String picture){
+        return ResponseEntity.ok(service.updateProfile(id,picture));
     }
 
     @GetMapping("/{id}")

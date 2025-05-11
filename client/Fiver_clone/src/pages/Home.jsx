@@ -35,12 +35,22 @@ import quick from "../assets/makeItHappen/quickly.6879514.svg";
 import { MasonaryGrid } from "../components/MasonaryGrid";
 import AuthModal from "../components/Login";
 import masonary from "../../json/masonary";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
+  const navigate = useNavigate();
+  const { isAuth } = useSelector((state) => state.auth);
   const [isOpen, setIsOpen] = useState(false);
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    if (isAuth) {
+      navigate("/home");
+    }
+  }, [isAuth]);
 
   useEffect(() => {
     videoRef.current?.play();
@@ -83,11 +93,17 @@ export const Home = () => {
   ];
 
   const visibleItems = showAll ? categories : categories.slice(0, 6);
-  const closeDialog = () => { setIsOpen(false); };
+  const closeDialog = () => {
+    setIsOpen(false);
+  };
 
   return (
     <div>
-      <AuthModal isOpen={isOpen} closeDialog={closeDialog} onClose={() => setIsOpen(false)} />
+      <AuthModal
+        isOpen={isOpen}
+        closeDialog={closeDialog}
+        onClose={() => setIsOpen(false)}
+      />
       <div
         className=" lg:hidden flex flex-col justify-center pb-8 bg-gradient-to-b from-green-950 to-green-700
 "
