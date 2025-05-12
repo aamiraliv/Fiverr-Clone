@@ -9,8 +9,9 @@ import CustomSidebarForAuth from "./SideBarForAuth";
 import toast from "react-hot-toast";
 import { logoutUser } from "../redux/AuthSlice/authSlice";
 import { persistor } from "../redux/store";
+import { IoIosArrowDown } from "react-icons/io";
 
-export const UserNavbar = () => {
+export const DashboardNav = () => {
   const dispatch = useDispatch();
   const bellRef = useRef(null);
   const mailRef = useRef(null);
@@ -18,8 +19,7 @@ export const UserNavbar = () => {
 
   const navigate = useNavigate();
   const { role, userDetails } = useSelector((state) => state.auth);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const dropdownRef = useRef(null);
+
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const toggleDrawer = (newOpen) => () => {
@@ -107,66 +107,59 @@ export const UserNavbar = () => {
         </Drawer>
       </div>
 
-      <div>
+      <div className="flex items-center gap-8">
         <h1
           onClick={() => navigate("/home")}
           className="text-3xl font-roboto font-extrabold text-gray-700 cursor-pointer"
         >
           Aiverr<span className=" text-green-500">.</span>
         </h1>
-      </div>
-      <div
-        className="relative flex items-center  h-auto min-w-[500px]"
-        ref={dropdownRef}
-      >
-        <input
-          onClick={() => setSearchOpen(!searchOpen)}
-          type="text"
-          placeholder="What service are you looking for?"
-          className="flex gap-4 items-center justify-center w-[250px] lg:w-full  h-[40px] bg-gray-100 rounded-md px-4 py-2 outline-none border border-black text-[12px] lg:text-sm "
-        />
-        <div className=" absolute hidden top-0 right-0 lg:flex items-center justify-center w-[50px] h-[40px] rounded-r-md bg-black/90 text-white cursor-pointer ">
-          <Search size={20} />
-        </div>
-        {searchOpen && (
-          <div className="absolute right-0 top-12 w-full bg-white rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
-            <div className="px-4 py-2 text-sm cursor-pointer hover:bg-green-100">
-              hello
-            </div>
-            <div className="px-4 py-2 text-sm cursor-pointer hover:bg-green-100">
-              hello
-            </div>
-            <div className="px-4 py-2 text-sm cursor-pointer hover:bg-green-100">
-              hello
-            </div>
-            <div className="px-4 py-2 text-sm cursor-pointer hover:bg-green-100">
-              hello
-            </div>
-            {/* {categories.map((item, index) => (
-              <div
-                key={index}
-                className={`px-4 py-2 text-sm cursor-pointer hover:bg-green-100 ${
-                  item === value ? "bg-green-50 font-medium text-green-600" : ""
-                }`}
-                onClick={() => handleSelect(item)}
-              >
-               {item}
-              </div>
-            ))} */}
-          </div>
-        )}
-      </div>
-      {role === "FREELANCER" && (
-        <div className="hidden lg:flex gap-5 items-center justify-center cursor-pointer relative">
-          <p className=" text-[16px] font-medium text-[#62646A]">Orders</p>
-          <p
-            onClick={() => navigate("/dashboard")}
-            className=" text-[16px] font-medium text-green-500"
+        <p className=" text-[17px] cursor-pointer font-medium text-[#757679]">
+          Dashboard
+        </p>
+        <div className="relative hidden lg:block cursor-pointer">
+          <div
+            onClick={() => handleClick(4)}
+            className="flex gap-1 items-center justify-center text-gray-950  font-semibold text-[17px] "
           >
-            Switch to Selling
-          </p>
+            <p className=" text-[17px]  font-medium text-[#757679]">
+              My Business
+            </p>
+            {menuOpen === 4 ? (
+              <IoIosArrowDown className="rotate-180 transition duration-500 text-[#62646A]" />
+            ) : (
+              <IoIosArrowDown className=" transition-transform duration-500 text-[#62646A]" />
+            )}
+          </div>
+          <div
+            className={`absolute right-0 top-12 z-10 ${
+              menuOpen === 4 ? "block" : "hidden"
+            } bg-white rounded-md shadow-2xl border border-gray-500/15 min-w-[200px] transition-all duration-500 flex flex-col gap-4`}
+          >
+            <div className="flex flex-col gap-1  bg-white rounded-md p-4 w-auto">
+              <div className="flex flex-col gap-1 border-b border-gray-300 hover:bg-gray-100 p-2 rounded-md cursor-pointer">
+                <h1 className="  text-[15px] text-gray-500">Orders</h1>
+              </div>
+              <div
+                onClick={() => navigate("/dashboard/gig")}
+                className="flex flex-col gap-1 hover:bg-gray-100 p-2 rounded-md cursor-pointer"
+              >
+                <h1 className="  text-[15px] text-gray-500">Gigs</h1>
+              </div>
+              <div
+                onClick={() => navigate("/user")}
+                className="flex flex-col gap-1 hover:bg-gray-100 p-2 rounded-md cursor-pointer"
+              >
+                <h1 className="  text-[15px] text-gray-500">Profile</h1>
+              </div>
+              <div className="flex flex-col gap-1 border-t border-gray-300 hover:bg-gray-100 p-2 rounded-md cursor-pointer">
+                <h1 className="  text-[15px] text-gray-500">Earnings</h1>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
+
       <div className="flex gap-6 items-center justify-center text-gray-500">
         <button
           onClick={() => handleClick(1)}
@@ -216,9 +209,7 @@ export const UserNavbar = () => {
             </div>
           </div>
         </button>
-        <button className=" hidden lg:flex items-center justify-center cursor-pointer ">
-          <Heart />
-        </button>
+
         <div
           ref={profileRef}
           className="hidden lg:flex items-center justify-center cursor-pointer relative"

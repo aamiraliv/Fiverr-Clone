@@ -7,7 +7,6 @@ import vector1 from "../assets/vector_1.svg";
 import vector2 from "../assets/vector_2.svg";
 import AuthModal from "./Login";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 
 export const Navbar = () => {
   const navigate = useNavigate();

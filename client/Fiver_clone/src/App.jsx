@@ -7,6 +7,9 @@ import { GigForm } from "./pages/GigForm";
 import { Toaster } from "react-hot-toast";
 import PrivateRoute from "./utils/PrivateRoute";
 import { UserProfile } from "./pages/UserProfile";
+import { Dashboard } from "./pages/Dashboard";
+import DashboardPage from "./pages/DashboardPage";
+import Gig from "./pages/Gig";
 
 const router = createBrowserRouter([
   {
@@ -31,7 +34,20 @@ const router = createBrowserRouter([
           {
             path: "/user",
             element: <UserProfile />,
-          }
+          },
+          {
+            element: <Dashboard />,
+            children: [
+              {
+                path: "/dashboard",
+                element: <DashboardPage />,
+              },
+              {
+                path: "/dashboard/gig",
+                element: <Gig />,
+              },
+            ],
+          },
         ],
       },
     ],
