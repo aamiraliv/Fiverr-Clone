@@ -5,7 +5,23 @@ const INITAIL_STATE = {
   image_url: "",
   uploadError: null,
   uploadLoading: false,
+
+  gigsByFreelacer: [],
+  gigsByFreelacerLoading: false,
+  gigsByFreelacerError: null,
 };
+
+export const getGigsByFreelancerId = createAsyncThunk(
+  "gig/getGigsByFreelancerId",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/gig/freelancer/${userId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
 
 export const uploadImage = createAsyncThunk(
   "image/upload",
@@ -39,6 +55,18 @@ const gigSlice = createSlice({
       .addCase(uploadImage.rejected, (state, action) => {
         state.uploadLoading = false;
         state.uploadError = action.payload;
+      })
+      .addCase(getGigsByFreelancerId.pending, (state) => {
+        state.gigsByFreelacerLoading = true;
+        state.gigsByFreelacerError = null;
+      })
+      .addCase(getGigsByFreelancerId.fulfilled, (state, action) => {
+        state.gigsByFreelacerLoading = false;
+        state.gigsByFreelacer = action.payload;
+      })
+      .addCase(getGigsByFreelancerId.rejected, (state, action) => {
+        state.gigsByFreelacerLoading = false;
+        state.gigsByFreelacerError = action.payload;
       });
   },
 });

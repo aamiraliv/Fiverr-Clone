@@ -38,4 +38,17 @@ public class Gig {
     private boolean isActive = true;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @Column(name = "impressions")
+    private Integer impressions = 0;
+
+    @Column(name = "clicks")
+    private Integer clicks = 0;
+
+    @Column(name = "orders")
+    private Integer orders = 0;
+
+    @Column(name = "cancellation_rate")
+    private Double cancellationRate = 0.0;
+
 }

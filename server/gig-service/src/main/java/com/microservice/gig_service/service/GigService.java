@@ -25,7 +25,7 @@ public class GigService {
     @Autowired
     private AuthClient authClient;
 
-    public GigDTO createGig(GigDTO dto) {
+    public Gig createGig(GigDTO dto) {
         if (!authClient.doesUserExist(dto.getUserId())) {
             throw new RuntimeException("Invalid user ID");
         }
@@ -33,15 +33,15 @@ public class GigService {
             Gig gig = mapperService.toEntity(dto);
             gig.setCreatedAt(LocalDateTime.now());
             gig.setUpdatedAt(LocalDateTime.now());
-            Gig saved = repository.save(gig);
-            return mapperService.convertToDTO(saved);
+            return repository.save(gig);
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to create product: " + e.getMessage());
         }
 
     }
 
-    public GigDTO updateGig(Long id, GigDTO dto) {
+    public Gig updateGig(Long id, GigDTO dto) {
         Gig gig = repository.findById(id).orElseThrow(() -> new RuntimeException(" gig not found "));
         gig.setTitle(dto.getTitle());
         gig.setDescription(dto.getDescription());
@@ -57,44 +57,35 @@ public class GigService {
         gig.setRevisions(dto.getRevisions());
         gig.setUpdatedAt(LocalDateTime.now());
 
-        return mapperService.convertToDTO(repository.save(gig));
+        return repository.save(gig);
     }
 
     public void deleteGig(Long id) {
         repository.deleteById(id);
     }
 
-    public GigDTO getGig(Long id) {
-        Gig gig = repository.findById(id).orElseThrow(() -> new RuntimeException("gig not found"));
-        return mapperService.convertToDTO(gig);
+    public Gig getGig(Long id) {
+        return repository.findById(id).orElseThrow(() -> new RuntimeException("gig not found"));
+
     }
 
 
-    public List<GigDTO> getAllGigs() {
-        return repository.findAll().stream().map(mapperService::convertToDTO).toList();
+    public List<Gig> getAllGigs() {
+        return repository.findAll();
     }
 
 
-    public List<GigDTO> getGigsByFreelancer(Long userId) {
-        return repository.findByUserId(userId)
-                .stream()
-                .map(mapperService::convertToDTO)
-                .toList();
+    public List<Gig> getGigsByFreelancer(Long userId) {
+        return repository.findByUserId(userId);
     }
 
 
-    public List<GigDTO> filterGigs(String category) {
-        return repository.findByCategoryContainingIgnoreCase(category)
-                .stream()
-                .map(mapperService::convertToDTO)
-                .toList();
+    public List<Gig> filterGigs(String category) {
+        return repository.findByCategoryContainingIgnoreCase(category);
     }
 
-    public List<GigDTO> searchGigs(String query) {
-        return repository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query)
-                .stream()
-                .map(mapperService::convertToDTO)
-                .toList();
+    public List<Gig> searchGigs(String query) {
+        return repository.findByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(query, query);
     }
 
     public boolean existsById(Long id) {

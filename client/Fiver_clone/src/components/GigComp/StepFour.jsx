@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import publishGig from "../../assets/publish-page.svg";
 
-export const StepFour = ({ gigdata, setStep }) => {
+export const StepFour = ({ gigdata, setStep , handleCreateGig }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+
 
   return (
     <div>
@@ -93,7 +95,7 @@ export const StepFour = ({ gigdata, setStep }) => {
       </div>
       <div className="mt-4 flex items-center justify-end gap-4">
         <button
-          //  onClick={() => setStep(4)}
+          onClick={() => handleCreateGig()}
           className={`text-[16px] font-semibold text-white py-3 px-4 rounded-md bg-gray-900 `}
         >
           Save & Continue

@@ -149,6 +149,7 @@ export const GigForm = () => {
             image3={formData.imageUrl3}
             thumbnail={formData.thumbnailUrl}
             setStep={setStep}
+            
           />
         )}
         {step === 4 && <StepFour gigdata={formData} setStep={setStep} />}

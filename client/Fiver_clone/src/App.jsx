@@ -28,10 +28,6 @@ const router = createBrowserRouter([
             element: <Landing />,
           },
           {
-            path: "/gigform",
-            element: <GigForm />,
-          },
-          {
             path: "/user",
             element: <UserProfile />,
           },
@@ -45,6 +41,10 @@ const router = createBrowserRouter([
               {
                 path: "/dashboard/gig",
                 element: <Gig />,
+              },
+              {
+                path: "/gigform",
+                element: <GigForm />,
               },
             ],
           },

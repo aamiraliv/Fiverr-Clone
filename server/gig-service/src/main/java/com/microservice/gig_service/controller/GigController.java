@@ -24,12 +24,12 @@ public class GigController {
     private MediaUploadService uploadService;
 
     @PostMapping
-    public ResponseEntity<GigDTO> createGig(@RequestBody GigDTO dto) {
+    public ResponseEntity<Gig> createGig(@RequestBody GigDTO dto) {
         return new ResponseEntity<>(service.createGig(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GigDTO> updateGig(@PathVariable Long id, @RequestBody GigDTO dto) {
+    public ResponseEntity<Gig> updateGig(@PathVariable Long id, @RequestBody GigDTO dto) {
         return ResponseEntity.ok(service.updateGig(id, dto));
     }
 
@@ -40,27 +40,27 @@ public class GigController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GigDTO> getGig(@PathVariable Long id) {
+    public ResponseEntity<Gig> getGig(@PathVariable Long id) {
         return ResponseEntity.ok(service.getGig(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<GigDTO>> getAllGigs() {
+    public ResponseEntity<List<Gig>> getAllGigs() {
         return ResponseEntity.ok(service.getAllGigs());
     }
 
     @GetMapping("/freelancer/{userId}")
-    public ResponseEntity<List<GigDTO>> getGigsByFreelancer(@PathVariable Long userId) {
+    public ResponseEntity<List<Gig>> getGigsByFreelancer(@PathVariable Long userId) {
         return ResponseEntity.ok(service.getGigsByFreelancer(userId));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<GigDTO>> searchGigs(@RequestParam String query) {
+    public ResponseEntity<List<Gig>> searchGigs(@RequestParam String query) {
         return ResponseEntity.ok(service.searchGigs(query));
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<GigDTO>> filterGigs(@RequestParam String category) {
+    public ResponseEntity<List<Gig>> filterGigs(@RequestParam String category) {
         return ResponseEntity.ok(service.filterGigs(category));
     }
 

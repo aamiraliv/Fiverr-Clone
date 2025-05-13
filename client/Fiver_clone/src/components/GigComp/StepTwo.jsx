@@ -49,7 +49,7 @@ export const StepTwo = ({
             placeholder="e.g. description here ..."
             onChange={(e) => onChange("description", e.target.value)}
             rows="3"
-            maxLength={120}
+            maxLength={300}
             minLength={50}
             value={description}
           ></textarea>
@@ -61,7 +61,7 @@ export const StepTwo = ({
 
           {description.length >= 50 && (
             <p className="float-end text-green-500 text-sm mt-1">
-              Looks good! ({description.length} / 120)
+              Looks good! ({description.length} words !)
             </p>
           )}
         </div>

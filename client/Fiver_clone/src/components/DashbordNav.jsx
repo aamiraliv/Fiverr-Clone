@@ -114,7 +114,10 @@ export const DashboardNav = () => {
         >
           Aiverr<span className=" text-green-500">.</span>
         </h1>
-        <p className=" text-[17px] cursor-pointer font-medium text-[#757679]">
+        <p
+          onClick={() => navigate("/dashboard")}
+          className=" text-[17px] cursor-pointer font-medium text-[#757679]"
+        >
           Dashboard
         </p>
         <div className="relative hidden lg:block cursor-pointer">
@@ -141,7 +144,10 @@ export const DashboardNav = () => {
                 <h1 className="  text-[15px] text-gray-500">Orders</h1>
               </div>
               <div
-                onClick={() => navigate("/dashboard/gig")}
+                onClick={() => {
+                  navigate("/dashboard/gig");
+                  setMenuOpen(null);
+                }}
                 className="flex flex-col gap-1 hover:bg-gray-100 p-2 rounded-md cursor-pointer"
               >
                 <h1 className="  text-[15px] text-gray-500">Gigs</h1>
