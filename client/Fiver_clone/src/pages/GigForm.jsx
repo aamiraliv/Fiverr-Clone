@@ -4,8 +4,15 @@ import { StepOne } from "../components/GigComp/StepOne";
 import { StepTwo } from "../components/GigComp/StepTwo";
 import { StepThree } from "../components/GigComp/StepThree";
 import { StepFour } from "../components/GigComp/StepFour";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { createGig } from "../redux/GigSlice/gigSlice";
+import { useNavigate } from "react-router-dom";
 
 export const GigForm = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { userDetails } = useSelector((state) => state.auth);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     title: "",
@@ -20,7 +27,7 @@ export const GigForm = () => {
     thumbnailUrl: "",
     deliveryTime: null,
     revisions: null,
-    userId: null,
+    userId: userDetails?.id || null,
   });
 
   const handleChange = (field, value) => {
@@ -32,6 +39,52 @@ export const GigForm = () => {
 
   console.log(formData);
   console.log(step);
+
+  const handleCreateGig = async () => {
+    try {
+      await toast.promise(
+        dispatch(createGig(formData)).unwrap(),
+        {
+          loading: "creating...",
+          success: "You are created gig successfully!",
+          error: (err) =>
+            typeof err === "string" ? err : "creation of gig failed!",
+        },
+        {
+          position: "top-center",
+          style: {
+            fontSize: "12px",
+            padding: "6px 12px",
+            background: "white",
+            color: "black",
+            border: "1px solid #ccc",
+          },
+        }
+      );
+
+      setTimeout(() => {
+        navigate("/dashboard/gig");
+        window.location.reload();
+        setFormData({
+          title: "",
+          price: null,
+          category: "",
+          description: "",
+          tags: [],
+          imageUrl1: "",
+          imageUrl2: "",
+          imageUrl3: "",
+          videoUrl: "",
+          thumbnailUrl: "",
+          deliveryTime: null,
+          revisions: null,
+        });
+        setStep(1);
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -149,10 +202,15 @@ export const GigForm = () => {
             image3={formData.imageUrl3}
             thumbnail={formData.thumbnailUrl}
             setStep={setStep}
-            
           />
         )}
-        {step === 4 && <StepFour gigdata={formData} setStep={setStep} />}
+        {step === 4 && (
+          <StepFour
+            handleCreateGig={handleCreateGig}
+            gigdata={formData}
+            setStep={setStep}
+          />
+        )}
       </div>
     </div>
   );

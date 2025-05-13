@@ -51,4 +51,7 @@ public class Gig {
     @Column(name = "cancellation_rate")
     private Double cancellationRate = 0.0;
 
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
 }

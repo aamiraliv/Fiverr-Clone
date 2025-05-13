@@ -2,44 +2,56 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getGigsByFreelancerId } from "../redux/GigSlice/gigSlice";
 import { useNavigate } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 
 const Gig = () => {
   const navigate = useNavigate();
   const { userDetails } = useSelector((state) => state.auth);
-  const { gigsByFreelacerLoading , gigsByFreelacer } = useSelector((state) => state.gig);
+  const { gigsByFreelacerLoading, gigsByFreelacer } = useSelector(
+    (state) => state.gig
+  );
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("ACTIVE");
-  const [openDropdown, setOpenDropdown] = useState(null);
+  const [filteredGigs, setFilteredGigs] = useState([]);
 
   const userId = userDetails?.id;
+  
+  // Only fetch gigs once when component mounts or userId changes
   useEffect(() => {
-    dispatch(getGigsByFreelancerId(userId));
+    if (userId) {
+      dispatch(getGigsByFreelancerId(userId));
+    }
   }, [dispatch, userId]);
 
-  const tabs = [
-    { label: "ACTIVE" },
-    { label: "PENDING APPROVAL" },
-    { label: "DENIED" },
-    { label: "PAUSED" },
-  ];
+  // Filter gigs whenever gigsByFreelacer changes or tab changes
+  // This is separate from the fetch to avoid dependency loops
+  useEffect(() => {
+    if (gigsByFreelacer && Array.isArray(gigsByFreelacer)) {
+      const filtered = gigsByFreelacer.filter(
+        (gig) => gig.status === activeTab
+      );
+      setFilteredGigs(filtered);
+    } else {
+      setFilteredGigs([]);
+    }
+  }, [gigsByFreelacer, activeTab]);
+
+  const tabs = [{ label: "ACTIVE" }, { label: "DENIED" }, { label: "PAUSED" }];
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    setOpenDropdown(openDropdown === tab ? null : tab);
   };
-  console.log("activeTab", activeTab);
 
-  const renderActiveGigsTable = () => {
-    const currentGigs = gigsByFreelacer[activeTab] || [];
-
-    console.log("currentGigs", currentGigs);
+  const renderGigsTable = () => {
     return (
       <div className="bg-white rounded-sm border border-gray-300 p-4 mt-2">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-semibold text-lg">{activeTab} GIGS</h3>
         </div>
 
-        {currentGigs.length === 0 ? (
+        {gigsByFreelacerLoading ? (
+          <div className="text-center text-gray-500 py-8"><ClipLoader color="#bdbdbd" /></div>
+        ) : filteredGigs.length === 0 ? (
           <div className="text-center text-gray-500 py-8">
             No {activeTab.toLowerCase()} gigs found
           </div>
@@ -66,20 +78,18 @@ const Gig = () => {
                   <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     CANCELLATIONS
                   </th>
-                  <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {/* Actions column */}
-                  </th>
+                  <th className="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {currentGigs.map((gig) => (
+                {filteredGigs.map((gig) => (
                   <tr key={gig.id} className="hover:bg-gray-50">
                     <td className="p-3">
                       <input type="checkbox" className="form-checkbox" />
                     </td>
                     <td className="p-3 flex items-center space-x-3">
                       <img
-                        src={gig.image || "https://via.placeholder.com/50"}
+                        src={gig.thumbnailUrl || "https://via.placeholder.com/50"}
                         alt={gig.title}
                         className="w-12 h-12 object-cover rounded"
                       />
@@ -88,12 +98,16 @@ const Gig = () => {
                       </span>
                     </td>
                     <td className="p-3 text-sm text-gray-500">
-                      {gig.impressions}
+                      {gig.impressions || 0}
                     </td>
-                    <td className="p-3 text-sm text-gray-500">{gig.clicks}</td>
-                    <td className="p-3 text-sm text-gray-500">{gig.orders}</td>
                     <td className="p-3 text-sm text-gray-500">
-                      {gig.cancellations}
+                      {gig.clicks || 0}
+                    </td>
+                    <td className="p-3 text-sm text-gray-500">
+                      {gig.orders || 0}
+                    </td>
+                    <td className="p-3 text-sm text-gray-500">
+                      {gig.cancellationRate || 0}
                     </td>
                     <td className="p-3">
                       <div className="relative">
@@ -153,16 +167,19 @@ const Gig = () => {
                 `}
                 onClick={() => handleTabClick(tab.label)}
               >
-                {tab.label} {tab.count > 0 && `(${tab.count})`}
+                {tab.label}
               </div>
             ))}
           </div>
-          <div onClick={()=> navigate("/gigform")} className="cursor-pointer px-3 py-2 text-[12px] font-medium bg-green-600 rounded-sm text-white hover:bg-green-600 transition duration-300">
+          <div
+            onClick={() => navigate("/gigform")}
+            className="cursor-pointer px-3 py-2 text-[12px] font-medium bg-green-600 rounded-sm text-white hover:bg-green-600 transition duration-300"
+          >
             CREATE A NEW GIG
           </div>
         </div>
 
-        {openDropdown && renderActiveGigsTable()}
+        {renderGigsTable()}
       </div>
     </div>
   );

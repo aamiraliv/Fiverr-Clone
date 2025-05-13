@@ -11,6 +11,18 @@ const INITAIL_STATE = {
   gigsByFreelacerError: null,
 };
 
+export const createGig = createAsyncThunk(
+  "gig/createGig",
+  async (formData, thunkAPI) => {
+    try {
+      const response = await api.post("/gig", formData);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 export const getGigsByFreelancerId = createAsyncThunk(
   "gig/getGigsByFreelancerId",
   async (userId, { rejectWithValue }) => {
