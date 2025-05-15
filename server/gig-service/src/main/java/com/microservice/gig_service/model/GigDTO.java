@@ -1,5 +1,7 @@
 package com.microservice.gig_service.model;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +27,9 @@ public class GigDTO {
 
     private Integer deliveryTime;
     private Integer revisions;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     private Long userId;
 }

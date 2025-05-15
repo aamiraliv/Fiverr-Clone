@@ -28,6 +28,7 @@ export const GigForm = () => {
     deliveryTime: null,
     revisions: null,
     userId: userDetails?.id || null,
+    status:"ACTIVE"
   });
 
   const handleChange = (field, value) => {
