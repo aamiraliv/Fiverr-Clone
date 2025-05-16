@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getGigsByFreelancerId } from "../redux/GigSlice/gigSlice";
+import { deleteGig, getGigsByFreelancerId } from "../redux/GigSlice/gigSlice";
 import { useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import toast from "react-hot-toast";
 
 const Gig = () => {
   const navigate = useNavigate();
@@ -14,34 +15,30 @@ const Gig = () => {
   const [activeTab, setActiveTab] = useState("ACTIVE");
   const [filteredGigs, setFilteredGigs] = useState([]);
   const [openMenuId, setOpenMenuId] = useState(null);
-  
-  // Reference for clicking outside
+
   const menuRef = useRef(null);
 
   const userId = userDetails?.id;
 
-  // Close menu when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setOpenMenuId(null);
       }
     }
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
-  // Only fetch gigs once when component mounts or userId changes
   useEffect(() => {
     if (userId) {
       dispatch(getGigsByFreelancerId(userId));
     }
   }, [dispatch, userId]);
 
-  // Filter gigs whenever gigsByFreelacer changes or tab changes
   useEffect(() => {
     if (gigsByFreelacer && Array.isArray(gigsByFreelacer)) {
       const filtered = gigsByFreelacer.filter(
@@ -63,24 +60,48 @@ const Gig = () => {
     setOpenMenuId(openMenuId === gigId ? null : gigId);
   };
 
-  const handleMenuAction = (action, gig) => {
-    switch(action) {
-      case 'preview':
-        console.log('Preview gig:', gig.id);
+  const handleMenuAction = async (action, gig) => {
+    switch (action) {
+      case "preview":
+        console.log("Preview gig:", gig.id);
         // Navigate to preview page
         break;
-      case 'denied':
-        console.log('Mark as denied:', gig.id);
+      case "denied":
+        console.log("Mark as denied:", gig.id);
         // Update gig status
         break;
-      case 'paused':
-        console.log('Pause gig:', gig.id);
+      case "paused":
+        console.log("Pause gig:", gig.id);
         // Update gig status
         break;
-      case 'delete':
-        console.log('Delete gig:', gig.id);
-        // Show confirmation and delete
+      case "delete": {
+        console.log("Delete gig:", gig.id);
+        const gigId = gig.id;
+        await toast.promise(
+          dispatch(deleteGig({ gigId, userId })).unwrap(),
+          {
+            loading: "Deleting...",
+            success: "Gig deleted successfully!",
+            error: (err) =>
+              typeof err === "string" ? err : "Deletion of gig failed!",
+          },
+          {
+            position: "top-center",
+            style: {
+              fontSize: "12px",
+              padding: "6px 12px",
+              background: "white",
+              color: "black",
+              border: "1px solid red",
+            },
+          }
+        );
+
+        setTimeout(() => {
+          navigate("/dashboard/gig");
+        }, 1000);
         break;
+      }
       default:
         break;
     }
@@ -89,7 +110,7 @@ const Gig = () => {
 
   const renderGigsTable = () => {
     return (
-      <div className="bg-white rounded-sm border border-gray-300 p-4 mt-2">
+      <div className="bg-white rounded-sm border border-gray-300 p-4 mt-2 ">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-semibold text-lg">{activeTab} GIGS</h3>
         </div>
@@ -155,7 +176,10 @@ const Gig = () => {
                       {gig.cancellationRate || 0}
                     </td>
                     <td className="p-3">
-                      <div className="relative" ref={openMenuId === gig.id ? menuRef : null}>
+                      <div
+                        className="relative"
+                        ref={openMenuId === gig.id ? menuRef : null}
+                      >
                         <button
                           onClick={() => toggleMenu(gig.id)}
                           className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100 transition-colors duration-200"
@@ -178,41 +202,90 @@ const Gig = () => {
                         </button>
                         {openMenuId === gig.id && (
                           <div className="absolute right-0 z-10 mt-1 w-36 bg-white rounded shadow-lg border border-gray-200 py-1 overflow-hidden">
-                            <button 
-                              onClick={() => handleMenuAction('preview', gig)}
+                            <button
+                              onClick={() => handleMenuAction("preview", gig)}
                               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                             >
-                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                              <svg
+                                className="w-4 h-4 mr-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                ></path>
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                ></path>
                               </svg>
                               Preview
                             </button>
-                            <button 
-                              onClick={() => handleMenuAction('paused', gig)}
+                            <button
+                              onClick={() => handleMenuAction("paused", gig)}
                               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                             >
-                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                              <svg
+                                className="w-4 h-4 mr-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                ></path>
                               </svg>
                               Pause
                             </button>
-                            <button 
-                              onClick={() => handleMenuAction('denied', gig)}
+                            <button
+                              onClick={() => handleMenuAction("denied", gig)}
                               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
                             >
-                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
+                              <svg
+                                className="w-4 h-4 mr-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"
+                                ></path>
                               </svg>
                               Deny
                             </button>
                             <div className="border-t border-gray-100 my-1"></div>
-                            <button 
-                              onClick={() => handleMenuAction('delete', gig)}
+                            <button
+                              onClick={() => handleMenuAction("delete", gig)}
                               className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
                             >
-                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                              <svg
+                                className="w-4 h-4 mr-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                ></path>
                               </svg>
                               Delete
                             </button>

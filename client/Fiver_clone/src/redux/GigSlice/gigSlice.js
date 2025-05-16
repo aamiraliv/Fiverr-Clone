@@ -18,7 +18,26 @@ export const createGig = createAsyncThunk(
       const response = await api.post("/gig", formData);
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
+    }
+  }
+); 
+
+export const deleteGig = createAsyncThunk(
+  "gig/deleteGig",
+  async ({gigId , userId}, thunkAPI) => {
+    try {
+      const response = await api.delete(`/gig/${gigId}`);
+      if (response.status === 200) {
+        thunkAPI.dispatch(getGigsByFreelancerId(userId));
+      }
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
     }
   }
 );
