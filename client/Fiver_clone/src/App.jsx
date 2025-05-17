@@ -10,7 +10,8 @@ import { UserProfile } from "./pages/UserProfile";
 import { Dashboard } from "./pages/Dashboard";
 import DashboardPage from "./pages/DashboardPage";
 import Gig from "./pages/Gig";
-import { GigPreview } from "./pages/GigPreview";
+import GigPreview from "./pages/GigPreview";
+
 
 const router = createBrowserRouter([
   {

@@ -9,6 +9,10 @@ const INITAIL_STATE = {
   gigsByFreelacer: [],
   gigsByFreelacerLoading: false,
   gigsByFreelacerError: null,
+
+  getbygigId: {},
+  getbygigIdloding: false,
+  getbygigIdError: null
 };
 
 export const createGig = createAsyncThunk(
@@ -47,6 +51,18 @@ export const getGigsByFreelancerId = createAsyncThunk(
   async (userId, { rejectWithValue }) => {
     try {
       const response = await api.get(`/gig/freelancer/${userId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const getGigByGigId = createAsyncThunk(
+  "gig/getGigByGigId",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/gig/${id}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -98,7 +114,19 @@ const gigSlice = createSlice({
       .addCase(getGigsByFreelancerId.rejected, (state, action) => {
         state.gigsByFreelacerLoading = false;
         state.gigsByFreelacerError = action.payload;
-      });
+      })
+      .addCase(getGigByGigId.pending,(state) => {
+        state.getbygigIdloding=true;
+        state.getbygigIdError = null;
+      })
+      .addCase(getGigByGigId.fulfilled, (state, action) => {
+        state.getbygigIdloding = false;
+        state.getbygigId = action.payload;
+      })
+      .addCase(getGigByGigId.rejected, (state, action) => {
+        state.getbygigIdloding = false;
+        state.getbygigIdError = action.payload;
+      })
   },
 });
 
