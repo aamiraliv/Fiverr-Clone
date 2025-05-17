@@ -100,7 +100,7 @@ export const Landing = () => {
           </div>
         </div>
         <div className="Gigs-you-may-like  flex flex-col gap-8 mt-16">
-          <h1 className="font-semibold text-black text-xl lg:text-2xl">Gigs you ma</h1>
+          <h1 className="font-semibold text-black text-xl lg:text-2xl">Gigs you may like </h1>
           <div className=" relative">
             <GigCard
               data={gigs}

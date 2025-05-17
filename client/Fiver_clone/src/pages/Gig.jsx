@@ -20,18 +20,18 @@ const Gig = () => {
 
   const userId = userDetails?.id;
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setOpenMenuId(null);
-      }
-    }
+  // useEffect(() => {
+  //   function handleClickOutside(event) {
+  //     if (menuRef.current && !menuRef.current.contains(event.target)) {
+  //       setOpenMenuId(null);
+  //     }
+  //   }
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (userId) {
@@ -62,10 +62,12 @@ const Gig = () => {
 
   const handleMenuAction = async (action, gig) => {
     switch (action) {
-      case "preview":
+      case "preview": {
+        const gigId = gig.id;
         console.log("Preview gig:", gig.id);
-        // Navigate to preview page
+        navigate(`/gigpreview/${gigId}`);
         break;
+      }
       case "denied":
         console.log("Mark as denied:", gig.id);
         // Update gig status
@@ -112,7 +114,9 @@ const Gig = () => {
     return (
       <div className="bg-white rounded-sm border border-gray-300 p-2 md:p-4 mt-2">
         <div className="flex justify-between items-center mb-2 md:mb-4">
-          <h3 className="font-semibold text-base md:text-lg">{activeTab} GIGS</h3>
+          <h3 className="font-semibold text-base md:text-lg">
+            {activeTab} GIGS
+          </h3>
         </div>
 
         {gigsByFreelacerLoading ? (
@@ -258,7 +262,9 @@ const Gig = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div className="flex items-center gap-1">
-                      <span className="font-medium text-gray-500">Impressions:</span>
+                      <span className="font-medium text-gray-500">
+                        Impressions:
+                      </span>
                       <span>{gig.impressions || 0}</span>
                     </div>
                     <div className="flex items-center gap-1">
@@ -270,7 +276,9 @@ const Gig = () => {
                       <span>{gig.orders || 0}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="font-medium text-gray-500">Cancel Rate:</span>
+                      <span className="font-medium text-gray-500">
+                        Cancel Rate:
+                      </span>
                       <span>{gig.cancellationRate || 0}</span>
                     </div>
                   </div>

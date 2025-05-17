@@ -34,7 +34,7 @@ const router = createBrowserRouter([
             element: <UserProfile />,
           },
           {
-            path: "gigpreview/:id",
+            path: "/gigpreview/:id",
             element: <GigPreview />,
           },
           {
