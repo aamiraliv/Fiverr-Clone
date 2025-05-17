@@ -203,7 +203,7 @@ export const Home = () => {
 
       <div className="flex flex-col gap-10 px-8 py-10">
         <div className="w-full py-6">
-          {/* Desktop Carousel */}
+          
           <div className="hidden lg:flex gap-4 overflow-x-auto scrollbar-hide">
             {categories.map((item, idx) => (
               <div
@@ -220,7 +220,7 @@ export const Home = () => {
             ))}
           </div>
 
-          {/* mobile view */}
+          
           <div className="grid grid-cols-3 gap-3 lg:hidden">
             {visibleItems.map((item, idx) => (
               <div key={idx} className="flex flex-col gap-2 items-center ">

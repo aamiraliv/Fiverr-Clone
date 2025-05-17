@@ -28,6 +28,10 @@ const INITIAL_STATE = {
   isAdminLogged: false,
   isAdminError: null,
   isAdminLoading: false,
+
+  freelancer: null,
+  freelancerLoading: false,
+  freelancerError: null,
 };
 
 export const registerUser = createAsyncThunk(
@@ -118,6 +122,18 @@ export const getUserDetails = createAsyncThunk(
   async (email, { rejectWithValue }) => {
     try {
       const response = await api.get(`/auth/user/${email}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const getFreelancerDetails = createAsyncThunk(
+  "auth/getFreelancerDetails",
+  async (userID, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/auth/freelancer/${userID}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -272,6 +288,18 @@ const authSlice = createSlice({
       .addCase(getAllUsers.rejected, (state, action) => {
         state.usersError = action.payload;
         state.usersLoading = false;
+      })
+      .addCase(getFreelancerDetails.fulfilled, (state, action) => {
+        state.freelancer = action.payload;
+        state.freelancerLoading = false;
+      })
+      .addCase(getFreelancerDetails.pending, (state) => {
+        state.freelancerLoading = true;
+      })
+      .addCase(getFreelancerDetails.rejected, (state, action) => {
+        state.freelancer = null;
+        state.freelancerError =
+          action.payload || "Failed to fetch freelancer details";
       });
   },
 });

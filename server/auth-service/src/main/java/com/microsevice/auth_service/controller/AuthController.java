@@ -85,6 +85,14 @@ public class AuthController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/freelancer/{userID}")
+    public ResponseEntity<User> getFreelancerDetails(@PathVariable Long userID){
+        User user = repository.findById(userID).orElseThrow(
+                ()-> new RuntimeException("user not found")
+        );
+        return ResponseEntity.ok(user);
+    }
+
     @PutMapping("/user/profile/{id}")
     public ResponseEntity<User> updateProfile(@PathVariable Long id,@RequestParam String picture){
         return ResponseEntity.ok(service.updateProfile(id,picture));
