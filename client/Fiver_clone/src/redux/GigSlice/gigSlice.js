@@ -12,7 +12,11 @@ const INITAIL_STATE = {
 
   getbygigId: {},
   getbygigIdloding: false,
-  getbygigIdError: null
+  getbygigIdError: null,
+
+  allGigs: [],
+  allGigLoading: false,
+  allGigError: null,
 };
 
 export const createGig = createAsyncThunk(
@@ -27,11 +31,11 @@ export const createGig = createAsyncThunk(
       );
     }
   }
-); 
+);
 
 export const deleteGig = createAsyncThunk(
   "gig/deleteGig",
-  async ({gigId , userId}, thunkAPI) => {
+  async ({ gigId, userId }, thunkAPI) => {
     try {
       const response = await api.delete(`/gig/${gigId}`);
       if (response.status === 200) {
@@ -66,6 +70,18 @@ export const getGigByGigId = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const getAllGigs = createAsyncThunk(
+  "gig/getAllGigs",
+  async (_, { rejectedWithValue }) => {
+    try {
+      const response = await api.get("/gig");
+      return response.data;
+    } catch (error) {
+      return rejectedWithValue(error.message);
     }
   }
 );
@@ -115,8 +131,8 @@ const gigSlice = createSlice({
         state.gigsByFreelacerLoading = false;
         state.gigsByFreelacerError = action.payload;
       })
-      .addCase(getGigByGigId.pending,(state) => {
-        state.getbygigIdloding=true;
+      .addCase(getGigByGigId.pending, (state) => {
+        state.getbygigIdloding = true;
         state.getbygigIdError = null;
       })
       .addCase(getGigByGigId.fulfilled, (state, action) => {
@@ -127,6 +143,18 @@ const gigSlice = createSlice({
         state.getbygigIdloding = false;
         state.getbygigIdError = action.payload;
       })
+      .addCase(getAllGigs.fulfilled, (state, action) => {
+        state.allGigs = action.payload;
+        state.allGigError = null;
+        state.allGigLoading = false;
+      })
+      .addCase(getAllGigs.pending, (state) => {
+        state.allGigLoading = true;
+      })
+      .addCase(getAllGigs.rejected, (state, action) => {
+        state.allGigError = action.payload;
+        state.allGigLoading = false;
+      });
   },
 });
 
