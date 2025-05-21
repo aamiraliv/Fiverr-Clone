@@ -85,6 +85,14 @@ public class AuthController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/userbyid/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable Long userId){
+        User user = repository.findById(userId).orElseThrow(
+                ()-> new RuntimeException("user not found")
+        );
+        return ResponseEntity.ok(user);
+    }
+
     @GetMapping("/freelancer/{userID}")
     public ResponseEntity<User> getFreelancerDetails(@PathVariable Long userID){
         User user = repository.findById(userID).orElseThrow(

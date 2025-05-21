@@ -5,21 +5,25 @@ import { MasonaryGrid } from "../components/MasonaryGrid";
 import masonary from "../../json/masonary";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { getAllGigs } from "../redux/GigSlice/gigSlice";
-import { getUserDetails } from "../redux/AuthSlice/authSlice";
 
 export const Landing = () => {
   const dispatch = useDispatch();
-  const { allGigs, allGigLoading, allGigError } = useSelector((state) => state.gig);
-  const navigate = useNavigate();
+  const { allGigs } = useSelector(
+    (state) => state.gig
+  );
+  // const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(getAllGigs());
+    try {
+      dispatch(getAllGigs());
+    } catch (error) {
+      console.log(error);
+    }
   }, [dispatch]);
 
-  
+  console.log(allGigs);
 
   return (
     <div className="flex flex-col gap-4">
@@ -110,7 +114,11 @@ export const Landing = () => {
             </div>
           </h1>
           <div>
-            <GigCard data={gigs} nextBtn={".next-btn"} prevBtn={".prev-btn"} />
+            <GigCard
+              data={allGigs}
+              nextBtn={".next-btn"}
+              prevBtn={".prev-btn"}
+            />
           </div>
         </div>
         <div className="Gigs-you-may-like  flex flex-col gap-8 mt-16">

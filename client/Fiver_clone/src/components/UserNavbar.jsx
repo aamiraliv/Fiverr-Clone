@@ -116,7 +116,7 @@ export const UserNavbar = () => {
         </h1>
       </div>
       <div
-        className="relative flex items-center  h-auto min-w-[500px]"
+        className=" hidden relative lg:flex items-center  h-auto min-w-[500px]"
         ref={dropdownRef}
       >
         <input

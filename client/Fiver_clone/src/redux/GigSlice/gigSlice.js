@@ -76,12 +76,33 @@ export const getGigByGigId = createAsyncThunk(
 
 export const getAllGigs = createAsyncThunk(
   "gig/getAllGigs",
-  async (_, { rejectedWithValue }) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await api.get("/gig");
-      return response.data;
+      const gigsResponse = await api.get("/gig");
+      const gigs = gigsResponse.data;
+
+      const userIds = [...new Set(gigs.map((gig) => gig.userId))];
+
+      const userDetailsPromises = userIds.map((userId) =>
+        api.get(`/auth/userbyid/${userId}`)
+      );
+
+      const userResponses = await Promise.all(userDetailsPromises);
+
+      const userMap = {};
+      userResponses.forEach((response) => {
+        const user = response.data;
+        userMap[user.id] = user;
+      });
+
+      const gigsWithUserDetails = gigs.map((gig) => ({
+        ...gig,
+        userDetails: userMap[gig.userId] || null,
+      }));
+
+      return gigsWithUserDetails;
     } catch (error) {
-      return rejectedWithValue(error.message);
+      return thunkAPI.rejectedWithValue(error.message);
     }
   }
 );
