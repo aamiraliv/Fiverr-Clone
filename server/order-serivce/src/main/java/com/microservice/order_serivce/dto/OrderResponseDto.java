@@ -19,4 +19,6 @@ public class OrderResponseDto {
     private double price;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String paymentIntentId;
+    private String paymentStatus;
 }

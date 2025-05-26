@@ -29,6 +29,9 @@ public class Order {
 
     private double price;
 
+    private String paymentIntentId;
+    private String paymentStatus;
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

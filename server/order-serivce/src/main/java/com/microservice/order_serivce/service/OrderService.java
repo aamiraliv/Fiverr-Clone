@@ -7,7 +7,10 @@ import com.microservice.order_serivce.feign.GigClient;
 import com.microservice.order_serivce.model.Order;
 import com.microservice.order_serivce.model.OrderStatus;
 import com.microservice.order_serivce.repository.OrderRepository;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,6 +18,9 @@ import java.util.List;
 
 @Service
 public class OrderService {
+
+    @Autowired
+    private PaymentService paymentService;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -54,7 +60,7 @@ public class OrderService {
         return orderRepository.findBySellerId(sellerId);
     }
 
-    public Order placeOrder(OrderRequestDto dto) {
+    public Order placeOrder(OrderRequestDto dto) throws StripeException {
 
         if (!authClient.doesUserExist(dto.getBuyerId())) {
             throw new RuntimeException("Buyer does not exist");
@@ -68,15 +74,39 @@ public class OrderService {
             throw new RuntimeException("Gig does not exist");
         }
 
+        Order order = Order.builder()
+                .buyerId(dto.getBuyerId())
+                .sellerId(dto.getSellerId())
+                .price(dto.getPrice())
+                .gigId(dto.getGigId())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .status(OrderStatus.PENDING)
+                .build();
 
-        Order order = new Order();
-        order.setBuyerId(dto.getBuyerId());
-        order.setSellerId(dto.getSellerId());
-        order.setPrice(dto.getPrice());
-        order.setGigId(dto.getGigId());
-        order.setCreatedAt(LocalDateTime.now());
-        order.setUpdatedAt(LocalDateTime.now());
-        order.setStatus(OrderStatus.PENDING);
+        order = orderRepository.save(order);
+
+        PaymentIntent paymentIntent = paymentService.createPaymentIntent(dto.getPrice(), "usd", order.getId(), dto.getSellerId());
+        order.setPaymentIntentId(paymentIntent.getId());
+        order.setPaymentStatus(paymentIntent.getStatus());
+
+        return orderRepository.save(order);
+
+
+    }
+
+    public Order confirmOrderPayment(Long orderId, String paymentIntentId) throws StripeException {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        String paymentStatus = paymentService.confirmPaymentIntent(paymentIntentId);
+        order.setPaymentStatus(paymentStatus);
+
+        if ("succeeded".equals(paymentStatus)) {
+            order.setStatus(OrderStatus.COMPLETED);
+        } else {
+            order.setStatus(OrderStatus.CANCELLED);
+        }
         return orderRepository.save(order);
     }
 }

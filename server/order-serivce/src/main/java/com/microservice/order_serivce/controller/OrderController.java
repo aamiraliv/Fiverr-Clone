@@ -1,12 +1,13 @@
 package com.microservice.order_serivce.controller;
 
 
+import com.microservice.order_serivce.dto.ConfirmPaymentRequest;
 import com.microservice.order_serivce.dto.OrderRequestDto;
 import com.microservice.order_serivce.dto.OrderResponseDto;
 import com.microservice.order_serivce.model.Order;
-import com.microservice.order_serivce.model.OrderStatus;
 import com.microservice.order_serivce.service.MapperService;
 import com.microservice.order_serivce.service.OrderService;
+import com.stripe.exception.StripeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,9 +26,14 @@ public class OrderController {
     private MapperService mapperService;
 
     @PostMapping
-    public ResponseEntity<OrderResponseDto> placeOrder(@RequestBody OrderRequestDto dto) {
+    public ResponseEntity<OrderResponseDto> placeOrder(@RequestBody OrderRequestDto dto) throws StripeException {
         Order order = orderService.placeOrder(dto);
         return ResponseEntity.ok(mapperService.toOrderResponse(order));
+    }
+
+    @PostMapping("/confirm/{orderId}")
+    public Order confirmOrderPayment(@PathVariable Long orderId , @RequestBody ConfirmPaymentRequest request) throws StripeException{
+        return orderService.confirmOrderPayment(orderId, request.getPaymentIntentId());
     }
 
     @GetMapping("/{id}")
