@@ -12,6 +12,7 @@ import DashboardPage from "./pages/DashboardPage";
 import Gig from "./pages/Gig";
 import GigPreview from "./pages/GigPreview";
 import OrderCheckout from "./pages/OrderCheckout";
+import PaymentPage from "./pages/PaymentPage";
 
 
 const router = createBrowserRouter([
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
           {
             path: "/checkout/:id",
             element: <OrderCheckout />
+          },
+          {
+            path: "/checkout/payment/:id/:orderId",
+            element: <PaymentPage />
           },
           {
             element: <Dashboard />,

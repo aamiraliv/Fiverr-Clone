@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import {
   ArrowLeft,
   CreditCard,
@@ -8,462 +14,636 @@ import {
   Calendar,
   Clock,
   User,
-  Mail,
-  Phone,
+  MessageCircle,
+  Download,
+  Heart,
+  Share2,
+  Sparkles,
+  CheckCircle2,
+  Trophy,
+  Zap,
 } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { confirmOrderPayment } from "../redux/OrderSlice/orderSlice";
-
+import { useDispatch, useSelector } from "react-redux";
+import {
+  confirmOrderPayment,
+  getOrderById,
+} from "../redux/OrderSlice/orderSlice";
+import { useParams } from "react-router-dom";
+import { getGigByGigId } from "../redux/GigSlice/gigSlice";
+import { getFreelancerDetails } from "../redux/AuthSlice/authSlice";
 
 function OrderSuccess({ gig, freelancer, order }) {
+  console.log("OrderSuccess component rendered with:", {
+    gig,
+    freelancer,
+    order,
+  });
+
+  const [showConfetti, setShowConfetti] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowConfetti(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-lg p-8 text-center">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Check className="w-8 h-8 text-green-600" />
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 relative overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-emerald-200/30 to-blue-200/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-32 w-96 h-96 bg-gradient-to-tr from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      {showConfetti && (
+        <div className="absolute inset-0 pointer-events-none">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute animate-bounce"
+              style={{
+                left: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 2}s`,
+                animationDuration: `${2 + Math.random() * 2}s`,
+              }}
+            >
+              <Sparkles className="w-4 h-4 text-yellow-400" />
+            </div>
+          ))}
         </div>
+      )}
 
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Payment Successful!
-        </h2>
-        <p className="text-gray-600 mb-6">
-          Your order has been confirmed and the freelancer will be notified.
-        </p>
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div className="max-w-lg w-full">
+          {/* Success Card */}
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center relative overflow-hidden">
+            {/* Header with animated icon */}
+            <div className="relative mb-8">
+              <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg animate-pulse">
+                <CheckCircle2 className="w-10 h-10 text-white" />
+              </div>
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2">
+                <Trophy className="w-8 h-8 text-yellow-500 animate-bounce" />
+              </div>
+            </div>
 
-        <div className="bg-gray-50 rounded-lg p-4 mb-6">
-          <div className="flex items-center gap-3 mb-3">
-            <img
-              src={freelancer?.picture || "/api/placeholder/40/40"}
-              alt={freelancer?.username || "Freelancer"}
-              className="w-10 h-10 rounded-full object-cover"
-            />
-            <div className="text-left">
-              <p className="font-semibold text-gray-900">
-                {freelancer?.username || "Unknown Freelancer"}
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3">
+              Payment Successful!
+            </h1>
+            <p className="text-gray-600 mb-8 text-lg">
+              🎉 Your order is confirmed and the freelancer has been notified
+            </p>
+
+            {/* Order Details Card */}
+            <div className="bg-gradient-to-r from-gray-50 to-blue-50/50 rounded-2xl p-6 mb-8 border border-gray-100">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="relative">
+                  <img
+                    src={freelancer?.picture || "/api/placeholder/50/50"}
+                    alt={freelancer?.username || "Freelancer"}
+                    className="w-12 h-12 rounded-full object-cover ring-2 ring-emerald-200"
+                  />
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                </div>
+                <div className="text-left flex-1">
+                  <p className="font-semibold text-gray-900 flex items-center gap-2">
+                    {freelancer?.username || "Unknown Freelancer"}
+                    <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                  </p>
+                  <p className="text-sm text-gray-600 line-clamp-1">
+                    {gig?.title || "Service"}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
+                    ₹{gig?.price || "0"}
+                  </p>
+                  <p className="text-xs text-gray-500">Total paid</p>
+                </div>
+              </div>
+
+              {/* Order Info */}
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                <div className="text-center">
+                  <p className="text-xs text-gray-500 mb-1">Order ID</p>
+                  <p className="font-mono text-sm font-semibold">
+                    #
+                    {order?.id?.toString().slice(-6) ||
+                      "ORD-" + Date.now().toString().slice(-6)}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-gray-500 mb-1">Delivery</p>
+                  <p className="text-sm font-semibold flex items-center justify-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {gig?.deliveryTime || "3-5 days"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              <button
+                onClick={() => (window.location.href = "/orders")}
+                className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 px-6 rounded-2xl font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+              >
+                <Zap className="w-5 h-5" />
+                View My Orders
+              </button>
+
+              <div className="grid grid-cols-3 gap-3">
+                <button className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                  <MessageCircle className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
+                  <span className="text-xs text-gray-600 group-hover:text-blue-600">
+                    Message
+                  </span>
+                </button>
+                <button className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                  <Heart className="w-5 h-5 text-gray-600 group-hover:text-red-500 transition-colors" />
+                  <span className="text-xs text-gray-600 group-hover:text-red-500">
+                    Save
+                  </span>
+                </button>
+                <button className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                  <Share2 className="w-5 h-5 text-gray-600 group-hover:text-green-600 transition-colors" />
+                  <span className="text-xs text-gray-600 group-hover:text-green-600">
+                    Share
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Success Message */}
+            <div className="mt-6 p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+              <p className="text-sm text-emerald-700">
+                <strong>What's next?</strong> The freelancer will start working
+                on your project and keep you updated on progress.
               </p>
-              <p className="text-sm text-gray-600">{gig?.title || "Service"}</p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-lg font-bold text-green-600">
-              ₹{gig?.price || "0"}
+
+          {/* Additional Info */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-500">
+              Need help?{" "}
+              <button className="text-blue-600 hover:underline">
+                Contact Support
+              </button>
             </p>
           </div>
         </div>
-
-        <div className="space-y-2 text-sm text-gray-600 mb-6">
-          <p>
-            <strong>Order ID:</strong> #{order?.id || "ORD-" + Date.now()}
-          </p>
-          <p>
-            <strong>Estimated Delivery:</strong>{" "}
-            {gig?.deliveryTime || "3-5 business days"}
-          </p>
-        </div>
-
-        <button
-          onClick={() => (window.location.href = "/orders")}
-          className="w-full bg-blue-600 text-white py-3 px-4 rounded-md font-semibold hover:bg-blue-700 transition-colors"
-        >
-          View My Orders
-        </button>
       </div>
     </div>
   );
 }
 
-function PaymentPage({ gig, freelancer, order, onBack }) {
+function PaymentPage() {
+  const { getbygigId: gig } = useSelector((state) => state.gig);
+  const { freelancer } = useSelector((state) => state.auth);
+  const { currentOrder: order } = useSelector((state) => state.order);
+  const { id, orderId } = useParams();
   const dispatch = useDispatch();
-  const [paymentMethod, setPaymentMethod] = useState("card");
-  const [cardDetails, setCardDetails] = useState({
-    number: "",
-    expiry: "",
-    cvc: "",
-    name: "",
+  const userId = gig?.userId;
+
+  console.log("PaymentPage rendered with:", {
+    gig,
+    freelancer,
+    order,
+    id,
+    orderId,
   });
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  useEffect(() => {
+    dispatch(getGigByGigId(id));
+  }, [dispatch, id]);
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(getFreelancerDetails(userId));
+    }
+  }, [dispatch, userId]);
+
+  useEffect(() => {
+    if (orderId) {
+      dispatch(getOrderById(orderId));
+    }
+  }, [dispatch, orderId]);
+
   const [paymentError, setPaymentError] = useState("");
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [reduxPaymentError, setReduxPaymentError] = useState(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [billingDetails, setBillingDetails] = useState({
     email: "",
     phone: "",
   });
 
-  const validateForm = () => {
-    if (!cardDetails.number || cardDetails.number.length < 16) {
-      setPaymentError("Please enter a valid card number");
-      return false;
+  // Refs to prevent recreating Stripe elements
+  const stripeRef = useRef(null);
+  const cardElementRef = useRef(null);
+  const elementsRef = useRef(null);
+  const mountedRef = useRef(false);
+
+  // Memoized pricing calculations
+  const pricing = useMemo(() => {
+    const gigPrice =
+      typeof gig?.price === "number" ? gig.price : parseFloat(gig?.price) || 0;
+    const serviceFee = Math.round(gigPrice * 0.05 * 100) / 100;
+    const total = gigPrice + serviceFee;
+    return { gigPrice, serviceFee, total };
+  }, [gig?.price]);
+
+  // Initialize Stripe only once
+  useEffect(() => {
+    if (!stripeRef.current && typeof window !== "undefined" && window.Stripe) {
+      stripeRef.current = window.Stripe(
+        "pk_test_51RRsKCICulaqgJXNm9xWMRwf6zLopsoV9yrdlGUJjkh6m8CN3DZjulhEFYvgspDM7s8e0oQDcB3awj0YGV3SB1IJ00TW31biPE"
+      );
     }
-    if (!cardDetails.expiry || cardDetails.expiry.length < 5) {
-      setPaymentError("Please enter a valid expiry date");
-      return false;
+  }, []);
+
+  // Setup Stripe Elements only when we have clientSecret and Stripe is loaded
+  useEffect(() => {
+    if (!order?.clientSecret || mountedRef.current) {
+      return;
     }
-    if (!cardDetails.cvc || cardDetails.cvc.length < 3) {
-      setPaymentError("Please enter a valid CVC");
-      return false;
-    }
-    if (!cardDetails.name.trim()) {
-      setPaymentError("Please enter the cardholder name");
-      return false;
-    }
+
+    const checkStripeAndSetup = () => {
+      if (!stripeRef.current) {
+        setTimeout(checkStripeAndSetup, 100);
+        return;
+      }
+
+      const stripe = stripeRef.current;
+
+      try {
+        if (!elementsRef.current) {
+          elementsRef.current = stripe.elements();
+        }
+
+        // Always unmount existing card element if already created
+        if (cardElementRef.current) {
+          cardElementRef.current.unmount();
+          cardElementRef.current = null;
+          mountedRef.current = false;
+        }
+
+        cardElementRef.current = elementsRef.current.create("card", {
+          style: {
+            base: {
+              fontSize: "16px",
+              color: "#1f2937",
+              fontFamily:
+                "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+              fontWeight: "400",
+              "::placeholder": { color: "#9ca3af" },
+            },
+            invalid: {
+              color: "#ef4444",
+              iconColor: "#ef4444",
+            },
+          },
+        });
+
+        const cardElement = document.getElementById("card-element");
+        if (cardElement) {
+          cardElementRef.current.mount("#card-element");
+          mountedRef.current = true;
+          setPaymentError("");
+        }
+      } catch (error) {
+        console.error("Error setting up Stripe Elements:", error);
+        setPaymentError(
+          "Failed to load payment form. Please refresh the page."
+        );
+      }
+    };
+
+    checkStripeAndSetup();
+
+    // Cleanup function
+    return () => {
+      if (cardElementRef.current && mountedRef.current) {
+        try {
+          cardElementRef.current.unmount();
+          cardElementRef.current = null;
+          mountedRef.current = false;
+        } catch (error) {
+          console.error("Error unmounting card element:", error);
+        }
+      }
+    };
+  }, [order?.clientSecret]);
+
+  const validateForm = useCallback(() => {
     if (!billingDetails.email || !billingDetails.email.includes("@")) {
       setPaymentError("Please enter a valid email address");
       return false;
     }
+    if (!cardElementRef.current || !mountedRef.current) {
+      setPaymentError("Payment form not ready. Please wait and try again.");
+      return;
+    }
+    if (!order?.clientSecret) {
+      setPaymentError("Payment information not available. Please try again.");
+      return false;
+    }
     return true;
-  };
+  }, [billingDetails.email, order?.clientSecret]);
 
-  const handlePayment = async () => {
-    if (!validateForm()) return;
+  const handlePayment = useCallback(async () => {
+    if (!validateForm() || isProcessing) return;
 
     setIsProcessing(true);
-    setIsProcessingPayment(true);
     setPaymentError("");
-    setReduxPaymentError(null);
 
     try {
-      dispatch(
-        confirmOrderPayment({
-          orderId: order?.id,
-          paymentIntentId: order?.paymentIntentId,
-        })
-      ).unwrap();
+      const stripe = stripeRef.current;
+      const cardElement = cardElementRef.current;
 
-      await new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (Math.random() > 0.9) {
-            reject(new Error("Payment failed. Please try again."));
-          } else {
-            resolve();
-          }
-        }, 2000);
+      if (!stripe || !cardElement) {
+        throw new Error("Stripe not properly initialized");
+      }
+
+      console.log("Card element:", cardElementRef.current);
+      console.log("Client secret:", order.clientSecret);
+      console.log("Billing details:", billingDetails);
+
+      const result = await stripe.confirmCardPayment(order.clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: {
+            email: billingDetails.email,
+            phone: billingDetails.phone,
+          },
+        },
       });
 
-      setPaymentSuccess(true);
+      if (result.error) {
+        setPaymentError(result.error.message);
+        return;
+      }
+
+      if (result.paymentIntent.status === "succeeded") {
+        // Confirm payment with backend
+        await dispatch(
+          confirmOrderPayment({
+            orderId: order.id,
+            paymentIntentId: order.paymentIntentId,
+          })
+        ).unwrap();
+
+        setPaymentSuccess(true);
+      } else {
+        setPaymentError(
+          `Payment not completed: ${result.paymentIntent.status}`
+        );
+      }
     } catch (error) {
-      setReduxPaymentError(
-        error.message || "Payment failed. Please try again."
-      );
+      console.error("Payment error:", error);
+      setPaymentError(error.message || "Payment failed. Please try again.");
     } finally {
       setIsProcessing(false);
-      setIsProcessingPayment(false);
     }
-  };
+  }, [validateForm, isProcessing, order, billingDetails, dispatch]);
 
-  const formatCardNumber = (value) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
-    const parts = [];
-    for (let i = 0; i < v.length; i += 4) {
-      parts.push(v.substring(i, i + 4));
-    }
-    return parts.join(" ");
-  };
+  const handleBillingChange = useCallback((field, value) => {
+    setBillingDetails((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  }, []);
 
-  const formatExpiry = (value) => {
-    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
-    if (v.length >= 2) {
-      return v.substring(0, 2) + "/" + v.substring(2, 4);
-    }
-    return v;
-  };
-
-  // Calculate totals
-  const gigPrice =
-    typeof gig?.price === "number" ? gig.price : parseFloat(gig?.price) || 0;
-  const serviceFee = Math.round(gigPrice * 0.05 * 100) / 100; // 5% service fee
-  const total = gigPrice + serviceFee;
-
+  // Show success page
   if (paymentSuccess) {
     return <OrderSuccess gig={gig} freelancer={freelancer} order={order} />;
   }
 
+  // Show loading if no order data
+  if (!order?.clientSecret) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Loading payment form...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
           <button
-            onClick={onBack}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors"
+            onClick={() => window.history.back()}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6 transition-colors hover:bg-white rounded-lg px-3 py-2 group"
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft
+              size={20}
+              className="group-hover:-translate-x-1 transition-transform"
+            />
             <span>Back to order</span>
           </button>
-          <h1 className="text-3xl font-bold text-gray-900">Secure Payment</h1>
-          <p className="text-gray-600 mt-2">
-            Complete your order with our secure payment system
-          </p>
+          <div className="text-center">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
+              Secure Payment
+            </h1>
+            <p className="text-gray-600 text-lg">
+              Complete your order with our secure payment system
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Payment Form */}
           <div className="lg:col-span-2 space-y-6">
             {/* Billing Information */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <User size={20} />
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8">
+              <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <User size={18} className="text-blue-600" />
+                </div>
                 Billing Information
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
                     Email Address *
                   </label>
                   <input
                     type="email"
                     value={billingDetails.email}
                     onChange={(e) =>
-                      setBillingDetails({
-                        ...billingDetails,
-                        email: e.target.value,
-                      })
+                      handleBillingChange("email", e.target.value)
                     }
                     placeholder="john@example.com"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700">
                     Phone Number
                   </label>
                   <input
                     type="tel"
                     value={billingDetails.phone}
                     onChange={(e) =>
-                      setBillingDetails({
-                        ...billingDetails,
-                        phone: e.target.value,
-                      })
+                      handleBillingChange("phone", e.target.value)
                     }
                     placeholder="+91 9876543210"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   />
                 </div>
               </div>
             </div>
 
             {/* Payment Method */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
-                <CreditCard size={20} />
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8">
+              <h2 className="text-2xl font-semibold mb-6 flex items-center gap-3">
+                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <CreditCard size={18} className="text-green-600" />
+                </div>
                 Payment Method
               </h2>
 
               <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      value="card"
-                      checked={paymentMethod === "card"}
-                      onChange={(e) => setPaymentMethod(e.target.value)}
-                      className="h-4 w-4 text-blue-600"
-                    />
-                    <CreditCard size={20} />
-                    <span>Credit/Debit Card</span>
-                  </label>
+                <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-xl bg-blue-50">
+                  <div className="w-4 h-4 bg-blue-600 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                  </div>
+                  <CreditCard size={20} className="text-blue-600" />
+                  <span className="font-medium">Credit/Debit Card</span>
+                  <div className="ml-auto flex gap-2">
+                    <div className="w-8 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">
+                      VISA
+                    </div>
+                    <div className="w-8 h-5 bg-red-600 rounded text-white text-xs flex items-center justify-center font-bold">
+                      MC
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Card Number *
-                    </label>
-                    <input
-                      type="text"
-                      value={cardDetails.number}
-                      onChange={(e) =>
-                        setCardDetails({
-                          ...cardDetails,
-                          number: formatCardNumber(e.target.value),
-                        })
-                      }
-                      placeholder="1234 5678 9012 3456"
-                      maxLength="19"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
+                  <div
+                    id="card-element"
+                    className="border border-gray-200 rounded-xl p-4 min-h-[50px] bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-transparent transition-all"
+                  ></div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Expiry Date *
-                      </label>
-                      <input
-                        type="text"
-                        value={cardDetails.expiry}
-                        onChange={(e) =>
-                          setCardDetails({
-                            ...cardDetails,
-                            expiry: formatExpiry(e.target.value),
-                          })
-                        }
-                        placeholder="MM/YY"
-                        maxLength="5"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
+                  {paymentError && (
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+                      <div className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
+                        <div className="w-2 h-2 bg-red-600 rounded-full"></div>
+                      </div>
+                      <p className="text-red-700 text-sm">{paymentError}</p>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        CVC *
-                      </label>
-                      <input
-                        type="text"
-                        value={cardDetails.cvc}
-                        onChange={(e) =>
-                          setCardDetails({
-                            ...cardDetails,
-                            cvc: e.target.value
-                              .replace(/\D/g, "")
-                              .substring(0, 3),
-                          })
-                        }
-                        placeholder="123"
-                        maxLength="3"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Cardholder Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={cardDetails.name}
-                      onChange={(e) =>
-                        setCardDetails({ ...cardDetails, name: e.target.value })
-                      }
-                      placeholder="John Doe"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                {(paymentError || reduxPaymentError) && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                    <p className="text-red-700 text-sm">
-                      {paymentError || reduxPaymentError}
-                    </p>
-                  </div>
-                )}
-
-                <button
-                  onClick={handlePayment}
-                  disabled={isProcessing || isProcessingPayment}
-                  className="w-full bg-green-600 text-white py-3 px-4 rounded-md font-semibold hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2"
-                >
-                  {isProcessing || isProcessingPayment ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Processing Payment...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Shield size={16} />
-                      <span>Pay ₹{total.toFixed(2)}</span>
-                    </>
                   )}
-                </button>
+
+                  <button
+                    onClick={handlePayment}
+                    disabled={isProcessing || !mountedRef.current}
+                    className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none flex items-center justify-center gap-3"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <span>Processing Payment...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Shield size={18} />
+                        <span>Pay ₹{pricing.total.toFixed(2)}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-8">
-              <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-8 sticky top-8">
+              <h3 className="text-xl font-semibold mb-6">Order Summary</h3>
 
-              {/* Gig Details */}
-              <div className="border-b border-gray-200 pb-4 mb-4">
-                <div className="flex items-start gap-3">
+              <div className="border-b border-gray-200 pb-6 mb-6">
+                <div className="flex items-start gap-4">
                   <img
-                    src={gig?.thumbnailUrl || "/api/placeholder/60/60"}
+                    src={gig?.imageUrl1 || "/api/placeholder/80/80"}
                     alt={gig?.title || "Service"}
-                    className="w-15 h-15 rounded-lg object-cover"
+                    className="w-20 h-20 rounded-xl object-cover shadow-md"
                   />
                   <div className="flex-1">
-                    <h4 className="font-medium text-gray-900 text-sm leading-tight">
+                    <h4 className="font-semibold text-gray-900 leading-tight mb-2">
                       {gig?.title || "Service Title"}
                     </h4>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-sm text-gray-500 mb-2">
                       {gig?.category || "Service Category"}
                     </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Freelancer Details */}
-              <div className="border-b border-gray-200 pb-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={freelancer?.picture || "/api/placeholder/40/40"}
-                    alt={freelancer?.username || "Freelancer"}
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900 text-sm">
-                      {freelancer?.username || "Unknown Freelancer"}
-                    </p>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Star
-                        size={12}
-                        className="text-yellow-400 fill-current"
-                      />
-                      <span className="text-xs text-gray-600">
-                        {freelancer?.rating || "5.0"} (
-                        {freelancer?.reviewCount || "0"} reviews)
-                      </span>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <span className="text-sm text-gray-600">4.9</span>
+                      </div>
+                      <span className="text-gray-300">•</span>
+                      <span className="text-sm text-gray-600">Best Seller</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Delivery Info */}
-              <div className="border-b border-gray-200 pb-4 mb-4 space-y-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Clock size={14} />
-                  <span>
-                    Delivery: {gig?.deliveryTime || "3-5 business days"}
-                  </span>
+              {freelancer && (
+                <div className="border-b border-gray-200 pb-6 mb-6">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={freelancer.picture || "/api/placeholder/40/40"}
+                      alt={freelancer.username || "Freelancer"}
+                      className="w-10 h-10 rounded-full object-cover ring-2 ring-gray-200"
+                    />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">
+                        {freelancer.username || "Freelancer"}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Professional Seller
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Calendar size={14} />
-                  <span>Order Date: {new Date().toLocaleDateString()}</span>
-                </div>
-              </div>
+              )}
 
-              {/* Price Breakdown */}
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Service Price</span>
-                  <span className="text-gray-900">₹{gigPrice.toFixed(2)}</span>
+              {/* Pricing Breakdown */}
+              <div className="space-y-3 mb-6">
+                <div className="flex justify-between text-gray-600">
+                  <span>Service Price</span>
+                  <span>₹{pricing.gigPrice.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Service Fee</span>
-                  <span className="text-gray-900">
-                    ₹{serviceFee.toFixed(2)}
-                  </span>
+                <div className="flex justify-between text-gray-600">
+                  <span>Service Fee</span>
+                  <span>₹{pricing.serviceFee.toFixed(2)}</span>
                 </div>
                 <div className="border-t border-gray-200 pt-3">
                   <div className="flex justify-between text-lg font-semibold">
-                    <span className="text-gray-900">Total</span>
-                    <span className="text-green-600">₹{total.toFixed(2)}</span>
+                    <span>Total</span>
+                    <span className="text-green-600">
+                      ₹{pricing.total.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Security Notice */}
-              <div className="mt-6 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                <div className="flex items-center gap-2 text-blue-700 text-sm">
-                  <Shield size={14} />
-                  <span className="font-medium">Secure Payment</span>
+              {/* Delivery Info */}
+              <div className="bg-gray-50 rounded-xl p-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <Clock className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium text-gray-900">
+                    Delivery Time
+                  </span>
                 </div>
-                <p className="text-blue-600 text-xs mt-1">
-                  Your payment information is encrypted and secure.
+                <p className="text-sm text-gray-600">
+                  {gig?.deliveryTime || "3-5 business days"}
                 </p>
               </div>
             </div>

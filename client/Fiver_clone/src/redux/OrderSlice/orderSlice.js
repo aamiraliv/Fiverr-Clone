@@ -28,6 +28,20 @@ export const placeOrder = createAsyncThunk(
   }
 );
 
+export const getOrderById = createAsyncThunk(
+  "order/getOrderById",
+  async (orderId, thunkAPI) => {
+    try {
+      const response = await api.get(`/order/${orderId}`,);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
+    }
+  }
+);
+
 export const confirmOrderPayment  = createAsyncThunk(
   "order/confirmOrderPayment ",
   async ({orderId , paymentIntentId }, thunkAPI) => {
@@ -78,6 +92,17 @@ const orderSlice = createSlice({
         state.isProcessingPayment = false;
         state.paymentError = action.payload;
       })
+      .addCase(getOrderById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getOrderById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentOrder = action.payload;
+      })
+      .addCase(getOrderById.rejected, (state, action) => {
+        state.loading = false;
+        state.placeOrderError = action.payload;
+      });
   },
 });
 

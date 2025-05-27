@@ -1,11 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  Timer,
-  Repeat2,
-  ArrowLeft,
-  CreditCard,
-  Shield,
-} from "lucide-react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Timer, Repeat2, ArrowLeft, CreditCard, Shield } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { getGigByGigId } from "../redux/GigSlice/gigSlice";
@@ -18,7 +12,6 @@ import toast from "react-hot-toast";
 import PaymentPage from "./PaymentPage";
 
 export default function OrderCheckout() {
-  const [isUploading, setIsUploading] = useState(false);
   const [requirements, setRequirements] = useState("");
   const [agreeToCancellation, setAgreeToCancellation] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
@@ -26,98 +19,123 @@ export default function OrderCheckout() {
   const [placeOrderError, setPlaceOrderError] = useState(null);
   const [currentOrder, setCurrentOrder] = useState(null);
 
-  const { getbygigId } = useSelector((state) => state.gig);
-  const { freelancer } = useSelector((state) => state.auth);
-  const { currentOrder: currentOrderState } = useSelector(
-    (state) => state.order
-  );
+  // Redux selectors
+  const { getbygigId, loading: gigLoading } = useSelector((state) => state.gig);
+  const {
+    freelancer,
+    email,
+    userDetails,
+    loading: authLoading,
+  } = useSelector((state) => state.auth);
+  const { currentOrder: currentOrderState, loading: orderLoading } =
+    useSelector((state) => state.order);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
-  const userId = getbygigId?.userId;
-  const { email, userDetails } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    dispatch(getUserDetails(email));
-  }, [dispatch, email]);
+  // Memoized values to prevent unnecessary recalculations
+  const userId = useMemo(() => getbygigId?.userId, [getbygigId?.userId]);
+  const currentUserId = useMemo(() => userDetails?.id, [userDetails?.id]);
 
-  useEffect(() => {
-    dispatch(getGigByGigId(id));
-  }, [dispatch, id]);
+  const pricing = useMemo(() => {
+    const gigPrice =
+      typeof getbygigId?.price === "number"
+        ? getbygigId.price
+        : parseFloat(getbygigId?.price) || 0;
+    const serviceFee = Math.round(gigPrice * 0.05 * 100) / 100;
+    const total = gigPrice + serviceFee;
 
-  useEffect(() => {
-    dispatch(getFreelancerDetails(userId));
-  }, [dispatch, userId]);
+    return { gigPrice, serviceFee, total };
+  }, [getbygigId?.price]);
 
+  // Fetch user details only once when email changes
   useEffect(() => {
-    if (currentOrder && currentOrder.clientSecret) {
+    if (email && !userDetails) {
+      dispatch(getUserDetails(email));
+    }
+  }, [dispatch, email, userDetails]);
+
+  // Fetch gig details only once when id changes
+  useEffect(() => {
+    if (id && (!getbygigId || getbygigId.id !== id)) {
+      dispatch(getGigByGigId(id));
+    }
+  }, [dispatch, id, getbygigId]);
+
+  // Fetch freelancer details only when userId changes and we don't have the data
+  useEffect(() => {
+    if (userId && (!freelancer || freelancer.id !== userId)) {
+      dispatch(getFreelancerDetails(userId));
+    }
+  }, [dispatch, userId, freelancer]);
+
+  // Handle order state changes
+  useEffect(() => {
+    if (currentOrderState && currentOrderState.clientSecret && !showPayment) {
+      setCurrentOrder({
+        id: currentOrderState.id,
+        clientSecret: currentOrderState.clientSecret,
+        paymentIntentId: currentOrderState.paymentIntentId,
+      });
       setShowPayment(true);
     }
-  }, [currentOrder]);
-  const currentUserId = userDetails?.id;
+  }, [currentOrderState, showPayment]);
 
-  const handlePlaceOrder = async () => {
+  const handlePlaceOrder = useCallback(async () => {
     if (!currentUserId || !getbygigId) {
       toast.error("Missing user or gig information");
       return;
     }
+
+    if (isPlacingOrder) return;
 
     const orderData = {
       buyerId: currentUserId,
       sellerId: getbygigId.userId,
       gigId: getbygigId.id,
       price: getbygigId.price,
-      // requirements: requirements.trim() || null,
+      requirements: requirements.trim() || null,
     };
 
     setIsPlacingOrder(true);
     setPlaceOrderError(null);
 
     try {
-      setIsUploading(true);
-      await toast.promise(
-        dispatch(placeOrder(orderData)),
-        {
-          loading: "Creating your order...",
-          success: "Order created successfully...!",
-          error: (err) =>
-            typeof err === "string" ? err : "creating order failed!",
-        },
-        {
-          position: "top-center",
-          style: {
-            fontSize: "12px",
-            padding: "6px 12px",
-            background: "white",
-            color: "black",
-            border: "1px solid #ccc",
-          },
-        }
-      );
+      const resultAction = await dispatch(placeOrder(orderData));
+
+      if (placeOrder.fulfilled.match(resultAction)) {
+        toast.success("Order created successfully!");
+        setTimeout(() => {
+          navigate(`/checkout/payment/${id}/${resultAction.payload.id}`);
+          window.location.reload();
+        }, 1000);
+      } else {
+        const errorMessage =
+          resultAction.payload?.message || "Failed to create order";
+        setPlaceOrderError(errorMessage);
+        toast.error(errorMessage);
+      }
     } catch (error) {
       console.error("Error creating order:", error);
+      const errorMessage = error.message || "An unexpected error occurred";
+      setPlaceOrderError(errorMessage);
+      toast.error(errorMessage);
     } finally {
-      setIsUploading(false);
-    }
-
-    setTimeout(() => {
       setIsPlacingOrder(false);
-      setCurrentOrder({
-        id: currentOrderState?.id || "order_123",
-        clientSecret: currentOrderState?.clientSecret || "cs_test_123",
-        paymentIntentId: currentOrderState?.paymentIntentId || "pi_123",
-      });
-      setShowPayment(true);
-    }, 1000);
-  };
+    }
+  }, [currentUserId, getbygigId, requirements, isPlacingOrder, dispatch]);
 
-  const handleBack = () => {
-    setShowPayment(false);
-    toast.success("Returned to order details");
-    navigate(-1);
-  };
+  const handleBack = useCallback(() => {
+    if (showPayment) {
+      setShowPayment(false);
+      setCurrentOrder(null);
+    } else {
+      navigate(-1);
+    }
+  }, [showPayment, navigate]);
 
-  const removePrefixFromName = (name) => {
+  const removePrefixFromName = useCallback((name) => {
     if (
       name &&
       typeof name === "string" &&
@@ -126,27 +144,27 @@ export default function OrderCheckout() {
       return name.substring(6).trim();
     }
     return name || "";
-  };
+  }, []);
 
-  if (showPayment) {
+  // Show loading state
+  if (gigLoading || authLoading || !getbygigId || !userDetails) {
     return (
-      <PaymentPage
-        gig={getbygigId}
-        freelancer={freelancer}
-        order={currentOrder}
-        onBack={handleBack}
-      />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading order details...</p>
+        </div>
+      </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-4 py-8">
-
         <div className="mb-8">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4"
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4 transition-colors"
           >
             <ArrowLeft size={20} />
             <span>Back to gig</span>
@@ -157,9 +175,7 @@ export default function OrderCheckout() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
           <div className="lg:col-span-2 space-y-6">
-           
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-xl font-semibold mb-4">Gig Details</h2>
               <div className="flex gap-4">
@@ -192,25 +208,25 @@ export default function OrderCheckout() {
               </div>
             </div>
 
-           
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-xl font-semibold mb-4">Freelancer</h2>
-              <div className="flex items-center gap-4">
-                <img
-                  src={freelancer?.picture}
-                  alt={freelancer?.username}
-                  className="w-12 h-12 rounded-full object-cover"
-                />
-                <div>
-                  <h3 className="font-semibold text-lg uppercase">
-                    {freelancer?.username}
-                  </h3>
-                  <p className="text-gray-600">Freelancer</p>
+            {freelancer && (
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h2 className="text-xl font-semibold mb-4">Freelancer</h2>
+                <div className="flex items-center gap-4">
+                  <img
+                    src={freelancer.picture}
+                    alt={freelancer.username}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div>
+                    <h3 className="font-semibold text-lg uppercase">
+                      {freelancer.username}
+                    </h3>
+                    <p className="text-gray-600">Freelancer</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
-            
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-xl font-semibold mb-4">Requirements</h2>
               <div className="space-y-4">
@@ -231,7 +247,6 @@ export default function OrderCheckout() {
               </div>
             </div>
 
-           
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h2 className="text-xl font-semibold mb-4">Terms & Conditions</h2>
               <div className="space-y-4">
@@ -255,19 +270,21 @@ export default function OrderCheckout() {
             </div>
           </div>
 
-         
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-8">
               <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
 
               <div className="space-y-4">
                 <div className="flex justify-between">
+                  <span className="text-gray-600">Service Price</span>
+                  <span className="font-semibold">
+                    ₹{pricing.gigPrice.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between">
                   <span className="text-gray-600">Service fee</span>
                   <span className="font-semibold">
-                    ₹
-                    {typeof getbygigId.price === "number"
-                      ? getbygigId.price.toFixed(2)
-                      : getbygigId.price}
+                    ₹{pricing.serviceFee.toFixed(2)}
                   </span>
                 </div>
 
@@ -275,10 +292,7 @@ export default function OrderCheckout() {
                   <div className="flex justify-between items-center text-lg font-semibold">
                     <span>Total</span>
                     <span className="text-green-600">
-                      ₹
-                      {typeof getbygigId.price === "number"
-                        ? getbygigId.price.toFixed(2)
-                        : getbygigId.price}
+                      ₹{pricing.total.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -291,10 +305,12 @@ export default function OrderCheckout() {
 
                   <button
                     onClick={handlePlaceOrder}
-                    disabled={!agreeToCancellation || isPlacingOrder}
+                    disabled={
+                      !agreeToCancellation || isPlacingOrder || orderLoading
+                    }
                     className="w-full bg-gray-800 text-white py-3 px-4 rounded-md font-semibold hover:bg-gray-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2"
                   >
-                    {isPlacingOrder ? (
+                    {isPlacingOrder || orderLoading ? (
                       <>
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         <span>Processing...</span>
