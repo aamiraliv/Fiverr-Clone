@@ -109,7 +109,7 @@ export default function OrderCheckout() {
         setTimeout(() => {
           navigate(`/checkout/payment/${id}/${resultAction.payload.id}`);
           window.location.reload();
-        }, 1000);
+        }, 500);
       } else {
         const errorMessage =
           resultAction.payload?.message || "Failed to create order";

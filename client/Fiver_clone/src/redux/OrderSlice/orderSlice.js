@@ -2,16 +2,16 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../../service/api";
 
 const INITAIL_STATE = {
-   isPlacingOrder : false,
-   placeOrderError : null,
-   currentOrder : null,
+  isPlacingOrder: false,
+  placeOrderError: null,
+  currentOrder: null,
 
-   isProcessingPayment : false,
-   paymentError : null,
-   paymentSuccess : false,
+  isProcessingPayment: false,
+  paymentError: null,
+  paymentSuccess: false,
 
-   orderHistory : [],
-   loading : false,
+  orderHistory: [],
+  loading: false,
 };
 
 export const placeOrder = createAsyncThunk(
@@ -32,7 +32,7 @@ export const getOrderById = createAsyncThunk(
   "order/getOrderById",
   async (orderId, thunkAPI) => {
     try {
-      const response = await api.get(`/order/${orderId}`,);
+      const response = await api.get(`/order/${orderId}`);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -42,11 +42,13 @@ export const getOrderById = createAsyncThunk(
   }
 );
 
-export const confirmOrderPayment  = createAsyncThunk(
+export const confirmOrderPayment = createAsyncThunk(
   "order/confirmOrderPayment ",
-  async ({orderId , paymentIntentId }, thunkAPI) => {
+  async ({ orderId, paymentIntentId }, thunkAPI) => {
     try {
-      const response = await api.post(`/order/confirm/${orderId}`, paymentIntentId);
+      const response = await api.post(`/order/confirm/${orderId}`, {
+        paymentIntentId,
+      });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(

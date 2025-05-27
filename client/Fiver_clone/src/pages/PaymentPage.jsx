@@ -39,62 +39,172 @@ function OrderSuccess({ gig, freelancer, order }) {
     order,
   });
 
-  const [showConfetti, setShowConfetti] = useState(true);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowConfetti(false), 3000);
+    // Trigger success animation after component mounts
+    const timer = setTimeout(() => setShowSuccessAnimation(true), 200);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50 relative overflow-hidden">
-      {/* Animated Background Elements */}
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-blue-50">
+      {/* Subtle Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-32 w-96 h-96 bg-gradient-to-br from-emerald-200/30 to-blue-200/30 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-32 w-96 h-96 bg-gradient-to-tr from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-br from-emerald-100/20 to-blue-100/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-tr from-purple-100/20 to-pink-100/20 rounded-full blur-3xl"></div>
       </div>
 
-      {showConfetti && (
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute animate-bounce"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${2 + Math.random() * 2}s`,
-              }}
-            >
-              <Sparkles className="w-4 h-4 text-yellow-400" />
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4 lg:p-8">
+        {/* Desktop Layout (Landscape) */}
+        <div className="hidden lg:block w-full max-w-6xl">
+          <div className="grid grid-cols-2 gap-12 items-center">
+            {/* Left Side - Success Animation */}
+            <div className="text-center">
+              <div className="relative mb-8">
+                <div className={`w-32 h-32 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mx-auto shadow-2xl transition-all duration-1000 ${
+                  showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
+                }`}>
+                  <CheckCircle2 className={`w-16 h-16 text-white transition-all duration-1000 delay-300 ${
+                    showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+                  }`} />
+                </div>
+                <div className={`absolute -top-4 -right-4 transition-all duration-1000 delay-500 ${
+                  showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+                }`}>
+                  <Trophy className="w-12 h-12 text-yellow-500" />
+                </div>
+              </div>
+              
+              <h1 className={`text-5xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-4 transition-all duration-1000 delay-700 ${
+                showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              }`}>
+                Payment Successful!
+              </h1>
+              <p className={`text-gray-600 text-xl transition-all duration-1000 delay-900 ${
+                showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+              }`}>
+                🎉 Your order is confirmed and the freelancer has been notified
+              </p>
             </div>
-          ))}
+
+            {/* Right Side - Order Details */}
+            <div className={`transition-all duration-1000 delay-1100 ${
+              showSuccessAnimation ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
+            }`}>
+              <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
+                {/* Order Details Card */}
+                <div className="bg-gradient-to-r from-gray-50 to-blue-50/50 rounded-2xl p-6 mb-8 border border-gray-100">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="relative">
+                      <img
+                        src={freelancer?.picture || "/api/placeholder/50/50"}
+                        alt={freelancer?.username || "Freelancer"}
+                        className="w-16 h-16 rounded-full object-cover ring-2 ring-emerald-200"
+                      />
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                    </div>
+                    <div className="text-left flex-1">
+                      <p className="font-semibold text-gray-900 flex items-center gap-2 text-lg">
+                        {freelancer?.username || "Unknown Freelancer"}
+                        <Star className="w-5 h-5 text-yellow-500 fill-current" />
+                      </p>
+                      <p className="text-gray-600 line-clamp-2">
+                        {gig?.title || "Service"}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
+                        ₹{gig?.price || "0"}
+                      </p>
+                      <p className="text-sm text-gray-500">Total paid</p>
+                    </div>
+                  </div>
+
+                  {/* Order Info */}
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                    <div className="text-center">
+                      <p className="text-sm text-gray-500 mb-1">Order ID</p>
+                      <p className="font-mono text-sm font-semibold">
+                        #{order?.id?.toString().slice(-6) || "ORD-" + Date.now().toString().slice(-6)}
+                      </p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-sm text-gray-500 mb-1">Delivery</p>
+                      <p className="text-sm font-semibold flex items-center justify-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        {gig?.deliveryTime || "3-5 days"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="space-y-4">
+                  <button
+                    onClick={() => (window.location.href = "/orders")}
+                    className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 px-6 rounded-2xl font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
+                  >
+                    <Zap className="w-5 h-5" />
+                    View My Orders
+                  </button>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <button className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                      <MessageCircle className="w-6 h-6 text-gray-600 group-hover:text-blue-600 transition-colors" />
+                      <span className="text-sm text-gray-600 group-hover:text-blue-600">Message</span>
+                    </button>
+                    <button className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                      <Heart className="w-6 h-6 text-gray-600 group-hover:text-red-500 transition-colors" />
+                      <span className="text-sm text-gray-600 group-hover:text-red-500">Save</span>
+                    </button>
+                    <button className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
+                      <Share2 className="w-6 h-6 text-gray-600 group-hover:text-green-600 transition-colors" />
+                      <span className="text-sm text-gray-600 group-hover:text-green-600">Share</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <div className="max-w-lg w-full">
-          {/* Success Card */}
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 text-center relative overflow-hidden">
-            {/* Header with animated icon */}
-            <div className="relative mb-8">
-              <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg animate-pulse">
-                <CheckCircle2 className="w-10 h-10 text-white" />
+        {/* Mobile Layout (Portrait) */}
+        <div className="block lg:hidden w-full max-w-lg">
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-6 text-center relative overflow-hidden">
+            {/* Success Animation */}
+            <div className="relative mb-6">
+              <div className={`w-20 h-20 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg transition-all duration-1000 ${
+                showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
+              }`}>
+                <CheckCircle2 className={`w-10 h-10 text-white transition-all duration-1000 delay-300 ${
+                  showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+                }`} />
               </div>
-              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2">
-                <Trophy className="w-8 h-8 text-yellow-500 animate-bounce" />
+              <div className={`absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 transition-all duration-1000 delay-500 ${
+                showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+              }`}>
+                <Trophy className="w-8 h-8 text-yellow-500" />
               </div>
             </div>
 
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3">
+            <h1 className={`text-3xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3 transition-all duration-1000 delay-700 ${
+              showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            }`}>
               Payment Successful!
             </h1>
-            <p className="text-gray-600 mb-8 text-lg">
+            <p className={`text-gray-600 mb-6 text-lg transition-all duration-1000 delay-900 ${
+              showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            }`}>
               🎉 Your order is confirmed and the freelancer has been notified
             </p>
 
             {/* Order Details Card */}
-            <div className="bg-gradient-to-r from-gray-50 to-blue-50/50 rounded-2xl p-6 mb-8 border border-gray-100">
+            <div className={`bg-gradient-to-r from-gray-50 to-blue-50/50 rounded-2xl p-6 mb-6 border border-gray-100 transition-all duration-1000 delay-1100 ${
+              showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            }`}>
               <div className="flex items-center gap-4 mb-4">
                 <div className="relative">
                   <img
@@ -128,9 +238,7 @@ function OrderSuccess({ gig, freelancer, order }) {
                 <div className="text-center">
                   <p className="text-xs text-gray-500 mb-1">Order ID</p>
                   <p className="font-mono text-sm font-semibold">
-                    #
-                    {order?.id?.toString().slice(-6) ||
-                      "ORD-" + Date.now().toString().slice(-6)}
+                    #{order?.id?.toString().slice(-6) || "ORD-" + Date.now().toString().slice(-6)}
                   </p>
                 </div>
                 <div className="text-center">
@@ -144,7 +252,9 @@ function OrderSuccess({ gig, freelancer, order }) {
             </div>
 
             {/* Action Buttons */}
-            <div className="space-y-3">
+            <div className={`space-y-3 transition-all duration-1000 delay-1300 ${
+              showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            }`}>
               <button
                 onClick={() => (window.location.href = "/orders")}
                 className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 px-6 rounded-2xl font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
@@ -156,41 +266,36 @@ function OrderSuccess({ gig, freelancer, order }) {
               <div className="grid grid-cols-3 gap-3">
                 <button className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
                   <MessageCircle className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
-                  <span className="text-xs text-gray-600 group-hover:text-blue-600">
-                    Message
-                  </span>
+                  <span className="text-xs text-gray-600 group-hover:text-blue-600">Message</span>
                 </button>
                 <button className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
                   <Heart className="w-5 h-5 text-gray-600 group-hover:text-red-500 transition-colors" />
-                  <span className="text-xs text-gray-600 group-hover:text-red-500">
-                    Save
-                  </span>
+                  <span className="text-xs text-gray-600 group-hover:text-red-500">Save</span>
                 </button>
                 <button className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
                   <Share2 className="w-5 h-5 text-gray-600 group-hover:text-green-600 transition-colors" />
-                  <span className="text-xs text-gray-600 group-hover:text-green-600">
-                    Share
-                  </span>
+                  <span className="text-xs text-gray-600 group-hover:text-green-600">Share</span>
                 </button>
               </div>
             </div>
 
             {/* Success Message */}
-            <div className="mt-6 p-4 bg-emerald-50 rounded-xl border border-emerald-200">
+            <div className={`mt-6 p-4 bg-emerald-50 rounded-xl border border-emerald-200 transition-all duration-1000 delay-1500 ${
+              showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            }`}>
               <p className="text-sm text-emerald-700">
-                <strong>What's next?</strong> The freelancer will start working
-                on your project and keep you updated on progress.
+                <strong>What's next?</strong> The freelancer will start working on your project and keep you updated on progress.
               </p>
             </div>
           </div>
 
           {/* Additional Info */}
-          <div className="mt-6 text-center">
+          <div className={`mt-6 text-center transition-all duration-1000 delay-1700 ${
+            showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+          }`}>
             <p className="text-sm text-gray-500">
               Need help?{" "}
-              <button className="text-blue-600 hover:underline">
-                Contact Support
-              </button>
+              <button className="text-blue-600 hover:underline">Contact Support</button>
             </p>
           </div>
         </div>
@@ -198,6 +303,7 @@ function OrderSuccess({ gig, freelancer, order }) {
     </div>
   );
 }
+
 
 function PaymentPage() {
   const { getbygigId: gig } = useSelector((state) => state.gig);
