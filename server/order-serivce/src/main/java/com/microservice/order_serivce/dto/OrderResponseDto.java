@@ -21,4 +21,5 @@ public class OrderResponseDto {
     private LocalDateTime updatedAt;
     private String paymentIntentId;
     private String paymentStatus;
+    private String clientSecret;
 }

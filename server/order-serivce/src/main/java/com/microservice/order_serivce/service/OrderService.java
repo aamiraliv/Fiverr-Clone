@@ -89,6 +89,7 @@ public class OrderService {
         PaymentIntent paymentIntent = paymentService.createPaymentIntent(dto.getPrice(), "usd", order.getId(), dto.getSellerId());
         order.setPaymentIntentId(paymentIntent.getId());
         order.setPaymentStatus(paymentIntent.getStatus());
+        order.setClientSecret(paymentIntent.getClientSecret());
 
         return orderRepository.save(order);
 
@@ -104,8 +105,12 @@ public class OrderService {
 
         if ("succeeded".equals(paymentStatus)) {
             order.setStatus(OrderStatus.COMPLETED);
-        } else {
+        }else if ("requires_payment_method".equals(paymentStatus)) {
+            order.setStatus(OrderStatus.PENDING);
+            throw new RuntimeException("Payment method required. Please provide a valid payment method.");
+        }else {
             order.setStatus(OrderStatus.CANCELLED);
+            throw new RuntimeException("Payment failed with status: " + paymentStatus);
         }
         return orderRepository.save(order);
     }

@@ -1,12 +1,23 @@
-import { ChevronLeft, ChevronRight, Heart, Repeat2, Timer, BarChart2, MousePointerClick, Package, AlertCircle } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  Repeat2,
+  Timer,
+  BarChart2,
+  MousePointerClick,
+  Package,
+  AlertCircle,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getGigByGigId } from "../redux/GigSlice/gigSlice";
 import { MoonLoader } from "react-spinners";
 import { getFreelancerDetails } from "../redux/AuthSlice/authSlice";
 
 export default function GigPreview() {
+  const navigate = useNavigate();
   const [mediaItems, setMediaItems] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showOrderCard, setShowOrderCard] = useState(false); // For mobile view
@@ -105,7 +116,9 @@ export default function GigPreview() {
       {/* Main content */}
       <div className=" lg:mr-[450px] md:mr-0 sm:mr-0">
         <div className="w-full p-4 md:p-6 lg:p-8 flex flex-col gap-4">
-          <h1 className="text-xl md:text-2xl font-bold mt-2 md:mt-4">{getbygigId.title}</h1>
+          <h1 className="text-xl md:text-2xl font-bold mt-2 md:mt-4">
+            {getbygigId.title}
+          </h1>
           <div className="flex items-center gap-2">
             <img
               src={freelancer?.picture}
@@ -116,7 +129,7 @@ export default function GigPreview() {
               {freelancer?.username}
             </h1>
           </div>
-          
+
           {/* Media content */}
           <div>
             {mediaItems.length > 0 && (
@@ -202,7 +215,7 @@ export default function GigPreview() {
               </div>
             )}
           </div>
-          
+
           {/* About this gig */}
           <div className="flex flex-col gap-2 md:gap-3">
             <h1 className="text-lg md:text-xl text-gray-800 font-semibold border-t border-gray-300 pt-3 md:pt-4">
@@ -212,7 +225,7 @@ export default function GigPreview() {
               {getbygigId.description}
             </p>
           </div>
-          
+
           {/* Tools Used */}
           <div className="flex flex-col gap-2 md:gap-3">
             <h1 className="text-lg md:text-xl text-gray-800 font-semibold border-t border-gray-300 pt-3 md:pt-4">
@@ -228,23 +241,27 @@ export default function GigPreview() {
               ))}
             </div>
           </div>
-          
+
           {/* Delivery & Revisions */}
           <div className="flex flex-col gap-2 md:gap-3">
             {getbygigId.deliveryTime && (
               <div className="text-gray-900 flex items-center gap-2">
                 <Timer size={16} className="md:w-5 md:h-5" />
-                <p className="text-sm md:text-base">{getbygigId.deliveryTime}-day delivery</p>
+                <p className="text-sm md:text-base">
+                  {getbygigId.deliveryTime}-day delivery
+                </p>
               </div>
             )}
             {getbygigId.revisions && (
               <div className="text-gray-900 flex items-center gap-2">
                 <Repeat2 size={16} className="md:w-5 md:h-5" />
-                <p className="text-sm md:text-base">{getbygigId.revisions} Revisions</p>
+                <p className="text-sm md:text-base">
+                  {getbygigId.revisions} Revisions
+                </p>
               </div>
             )}
           </div>
-          
+
           {/* Gig Statistics */}
           <div className="flex flex-col gap-2 md:gap-3 mt-2">
             <h1 className="text-lg md:text-xl text-gray-800 font-semibold border-t border-gray-300 pt-3 md:pt-4">
@@ -254,48 +271,62 @@ export default function GigPreview() {
               <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
                 <div className="flex items-center gap-2">
                   <BarChart2 size={16} className="text-blue-500" />
-                  <p className="text-sm font-medium text-gray-700">Impressions</p>
+                  <p className="text-sm font-medium text-gray-700">
+                    Impressions
+                  </p>
                 </div>
-                <p className="text-xl font-bold mt-1">{getbygigId.impressions || 0}</p>
+                <p className="text-xl font-bold mt-1">
+                  {getbygigId.impressions || 0}
+                </p>
               </div>
-              
+
               <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
                 <div className="flex items-center gap-2">
                   <MousePointerClick size={16} className="text-green-500" />
                   <p className="text-sm font-medium text-gray-700">Clicks</p>
                 </div>
-                <p className="text-xl font-bold mt-1">{getbygigId.clicks || 0}</p>
+                <p className="text-xl font-bold mt-1">
+                  {getbygigId.clicks || 0}
+                </p>
               </div>
-              
+
               <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
                 <div className="flex items-center gap-2">
                   <Package size={16} className="text-purple-500" />
                   <p className="text-sm font-medium text-gray-700">Orders</p>
                 </div>
-                <p className="text-xl font-bold mt-1">{getbygigId.orders || 0}</p>
+                <p className="text-xl font-bold mt-1">
+                  {getbygigId.orders || 0}
+                </p>
               </div>
-              
+
               <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200">
                 <div className="flex items-center gap-2">
                   <AlertCircle size={16} className="text-red-500" />
-                  <p className="text-sm font-medium text-gray-700">Cancellation</p>
+                  <p className="text-sm font-medium text-gray-700">
+                    Cancellation
+                  </p>
                 </div>
                 <p className="text-xl font-bold mt-1">
-                  {getbygigId.cancellationRate ? `${(getbygigId.cancellationRate * 100).toFixed(1)}%` : '0.0%'}
+                  {getbygigId.cancellationRate
+                    ? `${(getbygigId.cancellationRate * 100).toFixed(1)}%`
+                    : "0.0%"}
                 </p>
               </div>
             </div>
-            
+
             <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 mt-2">
               <div className="flex justify-between items-center">
                 <p className="text-sm font-medium text-gray-700">Status</p>
-                <div className={`px-2 py-1 rounded text-xs font-medium ${
-                  getbygigId.status === "ACTIVE" 
-                    ? "bg-green-100 text-green-700" 
-                    : getbygigId.status === "PAUSED" 
+                <div
+                  className={`px-2 py-1 rounded text-xs font-medium ${
+                    getbygigId.status === "ACTIVE"
+                      ? "bg-green-100 text-green-700"
+                      : getbygigId.status === "PAUSED"
                       ? "bg-yellow-100 text-yellow-700"
                       : "bg-red-100 text-red-700"
-                }`}>
+                  }`}
+                >
                   {getbygigId.status || "ACTIVE"}
                 </div>
               </div>
@@ -309,10 +340,13 @@ export default function GigPreview() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-lg font-bold text-green-600">
-              ₹{typeof getbygigId.price === "number" ? getbygigId.price.toFixed(2) : getbygigId.price}
+              ₹
+              {typeof getbygigId.price === "number"
+                ? getbygigId.price.toFixed(2)
+                : getbygigId.price}
             </p>
           </div>
-          <button 
+          <button
             onClick={toggleOrderCard}
             className="px-4 py-2 bg-gray-800 rounded-sm text-white font-semibold hover:bg-gray-700 transition-colors duration-200"
           >
@@ -331,14 +365,14 @@ export default function GigPreview() {
                 ✕
               </button>
             </div>
-            
+
             <div className="flex w-full justify-end mb-2">
               <Heart
                 size={20}
                 className="text-gray-500 hover:text-red-500 transition-colors duration-200"
               />
             </div>
-            
+
             <div className="flex justify-between items-start mb-3">
               <h1 className="text-lg font-bold">
                 {removePrefixFromName(getbygigId.title)}
@@ -354,11 +388,13 @@ export default function GigPreview() {
                 </div>
               )}
             </div>
-            
+
             {getbygigId.description && (
-              <p className="text-gray-500 text-sm mb-4">{getbygigId.description}</p>
+              <p className="text-gray-500 text-sm mb-4">
+                {getbygigId.description}
+              </p>
             )}
-            
+
             <div className="flex text-sm font-semibold gap-4 border-t pt-4 mb-4">
               {getbygigId.deliveryTime && (
                 <div className="text-gray-900 flex items-center gap-2">
@@ -373,7 +409,7 @@ export default function GigPreview() {
                 </div>
               )}
             </div>
-            
+
             <button className="w-full p-3 bg-gray-800 rounded-sm text-white font-semibold hover:bg-gray-700 transition-colors duration-200">
               Request to order
             </button>
@@ -381,7 +417,6 @@ export default function GigPreview() {
         </div>
       )}
 
-      {/* Desktop view - fixed order card */}
       <div className="hidden lg:flex fixed right-10 top-25 z-10 min-h-screen w-full md:w-96 items-start justify-end">
         <div className="w-full md:w-96 bg-white h-full overflow-y-auto border border-gray-300 rounded-lg shadow-lg">
           <div className="p-6 flex flex-col gap-4">
@@ -423,7 +458,10 @@ export default function GigPreview() {
                 </div>
               )}
             </div>
-            <button className="w-full p-4 bg-gray-800 rounded-sm text-white font-semibold hover:bg-gray-700 transition-colors duration-200">
+            <button
+              onClick={() => navigate(`/checkout/${id}`)}
+              className="w-full p-4 bg-gray-800 rounded-sm text-white font-semibold hover:bg-gray-700 transition-colors duration-200"
+            >
               Request to order
             </button>
           </div>

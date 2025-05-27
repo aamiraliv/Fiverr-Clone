@@ -11,6 +11,7 @@ import { Dashboard } from "./pages/Dashboard";
 import DashboardPage from "./pages/DashboardPage";
 import Gig from "./pages/Gig";
 import GigPreview from "./pages/GigPreview";
+import OrderCheckout from "./pages/OrderCheckout";
 
 
 const router = createBrowserRouter([
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
           {
             path: "/gigpreview/:id",
             element: <GigPreview />,
+          },
+          {
+            path: "/checkout/:id",
+            element: <OrderCheckout />
           },
           {
             element: <Dashboard />,

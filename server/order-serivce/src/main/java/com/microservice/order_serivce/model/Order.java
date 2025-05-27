@@ -31,6 +31,7 @@ public class Order {
 
     private String paymentIntentId;
     private String paymentStatus;
+    private String clientSecret;
 
     private LocalDateTime createdAt;
 
