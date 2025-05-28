@@ -11,14 +11,10 @@ import {
   Shield,
   Check,
   Star,
-  Calendar,
   Clock,
   User,
   MessageCircle,
-  Download,
   Heart,
-  Share2,
-  Sparkles,
   CheckCircle2,
   Trophy,
   Zap,
@@ -32,8 +28,9 @@ import {
 import { useParams } from "react-router-dom";
 import { getGigByGigId } from "../redux/GigSlice/gigSlice";
 import { getFreelancerDetails } from "../redux/AuthSlice/authSlice";
+import SiteLogo from "../assets/Aiverr_logo.png";
 
-const generateInvoiceHTML = (gig, freelancer, order) => {
+const generateInvoiceHTML = (gig, freelancer, order, userDetails) => {
   const currentDate = new Date().toLocaleDateString("en-GB");
   const orderId =
     order?.id?.toString().slice(-6) || "ORD-" + Date.now().toString().slice(-6);
@@ -49,281 +46,685 @@ const generateInvoiceHTML = (gig, freelancer, order) => {
     <html>
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Invoice #${orderId}</title>
         <style>
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            * {
                 margin: 0;
-                padding: 40px;
-                background: #f8f9fa;
-                color: #333;
+                padding: 0;
+                box-sizing: border-box;
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
+            
+            html, body {
+                width: 100%;
+                height: 100%;
+            }
+            
+            body {
+                font-family: 'Arial', 'Helvetica', sans-serif;
+                background: #ffffff;
+                color: #333333;
+                line-height: 1.5;
+                font-size: 14px;
+            }
+            
             .invoice-container {
-                max-width: 800px;
+                width: 210mm;
+                min-height: 297mm;
                 margin: 0 auto;
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                background: #ffffff;
+                position: relative;
+                padding: 0;
+            }
+            
+            /* Header Section */
+            .header {
+                background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+                color: white;
+                padding: 30px;
+                position: relative;
                 overflow: hidden;
             }
-            .header {
-                background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-                color: white;
-                padding: 40px;
-                position: relative;
-            }
-            .header::after {
+            
+            .header::before {
                 content: '';
                 position: absolute;
-                bottom: -20px;
-                right: 0;
+                top: -50%;
+                right: -20%;
                 width: 200px;
                 height: 200px;
-                background: rgba(255,255,255,0.1);
+                background: rgba(255, 255, 255, 0.1);
                 border-radius: 50%;
+                transform: rotate(45deg);
             }
-            .logo {
-                font-size: 24px;
-                font-weight: bold;
-                margin-bottom: 10px;
-            }
-            .invoice-title {
-                font-size: 48px;
-                font-weight: bold;
-                margin: 0;
-                text-align: right;
+            
+            .header-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
                 position: relative;
                 z-index: 1;
             }
-            .content {
-                padding: 40px;
+            
+            .company-section {
+                flex: 1;
             }
-            .details-grid {
+            
+            .company-logo {
+                width: 60px;
+                height: 60px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 24px;
+                margin-bottom: 15px;
+                backdrop-filter: blur(10px);
+            }
+            
+            .company-name {
+                font-size: 28px;
+                font-weight: bold;
+                margin-bottom: 5px;
+                letter-spacing: -0.5px;
+            }
+            
+            .company-tagline {
+                font-size: 14px;
+                opacity: 0.9;
+                font-weight: 300;
+            }
+            
+            .invoice-section {
+                text-align: right;
+                flex: 1;
+            }
+            
+            .invoice-title {
+                font-size: 48px;
+                font-weight: 900;
+                letter-spacing: -2px;
+                margin-bottom: 10px;
+                opacity: 0.95;
+            }
+            
+            .invoice-number {
+                font-size: 16px;
+                opacity: 0.8;
+                margin-bottom: 5px;
+            }
+            
+            .invoice-date {
+                font-size: 16px;
+                opacity: 0.8;
+            }
+            
+            /* Main Content */
+            .main-content {
+                padding: 40px 30px;
+            }
+            
+            /* Info Cards Section */
+            .info-cards {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
-                gap: 40px;
+                gap: 30px;
                 margin-bottom: 40px;
             }
-            .section-title {
+            
+            .info-card {
+                background: #f8fafc;
+                border-radius: 12px;
+                padding: 25px;
+                border-left: 4px solid #2563eb;
+                position: relative;
+            }
+            
+            .info-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 40px;
+                height: 40px;
+                background: linear-gradient(135deg, #2563eb20, #1d4ed820);
+                border-radius: 0 12px 0 40px;
+            }
+            
+            .card-title {
                 font-size: 18px;
-                font-weight: bold;
-                color: #059669;
+                font-weight: 700;
+                color: #1e293b;
                 margin-bottom: 15px;
                 text-transform: uppercase;
-                letter-spacing: 1px;
+                letter-spacing: 0.5px;
             }
-            .detail-item {
+            
+            .card-row {
+                display: flex;
+                justify-content: space-between;
                 margin-bottom: 8px;
+                align-items: center;
             }
-            .detail-label {
-                font-weight: 600;
-                color: #6b7280;
+            
+            .card-label {
+                font-size: 13px;
+                color: #64748b;
+                font-weight: 500;
+            }
+            
+            .card-value {
                 font-size: 14px;
+                color: #1e293b;
+                font-weight: 600;
             }
-            .detail-value {
-                font-size: 16px;
-                color: #111827;
+            
+            .provider-info {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-top: 15px;
+                padding: 15px;
+                background: white;
+                border-radius: 8px;
+                border: 1px solid #e2e8f0;
             }
-            .items-table {
+            
+            .provider-avatar {
+                width: 45px;
+                height: 45px;
+                background: linear-gradient(135deg, #2563eb, #1d4ed8);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: bold;
+                font-size: 18px;
+            }
+            
+            .provider-details h4 {
+                font-size: 15px;
+                font-weight: 600;
+                color: #1e293b;
+                margin-bottom: 2px;
+            }
+            
+            .provider-details p {
+                font-size: 13px;
+                color: #64748b;
+            }
+            
+            /* Services Table */
+            .services-section {
+                margin-bottom: 30px;
+            }
+            
+            .section-title {
+                font-size: 20px;
+                font-weight: 700;
+                color: #1e293b;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .section-title::before {
+                content: '';
+                width: 4px;
+                height: 20px;
+                background: linear-gradient(to bottom, #2563eb, #1d4ed8);
+                border-radius: 2px;
+            }
+            
+            .services-table {
                 width: 100%;
                 border-collapse: collapse;
-                margin-bottom: 30px;
-                border-radius: 8px;
+                border-radius: 12px;
                 overflow: hidden;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                background: white;
             }
-            .items-table th {
-                background: #059669;
+            
+            .services-table thead {
+                background: linear-gradient(135deg, #1e293b, #334155);
+            }
+            
+            .services-table th {
                 color: white;
-                padding: 15px;
+                padding: 18px 20px;
                 text-align: left;
                 font-weight: 600;
+                font-size: 14px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
-            .items-table td {
-                padding: 15px;
-                border-bottom: 1px solid #e5e7eb;
+            
+            .services-table td {
+                padding: 20px;
+                border-bottom: 1px solid #e2e8f0;
+                vertical-align: top;
             }
-            .items-table tbody tr:hover {
-                background: #f9fafb;
+            
+            .services-table tbody tr:hover {
+                background: #f8fafc;
             }
-            .totals {
-                background: #f8f9fa;
-                padding: 30px;
-                border-radius: 8px;
-                margin-top: 20px;
+            
+            .services-table tbody tr:last-child td {
+                border-bottom: none;
             }
+            
+            .service-main {
+                font-size: 15px;
+                font-weight: 600;
+                color: #1e293b;
+                margin-bottom: 4px;
+            }
+            
+            .service-desc {
+                font-size: 13px;
+                color: #64748b;
+                line-height: 1.4;
+            }
+            
+            .amount-cell {
+                text-align: right;
+                font-weight: 700;
+                color: #1e293b;
+                font-size: 15px;
+            }
+            
+            .qty-cell {
+                text-align: center;
+                font-weight: 600;
+                color: #1e293b;
+            }
+            
+            /* Totals Section */
+            .totals-section {
+                background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+                border-radius: 12px;
+                padding: 25px;
+                margin-bottom: 30px;
+                border: 1px solid #e2e8f0;
+            }
+            
             .total-row {
                 display: flex;
                 justify-content: space-between;
-                margin-bottom: 10px;
-                padding: 5px 0;
+                align-items: center;
+                padding: 12px 0;
+                font-size: 15px;
             }
+            
             .total-label {
+                color: #64748b;
                 font-weight: 500;
             }
+            
             .total-value {
-                font-weight: 600;
+                font-weight: 700;
+                color: #1e293b;
             }
-            .grand-total {
-                border-top: 2px solid #059669;
-                padding-top: 15px;
-                margin-top: 15px;
-                font-size: 20px;
-                font-weight: bold;
-                color: #059669;
+            
+            .subtotal-row {
+                border-bottom: 1px solid #e2e8f0;
             }
-            .notes {
-                background: #ecfdf5;
-                border-left: 4px solid #059669;
-                padding: 20px;
-                margin-top: 30px;
-                border-radius: 0 8px 8px 0;
+            
+            .tax-row {
+                border-bottom: 2px solid #2563eb;
+                margin-bottom: 15px;
             }
-            .notes-title {
-                font-weight: bold;
-                margin-bottom: 10px;
-                color: #059669;
-            }
-            .footer {
-                background: #1f2937;
+            
+            .grand-total-row {
+                background: linear-gradient(135deg, #2563eb, #1d4ed8);
+                margin: 15px -25px -25px -25px;
+                padding: 20px 25px;
+                border-radius: 0 0 12px 12px;
                 color: white;
-                padding: 30px;
-                text-align: center;
+                font-size: 18px;
             }
+            
+            .grand-total-row .total-label,
+            .grand-total-row .total-value {
+                color: white;
+                font-weight: 700;
+            }
+            
+            /* Notes Section */
+            .notes-section {
+                background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
+                border-radius: 12px;
+                padding: 25px;
+                border-left: 4px solid #22c55e;
+                margin-bottom: 30px;
+            }
+            
+            .notes-title {
+                font-size: 16px;
+                font-weight: 700;
+                color: #15803d;
+                margin-bottom: 15px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            
+            .note-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                margin-bottom: 10px;
+                font-size: 14px;
+                color: #166534;
+                line-height: 1.5;
+            }
+            
+            .note-icon {
+                font-size: 16px;
+                margin-top: 2px;
+                flex-shrink: 0;
+            }
+            
+            /* Footer */
+            .footer {
+                background: linear-gradient(135deg, #1e293b, #334155);
+                color: white;
+                padding: 25px 30px;
+                margin-top: auto;
+            }
+            
             .footer-content {
                 display: flex;
-                justify-content: space-around;
+                justify-content: center;
                 align-items: center;
+                gap: 40px;
                 flex-wrap: wrap;
-                gap: 20px;
             }
+            
+            .footer-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            
+            .footer-icon {
+                font-size: 16px;
+                opacity: 0.8;
+            }
+            
+            /* Print Styles */
             @media print {
-                body { background: white; padding: 0; }
-                .invoice-container { box-shadow: none; }
+                @page {
+                    size: A4;
+                    margin: 0;
+                }
+                
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                
+                body {
+                    background: white !important;
+                    font-size: 12px;
+                }
+                
+                .invoice-container {
+                    width: 100% !important;
+                    max-width: none !important;
+                    margin: 0 !important;
+                    box-shadow: none !important;
+                    border-radius: 0 !important;
+                    page-break-inside: avoid;
+                }
+                
+                .header {
+                    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+                    color: white !important;
+                    -webkit-print-color-adjust: exact !important;
+                }
+                
+                .services-table thead {
+                    background: linear-gradient(135deg, #1e293b, #334155) !important;
+                    -webkit-print-color-adjust: exact !important;
+                }
+                
+                .services-table th {
+                    color: white !important;
+                }
+                
+                .grand-total-row {
+                    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+                    color: white !important;
+                    -webkit-print-color-adjust: exact !important;
+                }
+                
+                .footer {
+                    background: linear-gradient(135deg, #1e293b, #334155) !important;
+                    color: white !important;
+                    -webkit-print-color-adjust: exact !important;
+                }
+                
+                .info-cards {
+                    page-break-inside: avoid;
+                }
+                
+                .services-table {
+                    page-break-inside: avoid;
+                }
+                
+                .totals-section {
+                    page-break-inside: avoid;
+                }
+            }
+            
+            /* Mobile Responsive */
+            @media (max-width: 768px) {
+                .invoice-container {
+                    width: 100%;
+                    margin: 0;
+                    border-radius: 0;
+                }
+                
+                .header {
+                    padding: 20px;
+                }
+                
+                .header-content {
+                    flex-direction: column;
+                    gap: 20px;
+                    text-align: center;
+                }
+                
+                .invoice-title {
+                    font-size: 36px;
+                }
+                
+                .main-content {
+                    padding: 20px;
+                }
+                
+                .info-cards {
+                    grid-template-columns: 1fr;
+                    gap: 20px;
+                }
+                
+                .services-table {
+                    font-size: 12px;
+                }
+                
+                .services-table th,
+                .services-table td {
+                    padding: 12px 8px;
+                }
+                
+                .footer-content {
+                    flex-direction: column;
+                    gap: 15px;
+                }
             }
         </style>
     </head>
     <body>
         <div class="invoice-container">
+            <!-- Header -->
             <div class="header">
-                <div class="logo">🚀 FreelanceHub</div>
-                <h1 class="invoice-title">INVOICE</h1>
+                <div class="header-content">
+                    <div class="company-section">
+                        <div class="company-logo">
+                        <img src="${SiteLogo}" alt="Aiverr Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" />
+                        </div>
+                        <div class="company-name">Aiverr</div>
+                        <div class="company-tagline">Professional Freelance Services</div>
+                    </div>
+                    <div class="invoice-section">
+                        <div class="invoice-title">INVOICE</div>
+                        <div class="invoice-number">Number: ${orderId}</div>
+                        <div class="invoice-date">Date: ${currentDate}</div>
+                    </div>
+                </div>
             </div>
             
-            <div class="content">
-                <div class="details-grid">
-                    <div>
-                        <div class="section-title">Invoice To</div>
-                        <div class="detail-item">
-                            <div class="detail-label">Client</div>
-                            <div class="detail-value">Mr. Client</div>
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Info Cards -->
+                <div class="info-cards">
+                    <div class="info-card">
+                        <div class="card-title">Payable To</div>
+                        <div class="card-row">
+                            <span class="card-label">Client Name</span>
+                            <span class="card-value">${userDetails?.username || "Valued Client"}</span>
                         </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Email</div>
-                            <div class="detail-value">client@example.com</div>
+                        <div class="card-row">
+                            <span class="card-label">Email</span>
+                            <span class="card-value">${userDetails?.email || "client@example.com"}</span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">Company</span>
+                            <span class="card-value">${order?.clientCompany || "Individual Client"}</span>
+                        </div>
+                        <div class="card-row">
+                            <span class="card-label">Order ID</span>
+                            <span class="card-value">#${orderId}</span>
                         </div>
                     </div>
                     
-                    <div>
-                        <div class="section-title">Invoice Details</div>
-                        <div class="detail-item">
-                            <div class="detail-label">Invoice Number</div>
-                            <div class="detail-value">#${orderId}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Date</div>
-                            <div class="detail-value">${currentDate}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Order ID</div>
-                            <div class="detail-value">#${orderId}</div>
+                    <div class="info-card">
+                        <div class="card-title">Service Provider</div>
+                        <div class="provider-info">
+                            <div class="provider-avatar">
+                                ${(freelancer?.picture || freelancer?.username || "F").charAt(0).toUpperCase()}
+                            </div>
+                            <div class="provider-details">
+                                <h4>${freelancer?.username || "Professional Freelancer"}</h4>
+                                <p>${freelancer?.email || "freelancer@aiverr.com"}</p>
+                                <p>${gig?.category || "Digital Services"}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="section">
-                    <div class="section-title">Service Provider</div>
-                    <div class="detail-item">
-                        <div class="detail-label">Freelancer</div>
-                        <div class="detail-value">${
-                          freelancer?.username || "Professional Freelancer"
-                        }</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Service Category</div>
-                        <div class="detail-value">${
-                          gig?.category || "Digital Services"
-                        }</div>
-                    </div>
+                
+                <!-- Services Table -->
+                <div class="services-section">
+                    <div class="section-title">Service Details</div>
+                    <table class="services-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50%;">Item Description</th>
+                                <th style="width: 10%;">Qty</th>
+                                <th style="width: 20%;">Price</th>
+                                <th style="width: 20%;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="service-main">${gig?.title || "Professional Service"}</div>
+                                    <div class="service-desc">${gig?.category || "Digital Service"} - Premium quality service delivered by experienced professional</div>
+                                </td>
+                                <td class="qty-cell">1</td>
+                                <td class="amount-cell">₹${gigPrice.toFixed(2)}</td>
+                                <td class="amount-cell">₹${gigPrice.toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="service-main">Platform Service Fee</div>
+                                    <div class="service-desc">Processing, security, and platform support (5%)</div>
+                                </td>
+                                <td class="qty-cell">1</td>
+                                <td class="amount-cell">₹${serviceFee.toFixed(2)}</td>
+                                <td class="amount-cell">₹${serviceFee.toFixed(2)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-
-                <table class="items-table">
-                    <thead>
-                        <tr>
-                            <th>Service Description</th>
-                            <th>Quantity</th>
-                            <th>Rate</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <strong>${
-                                  gig?.title || "Professional Service"
-                                }</strong><br>
-                                <small style="color: #6b7280;">${
-                                  gig?.category || "Digital Service"
-                                }</small>
-                            </td>
-                            <td>1</td>
-                            <td>₹${gigPrice.toFixed(2)}</td>
-                            <td>₹${gigPrice.toFixed(2)}</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <strong>Platform Service Fee</strong><br>
-                                <small style="color: #6b7280;">Processing & Support (5%)</small>
-                            </td>
-                            <td>1</td>
-                            <td>₹${serviceFee.toFixed(2)}</td>
-                            <td>₹${serviceFee.toFixed(2)}</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="totals">
-                    <div class="total-row">
-                        <span class="total-label">Subtotal:</span>
+                
+                <!-- Totals -->
+                <div class="totals-section">
+                    <div class="total-row subtotal-row">
+                        <span class="total-label">Sub Total</span>
                         <span class="total-value">₹${total.toFixed(2)}</span>
                     </div>
-                    <div class="total-row">
-                        <span class="total-label">GST (18%):</span>
+                    <div class="total-row tax-row">
+                        <span class="total-label">Tax (18% GST)</span>
                         <span class="total-value">₹${tax.toFixed(2)}</span>
                     </div>
-                    <div class="total-row grand-total">
-                        <span class="total-label">Grand Total:</span>
-                        <span class="total-value">₹${grandTotal.toFixed(
-                          2
-                        )}</span>
+                    <div class="total-row grand-total-row">
+                        <span class="total-label">Grand Total</span>
+                        <span class="total-value">₹${grandTotal.toFixed(2)}</span>
                     </div>
                 </div>
-
-                <div class="notes">
-                    <div class="notes-title">Payment Terms & Notes:</div>
-                    <p>✅ Payment has been successfully processed</p>
-                    <p>📋 Service delivery time: ${
-                      gig?.deliveryTime || "3-5 business days"
-                    }</p>
-                    <p>🔒 This transaction is secured and protected</p>
-                    <p>💬 For any queries, please contact our support team</p>
+                
+                <!-- Notes -->
+                <div class="notes-section">
+                    <div class="notes-title">
+                        <span class="note-icon">ℹ️</span>
+                        Payment & Service Information
+                    </div>
+                    <div class="note-item">
+                        <span class="note-icon"></span>
+                        <span>Payment has been successfully processed and confirmed through our secure payment gateway</span>
+                    </div>
+                    <div class="note-item">
+                        <span class="note-icon"></span>
+                        <span>Expected delivery timeline: ${gig?.deliveryTime || "3-5 business days"} from order confirmation</span>
+                    </div>
+                    <div class="note-item">
+                        <span class="note-icon"></span>
+                        <span>All transactions are secured with industry-standard encryption and security protocols</span>
+                    </div>
+                    <div class="note-item">
+                        <span class="note-icon"></span>
+                        <span>For any questions or support, please contact our customer service team available 24/7</span>
+                    </div>
                 </div>
             </div>
-
+            
+            <!-- Footer -->
             <div class="footer">
                 <div class="footer-content">
-                    <div>🌐 freelancehub.com</div>
-                    <div>📞 +91-123-456-7890</div>
-                    <div>✉️ support@freelancehub.com</div>
+                    <div class="footer-item">
+                        <span class="footer-icon"></span>
+                        <span>www.aiverr.com</span>
+                    </div>
+                    <div class="footer-item">
+                        <span class="footer-icon"></span>
+                        <span>+91-8891804826</span>
+                    </div>
+                    <div class="footer-item">
+                        <span class="footer-icon"></span>
+                        <span>support@aiverr.com</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -340,8 +741,7 @@ function OrderSuccess({ gig, freelancer, order }) {
   });
 
   const downloadInvoice = (gig, freelancer, order) => {
-    const invoiceHTML = generateInvoiceHTML(gig, freelancer, order);
-
+    const invoiceHTML = generateInvoiceHTML(gig, freelancer, order , userDetails);
     // Create a new window for printing
     const printWindow = window.open("", "_blank");
     printWindow.document.write(invoiceHTML);
@@ -353,14 +753,14 @@ function OrderSuccess({ gig, freelancer, order }) {
       printWindow.print();
 
       // Close the print window after printing (optional)
-      setTimeout(() => {
-        printWindow.close();
-      }, 1000);
+      // setTimeout(() => {
+      //   printWindow.close();
+      // }, 1000);
     };
   };
 
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
-
+  const { userDetails } = useSelector((state) => state.auth);
   useEffect(() => {
     // Trigger success animation after component mounts
     const timer = setTimeout(() => setShowSuccessAnimation(true), 200);
