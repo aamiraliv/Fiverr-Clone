@@ -43,693 +43,186 @@ const generateInvoiceHTML = (gig, freelancer, order, userDetails) => {
 
   return `
     <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Invoice #${orderId}</title>
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            
-            html, body {
-                width: 100%;
-                height: 100%;
-            }
-            
-            body {
-                font-family: 'Arial', 'Helvetica', sans-serif;
-                background: #ffffff;
-                color: #333333;
-                line-height: 1.5;
-                font-size: 14px;
-            }
-            
-            .invoice-container {
-                width: 210mm;
-                min-height: 297mm;
-                margin: 0 auto;
-                background: #ffffff;
-                position: relative;
-                padding: 0;
-            }
-            
-            /* Header Section */
-            .header {
-                background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-                color: white;
-                padding: 30px;
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .header::before {
-                content: '';
-                position: absolute;
-                top: -50%;
-                right: -20%;
-                width: 200px;
-                height: 200px;
-                background: rgba(255, 255, 255, 0.1);
-                border-radius: 50%;
-                transform: rotate(45deg);
-            }
-            
-            .header-content {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                position: relative;
-                z-index: 1;
-            }
-            
-            .company-section {
-                flex: 1;
-            }
-            
-            .company-logo {
-                width: 60px;
-                height: 60px;
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: bold;
-                font-size: 24px;
-                margin-bottom: 15px;
-                backdrop-filter: blur(10px);
-            }
-            
-            .company-name {
-                font-size: 28px;
-                font-weight: bold;
-                margin-bottom: 5px;
-                letter-spacing: -0.5px;
-            }
-            
-            .company-tagline {
-                font-size: 14px;
-                opacity: 0.9;
-                font-weight: 300;
-            }
-            
-            .invoice-section {
-                text-align: right;
-                flex: 1;
-            }
-            
-            .invoice-title {
-                font-size: 48px;
-                font-weight: 900;
-                letter-spacing: -2px;
-                margin-bottom: 10px;
-                opacity: 0.95;
-            }
-            
-            .invoice-number {
-                font-size: 16px;
-                opacity: 0.8;
-                margin-bottom: 5px;
-            }
-            
-            .invoice-date {
-                font-size: 16px;
-                opacity: 0.8;
-            }
-            
-            /* Main Content */
-            .main-content {
-                padding: 40px 30px;
-            }
-            
-            /* Info Cards Section */
-            .info-cards {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 30px;
-                margin-bottom: 40px;
-            }
-            
-            .info-card {
-                background: #f8fafc;
-                border-radius: 12px;
-                padding: 25px;
-                border-left: 4px solid #2563eb;
-                position: relative;
-            }
-            
-            .info-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                right: 0;
-                width: 40px;
-                height: 40px;
-                background: linear-gradient(135deg, #2563eb20, #1d4ed820);
-                border-radius: 0 12px 0 40px;
-            }
-            
-            .card-title {
-                font-size: 18px;
-                font-weight: 700;
-                color: #1e293b;
-                margin-bottom: 15px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-            
-            .card-row {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 8px;
-                align-items: center;
-            }
-            
-            .card-label {
-                font-size: 13px;
-                color: #64748b;
-                font-weight: 500;
-            }
-            
-            .card-value {
-                font-size: 14px;
-                color: #1e293b;
-                font-weight: 600;
-            }
-            
-            .provider-info {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                margin-top: 15px;
-                padding: 15px;
-                background: white;
-                border-radius: 8px;
-                border: 1px solid #e2e8f0;
-            }
-            
-            .provider-avatar {
-                width: 45px;
-                height: 45px;
-                background: linear-gradient(135deg, #2563eb, #1d4ed8);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: white;
-                font-weight: bold;
-                font-size: 18px;
-            }
-            
-            .provider-details h4 {
-                font-size: 15px;
-                font-weight: 600;
-                color: #1e293b;
-                margin-bottom: 2px;
-            }
-            
-            .provider-details p {
-                font-size: 13px;
-                color: #64748b;
-            }
-            
-            /* Services Table */
-            .services-section {
-                margin-bottom: 30px;
-            }
-            
-            .section-title {
-                font-size: 20px;
-                font-weight: 700;
-                color: #1e293b;
-                margin-bottom: 20px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-            
-            .section-title::before {
-                content: '';
-                width: 4px;
-                height: 20px;
-                background: linear-gradient(to bottom, #2563eb, #1d4ed8);
-                border-radius: 2px;
-            }
-            
-            .services-table {
-                width: 100%;
-                border-collapse: collapse;
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                background: white;
-            }
-            
-            .services-table thead {
-                background: linear-gradient(135deg, #1e293b, #334155);
-            }
-            
-            .services-table th {
-                color: white;
-                padding: 18px 20px;
-                text-align: left;
-                font-weight: 600;
-                font-size: 14px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-            
-            .services-table td {
-                padding: 20px;
-                border-bottom: 1px solid #e2e8f0;
-                vertical-align: top;
-            }
-            
-            .services-table tbody tr:hover {
-                background: #f8fafc;
-            }
-            
-            .services-table tbody tr:last-child td {
-                border-bottom: none;
-            }
-            
-            .service-main {
-                font-size: 15px;
-                font-weight: 600;
-                color: #1e293b;
-                margin-bottom: 4px;
-            }
-            
-            .service-desc {
-                font-size: 13px;
-                color: #64748b;
-                line-height: 1.4;
-            }
-            
-            .amount-cell {
-                text-align: right;
-                font-weight: 700;
-                color: #1e293b;
-                font-size: 15px;
-            }
-            
-            .qty-cell {
-                text-align: center;
-                font-weight: 600;
-                color: #1e293b;
-            }
-            
-            /* Totals Section */
-            .totals-section {
-                background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-                border-radius: 12px;
-                padding: 25px;
-                margin-bottom: 30px;
-                border: 1px solid #e2e8f0;
-            }
-            
-            .total-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 12px 0;
-                font-size: 15px;
-            }
-            
-            .total-label {
-                color: #64748b;
-                font-weight: 500;
-            }
-            
-            .total-value {
-                font-weight: 700;
-                color: #1e293b;
-            }
-            
-            .subtotal-row {
-                border-bottom: 1px solid #e2e8f0;
-            }
-            
-            .tax-row {
-                border-bottom: 2px solid #2563eb;
-                margin-bottom: 15px;
-            }
-            
-            .grand-total-row {
-                background: linear-gradient(135deg, #2563eb, #1d4ed8);
-                margin: 15px -25px -25px -25px;
-                padding: 20px 25px;
-                border-radius: 0 0 12px 12px;
-                color: white;
-                font-size: 18px;
-            }
-            
-            .grand-total-row .total-label,
-            .grand-total-row .total-value {
-                color: white;
-                font-weight: 700;
-            }
-            
-            /* Notes Section */
-            .notes-section {
-                background: linear-gradient(135deg, #ecfdf5, #f0fdf4);
-                border-radius: 12px;
-                padding: 25px;
-                border-left: 4px solid #22c55e;
-                margin-bottom: 30px;
-            }
-            
-            .notes-title {
-                font-size: 16px;
-                font-weight: 700;
-                color: #15803d;
-                margin-bottom: 15px;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            
-            .note-item {
-                display: flex;
-                align-items: flex-start;
-                gap: 10px;
-                margin-bottom: 10px;
-                font-size: 14px;
-                color: #166534;
-                line-height: 1.5;
-            }
-            
-            .note-icon {
-                font-size: 16px;
-                margin-top: 2px;
-                flex-shrink: 0;
-            }
-            
-            /* Footer */
-            .footer {
-                background: linear-gradient(135deg, #1e293b, #334155);
-                color: white;
-                padding: 25px 30px;
-                margin-top: auto;
-            }
-            
-            .footer-content {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 40px;
-                flex-wrap: wrap;
-            }
-            
-            .footer-item {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                font-size: 14px;
-                font-weight: 500;
-            }
-            
-            .footer-icon {
-                font-size: 16px;
-                opacity: 0.8;
-            }
-            
-            /* Print Styles */
-            @media print {
-                @page {
-                    size: A4;
-                    margin: 0;
-                }
-                
-                * {
-                    -webkit-print-color-adjust: exact !important;
-                    color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                }
-                
-                body {
-                    background: white !important;
-                    font-size: 12px;
-                }
-                
-                .invoice-container {
-                    width: 100% !important;
-                    max-width: none !important;
-                    margin: 0 !important;
-                    box-shadow: none !important;
-                    border-radius: 0 !important;
-                    page-break-inside: avoid;
-                }
-                
-                .header {
-                    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-                    color: white !important;
-                    -webkit-print-color-adjust: exact !important;
-                }
-                
-                .services-table thead {
-                    background: linear-gradient(135deg, #1e293b, #334155) !important;
-                    -webkit-print-color-adjust: exact !important;
-                }
-                
-                .services-table th {
-                    color: white !important;
-                }
-                
-                .grand-total-row {
-                    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
-                    color: white !important;
-                    -webkit-print-color-adjust: exact !important;
-                }
-                
-                .footer {
-                    background: linear-gradient(135deg, #1e293b, #334155) !important;
-                    color: white !important;
-                    -webkit-print-color-adjust: exact !important;
-                }
-                
-                .info-cards {
-                    page-break-inside: avoid;
-                }
-                
-                .services-table {
-                    page-break-inside: avoid;
-                }
-                
-                .totals-section {
-                    page-break-inside: avoid;
-                }
-            }
-            
-            /* Mobile Responsive */
-            @media (max-width: 768px) {
-                .invoice-container {
-                    width: 100%;
-                    margin: 0;
-                    border-radius: 0;
-                }
-                
-                .header {
-                    padding: 20px;
-                }
-                
-                .header-content {
-                    flex-direction: column;
-                    gap: 20px;
-                    text-align: center;
-                }
-                
-                .invoice-title {
-                    font-size: 36px;
-                }
-                
-                .main-content {
-                    padding: 20px;
-                }
-                
-                .info-cards {
-                    grid-template-columns: 1fr;
-                    gap: 20px;
-                }
-                
-                .services-table {
-                    font-size: 12px;
-                }
-                
-                .services-table th,
-                .services-table td {
-                    padding: 12px 8px;
-                }
-                
-                .footer-content {
-                    flex-direction: column;
-                    gap: 15px;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="invoice-container">
-            <!-- Header -->
-            <div class="header">
-                <div class="header-content">
-                    <div class="company-section">
-                        <div class="company-logo">
-                        <img src="${SiteLogo}" alt="Aiverr Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;" />
-                        </div>
-                        <div class="company-name">Aiverr</div>
-                        <div class="company-tagline">Professional Freelance Services</div>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+</head>
+<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; line-height: 1.5;">
+    <div style="max-width: 800px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden;">
+        
+        <!-- Header Section -->
+        <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 20px 25px; border-bottom: 2px solid #28a745;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <!-- Logo Space -->
+                <div style="display: flex; align-items: center;">
+                    <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #28a745, #20c997); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 12px; box-shadow: 0 2px 6px rgba(40, 167, 69, 0.3);">
+                        <img src="${SiteLogo}" alt="Aiverr Logo" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;">
                     </div>
-                    <div class="invoice-section">
-                        <div class="invoice-title">INVOICE</div>
-                        <div class="invoice-number">Number: ${orderId}</div>
-                        <div class="invoice-date">Date: ${currentDate}</div>
+                    <div>
+                        <h1 style="font-size: 24px; color: #212529; margin: 0; font-weight: 700;">Aiverr</h1>
+                        <p style="font-size: 12px; color: #6c757d; margin: 0; font-weight: 500;">Professional Freelance Services</p>
+                    </div>
+                </div>
+                
+                <!-- Invoice Info -->
+                <div style="text-align: right;">
+                    <h2 style="font-size: 20px; color: #212529; margin: 0 0 5px; font-weight: 600;">INVOICE</h2>
+                    <p style="font-size: 12px; color: #6c757d; margin: 0;">Number: <strong style="color: #212529;">#${orderId}</strong></p>
+                    <p style="font-size: 12px; color: #6c757d; margin: 0;">Date: <strong style="color: #212529;">${currentDate}</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Client and Service Provider Info -->
+        <div style="padding: 25px; background-color: #ffffff;">
+            <div style="display: flex; justify-content: space-between; gap: 40px; margin-bottom: 20px;">
+                
+                <!-- Bill To Section -->
+                <div style="flex: 1;">
+                    <h3 style="font-size: 14px; color: #212529; margin: 0 0 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #28a745; padding-bottom: 5px; display: inline-block;">Bill To</h3>
+                    <div style="margin-bottom: 8px;">
+                        <p style="font-size: 11px; color: #6c757d; margin: 0; font-weight: 500; text-transform: uppercase;">Client Name</p>
+                        <p style="font-size: 14px; color: #212529; margin: 1px 0; font-weight: 600;">${
+                          userDetails?.username || "Valued Client"
+                        }</p>
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <p style="font-size: 11px; color: #6c757d; margin: 0; font-weight: 500; text-transform: uppercase;">Email</p>
+                        <p style="font-size: 12px; color: #495057; margin: 1px 0;">${
+                          userDetails?.email || "[email protected]"
+                        }</p>
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <p style="font-size: 11px; color: #6c757d; margin: 0; font-weight: 500; text-transform: uppercase;">Company</p>
+                        <p style="font-size: 12px; color: #495057; margin: 1px 0;">${
+                          order?.clientCompany || "Individual Client"
+                        }</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 11px; color: #6c757d; margin: 0; font-weight: 500; text-transform: uppercase;">Order ID</p>
+                        <p style="font-size: 12px; color: #495057; margin: 1px 0; font-weight: 600;">#${orderId}</p>
+                    </div>
+                </div>
+
+                <!-- Service Provider Section -->
+                <div style="flex: 1; text-align: right;">
+                    <h3 style="font-size: 14px; color: #212529; margin: 0 0 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #28a745; padding-bottom: 5px; display: inline-block;">Service Provider</h3>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                        <div style="width: 35px; height: 35px; background: linear-gradient(135deg, #28a745, #20c997); color: #ffffff; font-size: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; font-weight: 600;">
+                            <img src="${freelancer?.picture || "/api/placeholder/50/50"}" alt="${freelancer?.username || "Freelancer"}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                        </div>
+                        <div style="text-align: right;">
+                            <p style="font-size: 14px; color: #212529; margin: 0 0 3px; font-weight: 600;">${
+                              freelancer?.username || "Professional Freelancer"
+                            }</p>
+                            <p style="font-size: 12px; color: #495057; margin: 0 0 3px;">${
+                              freelancer?.email || "[email protected]"
+                            }</p>
+                            <p style="font-size: 11px; color: #6c757d; margin: 0; font-weight: 500; text-transform: uppercase;">${
+                              gig?.category || "Digital Services"
+                            }</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Main Content -->
-            <div class="main-content">
-                <!-- Info Cards -->
-                <div class="info-cards">
-                    <div class="info-card">
-                        <div class="card-title">Payable To</div>
-                        <div class="card-row">
-                            <span class="card-label">Client Name</span>
-                            <span class="card-value">${userDetails?.username || "Valued Client"}</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Email</span>
-                            <span class="card-value">${userDetails?.email || "client@example.com"}</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Company</span>
-                            <span class="card-value">${order?.clientCompany || "Individual Client"}</span>
-                        </div>
-                        <div class="card-row">
-                            <span class="card-label">Order ID</span>
-                            <span class="card-value">#${orderId}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="info-card">
-                        <div class="card-title">Service Provider</div>
-                        <div class="provider-info">
-                            <div class="provider-avatar">
-                                ${(freelancer?.picture || freelancer?.username || "F").charAt(0).toUpperCase()}
-                            </div>
-                            <div class="provider-details">
-                                <h4>${freelancer?.username || "Professional Freelancer"}</h4>
-                                <p>${freelancer?.email || "freelancer@aiverr.com"}</p>
-                                <p>${gig?.category || "Digital Services"}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Services Table -->
-                <div class="services-section">
-                    <div class="section-title">Service Details</div>
-                    <table class="services-table">
+
+            <!-- Service Details Table -->
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-size: 14px; color: #212529; margin: 0 0 12px; font-weight: 600;">Service Details</h3>
+                <div style="border: 1px solid #e9ecef; border-radius: 8px; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse;">
                         <thead>
-                            <tr>
-                                <th style="width: 50%;">Item Description</th>
-                                <th style="width: 10%;">Qty</th>
-                                <th style="width: 20%;">Price</th>
-                                <th style="width: 20%;">Total</th>
+                            <tr style="background: linear-gradient(135deg, #28a745, #20c997);">
+                                <th style="padding: 10px 15px; text-align: left; font-size: 12px; color: #ffffff; font-weight: 600; text-transform: uppercase;">Description</th>
+                                <th style="padding: 10px 15px; text-align: center; font-size: 12px; color: #ffffff; font-weight: 600; text-transform: uppercase;">Qty</th>
+                                <th style="padding: 10px 15px; text-align: right; font-size: 12px; color: #ffffff; font-weight: 600; text-transform: uppercase;">Price</th>
+                                <th style="padding: 10px 15px; text-align: right; font-size: 12px; color: #ffffff; font-weight: 600; text-transform: uppercase;">Total</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <div class="service-main">${gig?.title || "Professional Service"}</div>
-                                    <div class="service-desc">${gig?.category || "Digital Service"} - Premium quality service delivered by experienced professional</div>
+                            <tr style="border-bottom: 1px solid #e9ecef;">
+                                <td style="padding: 12px 15px; font-size: 13px; color: #212529; vertical-align: top;">
+                                    <div style="font-weight: 600; margin-bottom: 3px;">${
+                                      gig?.title || "Professional Service"
+                                    }</div>
+                                    <div style="color: #6c757d; font-size: 11px; line-height: 1.3;">${
+                                      gig?.category || "Digital Service"
+                                    } - Premium quality service</div>
                                 </td>
-                                <td class="qty-cell">1</td>
-                                <td class="amount-cell">₹${gigPrice.toFixed(2)}</td>
-                                <td class="amount-cell">₹${gigPrice.toFixed(2)}</td>
+                                <td style="padding: 12px 15px; text-align: center; font-size: 13px; color: #212529; font-weight: 600;">1</td>
+                                <td style="padding: 12px 15px; text-align: right; font-size: 13px; color: #212529; font-weight: 600;">₹${gigPrice.toFixed(
+                                  2
+                                )}</td>
+                                <td style="padding: 12px 15px; text-align: right; font-size: 13px; color: #212529; font-weight: 600;">₹${gigPrice.toFixed(
+                                  2
+                                )}</td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <div class="service-main">Platform Service Fee</div>
-                                    <div class="service-desc">Processing, security, and platform support (5%)</div>
+                            <tr style="background-color: #f8f9fa;">
+                                <td style="padding: 12px 15px; font-size: 13px; color: #212529; vertical-align: top;">
+                                    <div style="font-weight: 600; margin-bottom: 3px;">Platform Service Fee</div>
+                                    <div style="color: #6c757d; font-size: 11px; line-height: 1.3;">Processing & platform support (5%)</div>
                                 </td>
-                                <td class="qty-cell">1</td>
-                                <td class="amount-cell">₹${serviceFee.toFixed(2)}</td>
-                                <td class="amount-cell">₹${serviceFee.toFixed(2)}</td>
+                                <td style="padding: 12px 15px; text-align: center; font-size: 13px; color: #212529; font-weight: 600;">1</td>
+                                <td style="padding: 12px 15px; text-align: right; font-size: 13px; color: #212529; font-weight: 600;">₹${serviceFee.toFixed(
+                                  2
+                                )}</td>
+                                <td style="padding: 12px 15px; text-align: right; font-size: 13px; color: #212529; font-weight: 600;">₹${serviceFee.toFixed(
+                                  2
+                                )}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                
-                <!-- Totals -->
-                <div class="totals-section">
-                    <div class="total-row subtotal-row">
-                        <span class="total-label">Sub Total</span>
-                        <span class="total-value">₹${total.toFixed(2)}</span>
+            </div>
+
+            <!-- Totals Section -->
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px;">
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; min-width: 250px; border: 1px solid #e9ecef;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                        <span style="font-size: 13px; color: #495057; font-weight: 500;">Subtotal</span>
+                        <span style="font-size: 13px; color: #212529; font-weight: 600;">₹${total.toFixed(
+                          2
+                        )}</span>
                     </div>
-                    <div class="total-row tax-row">
-                        <span class="total-label">Tax (18% GST)</span>
-                        <span class="total-value">₹${tax.toFixed(2)}</span>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #dee2e6;">
+                        <span style="font-size: 13px; color: #495057; font-weight: 500;">Tax (18% GST)</span>
+                        <span style="font-size: 13px; color: #212529; font-weight: 600;">₹${tax.toFixed(
+                          2
+                        )}</span>
                     </div>
-                    <div class="total-row grand-total-row">
-                        <span class="total-label">Grand Total</span>
-                        <span class="total-value">₹${grandTotal.toFixed(2)}</span>
-                    </div>
-                </div>
-                
-                <!-- Notes -->
-                <div class="notes-section">
-                    <div class="notes-title">
-                        <span class="note-icon">ℹ️</span>
-                        Payment & Service Information
-                    </div>
-                    <div class="note-item">
-                        <span class="note-icon"></span>
-                        <span>Payment has been successfully processed and confirmed through our secure payment gateway</span>
-                    </div>
-                    <div class="note-item">
-                        <span class="note-icon"></span>
-                        <span>Expected delivery timeline: ${gig?.deliveryTime || "3-5 business days"} from order confirmation</span>
-                    </div>
-                    <div class="note-item">
-                        <span class="note-icon"></span>
-                        <span>All transactions are secured with industry-standard encryption and security protocols</span>
-                    </div>
-                    <div class="note-item">
-                        <span class="note-icon"></span>
-                        <span>For any questions or support, please contact our customer service team available 24/7</span>
+                    <div style="display: flex; justify-content: space-between; background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 10px; border-radius: 6px; margin: -5px -5px 0;">
+                        <span style="font-size: 15px; font-weight: 700;">Grand Total</span>
+                        <span style="font-size: 15px; font-weight: 700;">₹${grandTotal.toFixed(
+                          2
+                        )}</span>
                     </div>
                 </div>
             </div>
-            
-            <!-- Footer -->
-            <div class="footer">
-                <div class="footer-content">
-                    <div class="footer-item">
-                        <span class="footer-icon"></span>
-                        <span>www.aiverr.com</span>
-                    </div>
-                    <div class="footer-item">
-                        <span class="footer-icon"></span>
-                        <span>+91-8891804826</span>
-                    </div>
-                    <div class="footer-item">
-                        <span class="footer-icon"></span>
-                        <span>support@aiverr.com</span>
-                    </div>
-                </div>
+
+            <!-- Payment & Service Information -->
+            <div style="margin-top: 15px; padding: 10px; border: 1px solid #e9ecef; border-radius: 6px; background-color: #f8f9fa;">
+                <p style="font-size: 12px; color: #6c757d; margin: 0; line-height: 1.5;">
+                    <strong style="color: #28a745;">Note:</strong> Payment successfully processed. Expected delivery: ${
+                      gig?.deliveryTime || "3-5 business days"
+                    }. All transactions secured. For support, contact our 24/7 team.
+                </p>
             </div>
         </div>
-    </body>
-    </html>
+
+        <!-- Footer -->
+        <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 15px 25px; border-top: 1px solid #e9ecef; text-align: center;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <a href="http://www.aiverr.com" style="color: #495057; text-decoration: none; font-size: 12px; font-weight: 500;">www.aiverr.com</a>
+                <span style="color: #495057; font-size: 12px; font-weight: 500;">+91-8891804826</span>
+                <a href="mailto:support@aiverr.com" style="color: #495057; text-decoration: none; font-size: 12px; font-weight: 500;">support@aiverr.com</a>
+            </div>
+            <p style="font-size: 10px; color: #6c757d; margin: 8px 0 0; font-weight: 500;">Thank you for choosing Aiverr</p>
+        </div>
+    </div>
+</body>
+</html>
   `;
 };
 
@@ -741,7 +234,12 @@ function OrderSuccess({ gig, freelancer, order }) {
   });
 
   const downloadInvoice = (gig, freelancer, order) => {
-    const invoiceHTML = generateInvoiceHTML(gig, freelancer, order , userDetails);
+    const invoiceHTML = generateInvoiceHTML(
+      gig,
+      freelancer,
+      order,
+      userDetails
+    );
     // Create a new window for printing
     const printWindow = window.open("", "_blank");
     printWindow.document.write(invoiceHTML);
