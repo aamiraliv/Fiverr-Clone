@@ -23,6 +23,7 @@ import {
   Trophy,
   Zap,
 } from "lucide-react";
+import { TbFileInvoice } from "react-icons/tb";
 import { useDispatch, useSelector } from "react-redux";
 import {
   confirmOrderPayment,
@@ -32,12 +33,331 @@ import { useParams } from "react-router-dom";
 import { getGigByGigId } from "../redux/GigSlice/gigSlice";
 import { getFreelancerDetails } from "../redux/AuthSlice/authSlice";
 
+const generateInvoiceHTML = (gig, freelancer, order) => {
+  const currentDate = new Date().toLocaleDateString("en-GB");
+  const orderId =
+    order?.id?.toString().slice(-6) || "ORD-" + Date.now().toString().slice(-6);
+  const gigPrice =
+    typeof gig?.price === "number" ? gig.price : parseFloat(gig?.price) || 0;
+  const serviceFee = Math.round(gigPrice * 0.05 * 100) / 100;
+  const total = gigPrice + serviceFee;
+  const tax = Math.round(total * 0.18 * 100) / 100;
+  const grandTotal = total + tax;
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin: 0;
+                padding: 40px;
+                background: #f8f9fa;
+                color: #333;
+            }
+            .invoice-container {
+                max-width: 800px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+                overflow: hidden;
+            }
+            .header {
+                background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+                color: white;
+                padding: 40px;
+                position: relative;
+            }
+            .header::after {
+                content: '';
+                position: absolute;
+                bottom: -20px;
+                right: 0;
+                width: 200px;
+                height: 200px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 50%;
+            }
+            .logo {
+                font-size: 24px;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            .invoice-title {
+                font-size: 48px;
+                font-weight: bold;
+                margin: 0;
+                text-align: right;
+                position: relative;
+                z-index: 1;
+            }
+            .content {
+                padding: 40px;
+            }
+            .details-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+                margin-bottom: 40px;
+            }
+            .section-title {
+                font-size: 18px;
+                font-weight: bold;
+                color: #059669;
+                margin-bottom: 15px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+            .detail-item {
+                margin-bottom: 8px;
+            }
+            .detail-label {
+                font-weight: 600;
+                color: #6b7280;
+                font-size: 14px;
+            }
+            .detail-value {
+                font-size: 16px;
+                color: #111827;
+            }
+            .items-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 30px;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
+            .items-table th {
+                background: #059669;
+                color: white;
+                padding: 15px;
+                text-align: left;
+                font-weight: 600;
+            }
+            .items-table td {
+                padding: 15px;
+                border-bottom: 1px solid #e5e7eb;
+            }
+            .items-table tbody tr:hover {
+                background: #f9fafb;
+            }
+            .totals {
+                background: #f8f9fa;
+                padding: 30px;
+                border-radius: 8px;
+                margin-top: 20px;
+            }
+            .total-row {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                padding: 5px 0;
+            }
+            .total-label {
+                font-weight: 500;
+            }
+            .total-value {
+                font-weight: 600;
+            }
+            .grand-total {
+                border-top: 2px solid #059669;
+                padding-top: 15px;
+                margin-top: 15px;
+                font-size: 20px;
+                font-weight: bold;
+                color: #059669;
+            }
+            .notes {
+                background: #ecfdf5;
+                border-left: 4px solid #059669;
+                padding: 20px;
+                margin-top: 30px;
+                border-radius: 0 8px 8px 0;
+            }
+            .notes-title {
+                font-weight: bold;
+                margin-bottom: 10px;
+                color: #059669;
+            }
+            .footer {
+                background: #1f2937;
+                color: white;
+                padding: 30px;
+                text-align: center;
+            }
+            .footer-content {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 20px;
+            }
+            @media print {
+                body { background: white; padding: 0; }
+                .invoice-container { box-shadow: none; }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="invoice-container">
+            <div class="header">
+                <div class="logo">🚀 FreelanceHub</div>
+                <h1 class="invoice-title">INVOICE</h1>
+            </div>
+            
+            <div class="content">
+                <div class="details-grid">
+                    <div>
+                        <div class="section-title">Invoice To</div>
+                        <div class="detail-item">
+                            <div class="detail-label">Client</div>
+                            <div class="detail-value">Mr. Client</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value">client@example.com</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="section-title">Invoice Details</div>
+                        <div class="detail-item">
+                            <div class="detail-label">Invoice Number</div>
+                            <div class="detail-value">#${orderId}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Date</div>
+                            <div class="detail-value">${currentDate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Order ID</div>
+                            <div class="detail-value">#${orderId}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Service Provider</div>
+                    <div class="detail-item">
+                        <div class="detail-label">Freelancer</div>
+                        <div class="detail-value">${
+                          freelancer?.username || "Professional Freelancer"
+                        }</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Service Category</div>
+                        <div class="detail-value">${
+                          gig?.category || "Digital Services"
+                        }</div>
+                    </div>
+                </div>
+
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Service Description</th>
+                            <th>Quantity</th>
+                            <th>Rate</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <strong>${
+                                  gig?.title || "Professional Service"
+                                }</strong><br>
+                                <small style="color: #6b7280;">${
+                                  gig?.category || "Digital Service"
+                                }</small>
+                            </td>
+                            <td>1</td>
+                            <td>₹${gigPrice.toFixed(2)}</td>
+                            <td>₹${gigPrice.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Platform Service Fee</strong><br>
+                                <small style="color: #6b7280;">Processing & Support (5%)</small>
+                            </td>
+                            <td>1</td>
+                            <td>₹${serviceFee.toFixed(2)}</td>
+                            <td>₹${serviceFee.toFixed(2)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="totals">
+                    <div class="total-row">
+                        <span class="total-label">Subtotal:</span>
+                        <span class="total-value">₹${total.toFixed(2)}</span>
+                    </div>
+                    <div class="total-row">
+                        <span class="total-label">GST (18%):</span>
+                        <span class="total-value">₹${tax.toFixed(2)}</span>
+                    </div>
+                    <div class="total-row grand-total">
+                        <span class="total-label">Grand Total:</span>
+                        <span class="total-value">₹${grandTotal.toFixed(
+                          2
+                        )}</span>
+                    </div>
+                </div>
+
+                <div class="notes">
+                    <div class="notes-title">Payment Terms & Notes:</div>
+                    <p>✅ Payment has been successfully processed</p>
+                    <p>📋 Service delivery time: ${
+                      gig?.deliveryTime || "3-5 business days"
+                    }</p>
+                    <p>🔒 This transaction is secured and protected</p>
+                    <p>💬 For any queries, please contact our support team</p>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div class="footer-content">
+                    <div>🌐 freelancehub.com</div>
+                    <div>📞 +91-123-456-7890</div>
+                    <div>✉️ support@freelancehub.com</div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+  `;
+};
+
 function OrderSuccess({ gig, freelancer, order }) {
   console.log("OrderSuccess component rendered with:", {
     gig,
     freelancer,
     order,
   });
+
+  const downloadInvoice = (gig, freelancer, order) => {
+    const invoiceHTML = generateInvoiceHTML(gig, freelancer, order);
+
+    // Create a new window for printing
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(invoiceHTML);
+    printWindow.document.close();
+
+    // Wait for content to load then trigger print
+    printWindow.onload = () => {
+      printWindow.focus();
+      printWindow.print();
+
+      // Close the print window after printing (optional)
+      setTimeout(() => {
+        printWindow.close();
+      }, 1000);
+    };
+  };
 
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
@@ -62,36 +382,60 @@ function OrderSuccess({ gig, freelancer, order }) {
             {/* Left Side - Success Animation */}
             <div className="text-center">
               <div className="relative mb-8">
-                <div className={`w-32 h-32 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mx-auto shadow-2xl transition-all duration-1000 ${
-                  showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
-                }`}>
-                  <CheckCircle2 className={`w-16 h-16 text-white transition-all duration-1000 delay-300 ${
-                    showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
-                  }`} />
+                <div
+                  className={`w-32 h-32 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mx-auto shadow-2xl transition-all duration-1000 ${
+                    showSuccessAnimation
+                      ? "scale-100 opacity-100"
+                      : "scale-75 opacity-0"
+                  }`}
+                >
+                  <CheckCircle2
+                    className={`w-16 h-16 text-white transition-all duration-1000 delay-300 ${
+                      showSuccessAnimation
+                        ? "scale-100 opacity-100"
+                        : "scale-0 opacity-0"
+                    }`}
+                  />
                 </div>
-                <div className={`absolute -top-4 -right-4 transition-all duration-1000 delay-500 ${
-                  showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
-                }`}>
+                <div
+                  className={`absolute -top-4 -right-4 transition-all duration-1000 delay-500 ${
+                    showSuccessAnimation
+                      ? "scale-100 opacity-100"
+                      : "scale-0 opacity-0"
+                  }`}
+                >
                   <Trophy className="w-12 h-12 text-yellow-500" />
                 </div>
               </div>
-              
-              <h1 className={`text-5xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-4 transition-all duration-1000 delay-700 ${
-                showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-              }`}>
+
+              <h1
+                className={`text-5xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-4 transition-all duration-1000 delay-700 ${
+                  showSuccessAnimation
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-4 opacity-0"
+                }`}
+              >
                 Payment Successful!
               </h1>
-              <p className={`text-gray-600 text-xl transition-all duration-1000 delay-900 ${
-                showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-              }`}>
+              <p
+                className={`text-gray-600 text-xl transition-all duration-1000 delay-900 ${
+                  showSuccessAnimation
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-4 opacity-0"
+                }`}
+              >
                 🎉 Your order is confirmed and the freelancer has been notified
               </p>
             </div>
 
             {/* Right Side - Order Details */}
-            <div className={`transition-all duration-1000 delay-1100 ${
-              showSuccessAnimation ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
-            }`}>
+            <div
+              className={`transition-all duration-1000 delay-1100 ${
+                showSuccessAnimation
+                  ? "translate-x-0 opacity-100"
+                  : "translate-x-8 opacity-0"
+              }`}
+            >
               <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
                 {/* Order Details Card */}
                 <div className="bg-gradient-to-r from-gray-50 to-blue-50/50 rounded-2xl p-6 mb-8 border border-gray-100">
@@ -128,7 +472,9 @@ function OrderSuccess({ gig, freelancer, order }) {
                     <div className="text-center">
                       <p className="text-sm text-gray-500 mb-1">Order ID</p>
                       <p className="font-mono text-sm font-semibold">
-                        #{order?.id?.toString().slice(-6) || "ORD-" + Date.now().toString().slice(-6)}
+                        #
+                        {order?.id?.toString().slice(-6) ||
+                          "ORD-" + Date.now().toString().slice(-6)}
                       </p>
                     </div>
                     <div className="text-center">
@@ -154,15 +500,24 @@ function OrderSuccess({ gig, freelancer, order }) {
                   <div className="grid grid-cols-3 gap-3">
                     <button className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
                       <MessageCircle className="w-6 h-6 text-gray-600 group-hover:text-blue-600 transition-colors" />
-                      <span className="text-sm text-gray-600 group-hover:text-blue-600">Message</span>
+                      <span className="text-sm text-gray-600 group-hover:text-blue-600">
+                        Message
+                      </span>
                     </button>
                     <button className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
                       <Heart className="w-6 h-6 text-gray-600 group-hover:text-red-500 transition-colors" />
-                      <span className="text-sm text-gray-600 group-hover:text-red-500">Save</span>
+                      <span className="text-sm text-gray-600 group-hover:text-red-500">
+                        Save
+                      </span>
                     </button>
-                    <button className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
-                      <Share2 className="w-6 h-6 text-gray-600 group-hover:text-green-600 transition-colors" />
-                      <span className="text-sm text-gray-600 group-hover:text-green-600">Share</span>
+                    <button
+                      onClick={() => downloadInvoice(gig, freelancer, order)}
+                      className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group"
+                    >
+                      <TbFileInvoice className="w-6 h-6 text-gray-600 group-hover:text-green-600 transition-colors" />
+                      <span className="text-sm text-gray-600 group-hover:text-green-600">
+                        Invoice
+                      </span>
                     </button>
                   </div>
                 </div>
@@ -176,35 +531,59 @@ function OrderSuccess({ gig, freelancer, order }) {
           <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-6 text-center relative overflow-hidden">
             {/* Success Animation */}
             <div className="relative mb-6">
-              <div className={`w-20 h-20 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg transition-all duration-1000 ${
-                showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
-              }`}>
-                <CheckCircle2 className={`w-10 h-10 text-white transition-all duration-1000 delay-300 ${
-                  showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
-                }`} />
+              <div
+                className={`w-20 h-20 bg-gradient-to-r from-emerald-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg transition-all duration-1000 ${
+                  showSuccessAnimation
+                    ? "scale-100 opacity-100"
+                    : "scale-75 opacity-0"
+                }`}
+              >
+                <CheckCircle2
+                  className={`w-10 h-10 text-white transition-all duration-1000 delay-300 ${
+                    showSuccessAnimation
+                      ? "scale-100 opacity-100"
+                      : "scale-0 opacity-0"
+                  }`}
+                />
               </div>
-              <div className={`absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 transition-all duration-1000 delay-500 ${
-                showSuccessAnimation ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
-              }`}>
+              <div
+                className={`absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 transition-all duration-1000 delay-500 ${
+                  showSuccessAnimation
+                    ? "scale-100 opacity-100"
+                    : "scale-0 opacity-0"
+                }`}
+              >
                 <Trophy className="w-8 h-8 text-yellow-500" />
               </div>
             </div>
 
-            <h1 className={`text-3xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3 transition-all duration-1000 delay-700 ${
-              showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`}>
+            <h1
+              className={`text-3xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3 transition-all duration-1000 delay-700 ${
+                showSuccessAnimation
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-4 opacity-0"
+              }`}
+            >
               Payment Successful!
             </h1>
-            <p className={`text-gray-600 mb-6 text-lg transition-all duration-1000 delay-900 ${
-              showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`}>
+            <p
+              className={`text-gray-600 mb-6 text-lg transition-all duration-1000 delay-900 ${
+                showSuccessAnimation
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-4 opacity-0"
+              }`}
+            >
               🎉 Your order is confirmed and the freelancer has been notified
             </p>
 
             {/* Order Details Card */}
-            <div className={`bg-gradient-to-r from-gray-50 to-blue-50/50 rounded-2xl p-6 mb-6 border border-gray-100 transition-all duration-1000 delay-1100 ${
-              showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`}>
+            <div
+              className={`bg-gradient-to-r from-gray-50 to-blue-50/50 rounded-2xl p-6 mb-6 border border-gray-100 transition-all duration-1000 delay-1100 ${
+                showSuccessAnimation
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-4 opacity-0"
+              }`}
+            >
               <div className="flex items-center gap-4 mb-4">
                 <div className="relative">
                   <img
@@ -238,7 +617,9 @@ function OrderSuccess({ gig, freelancer, order }) {
                 <div className="text-center">
                   <p className="text-xs text-gray-500 mb-1">Order ID</p>
                   <p className="font-mono text-sm font-semibold">
-                    #{order?.id?.toString().slice(-6) || "ORD-" + Date.now().toString().slice(-6)}
+                    #
+                    {order?.id?.toString().slice(-6) ||
+                      "ORD-" + Date.now().toString().slice(-6)}
                   </p>
                 </div>
                 <div className="text-center">
@@ -252,9 +633,13 @@ function OrderSuccess({ gig, freelancer, order }) {
             </div>
 
             {/* Action Buttons */}
-            <div className={`space-y-3 transition-all duration-1000 delay-1300 ${
-              showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`}>
+            <div
+              className={`space-y-3 transition-all duration-1000 delay-1300 ${
+                showSuccessAnimation
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-4 opacity-0"
+              }`}
+            >
               <button
                 onClick={() => (window.location.href = "/orders")}
                 className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 px-6 rounded-2xl font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
@@ -266,36 +651,54 @@ function OrderSuccess({ gig, freelancer, order }) {
               <div className="grid grid-cols-3 gap-3">
                 <button className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
                   <MessageCircle className="w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-colors" />
-                  <span className="text-xs text-gray-600 group-hover:text-blue-600">Message</span>
+                  <span className="text-xs text-gray-600 group-hover:text-blue-600">
+                    Message
+                  </span>
                 </button>
                 <button className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
                   <Heart className="w-5 h-5 text-gray-600 group-hover:text-red-500 transition-colors" />
-                  <span className="text-xs text-gray-600 group-hover:text-red-500">Save</span>
+                  <span className="text-xs text-gray-600 group-hover:text-red-500">
+                    Save
+                  </span>
                 </button>
-                <button className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group">
-                  <Share2 className="w-5 h-5 text-gray-600 group-hover:text-green-600 transition-colors" />
-                  <span className="text-xs text-gray-600 group-hover:text-green-600">Share</span>
+                <button
+                  onClick={() => downloadInvoice(gig, freelancer, order)}
+                  className="flex flex-col items-center gap-2 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group"
+                >
+                  <TbFileInvoice className="w-5 h-5 text-gray-600 group-hover:text-green-600 transition-colors" />
+                  <span className="text-xs text-gray-600 group-hover:text-green-600">
+                    Invoice
+                  </span>
                 </button>
               </div>
             </div>
 
-            {/* Success Message */}
-            <div className={`mt-6 p-4 bg-emerald-50 rounded-xl border border-emerald-200 transition-all duration-1000 delay-1500 ${
-              showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            }`}>
+            <div
+              className={`mt-6 p-4 bg-emerald-50 rounded-xl border border-emerald-200 transition-all duration-1000 delay-1500 ${
+                showSuccessAnimation
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-4 opacity-0"
+              }`}
+            >
               <p className="text-sm text-emerald-700">
-                <strong>What's next?</strong> The freelancer will start working on your project and keep you updated on progress.
+                <strong>What's next?</strong> The freelancer will start working
+                on your project and keep you updated on progress.
               </p>
             </div>
           </div>
 
-          {/* Additional Info */}
-          <div className={`mt-6 text-center transition-all duration-1000 delay-1700 ${
-            showSuccessAnimation ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-          }`}>
+          <div
+            className={`mt-6 text-center transition-all duration-1000 delay-1700 ${
+              showSuccessAnimation
+                ? "translate-y-0 opacity-100"
+                : "translate-y-4 opacity-0"
+            }`}
+          >
             <p className="text-sm text-gray-500">
               Need help?{" "}
-              <button className="text-blue-600 hover:underline">Contact Support</button>
+              <button className="text-blue-600 hover:underline">
+                Contact Support
+              </button>
             </p>
           </div>
         </div>
@@ -303,7 +706,6 @@ function OrderSuccess({ gig, freelancer, order }) {
     </div>
   );
 }
-
 
 function PaymentPage() {
   const { getbygigId: gig } = useSelector((state) => state.gig);
