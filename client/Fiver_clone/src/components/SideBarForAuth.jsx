@@ -49,7 +49,13 @@ export const CustomSidebarForAuth = () => {
           Billing and Payment{" "}
         </MenuItem>
 
-        <MenuItem className="text-gray-800 font-grotesk"> Order </MenuItem>
+        <MenuItem
+          onClick={() => navigate("/userorders")}
+          className="text-gray-800 font-grotesk"
+        >
+          {" "}
+          Orders{" "}
+        </MenuItem>
 
         {role === "FREELANCER" && (
           <MenuItem className="text-green-500 font-grotesk">

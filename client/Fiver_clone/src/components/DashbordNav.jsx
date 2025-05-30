@@ -141,7 +141,15 @@ export const DashboardNav = () => {
           >
             <div className="flex flex-col gap-1  bg-white rounded-md p-4 w-auto">
               <div className="flex flex-col gap-1 border-b border-gray-300 hover:bg-gray-100 p-2 rounded-md cursor-pointer">
-                <h1 className="  text-[15px] text-gray-500">Orders</h1>
+                <h1
+                  onClick={() => {
+                    navigate("dashboard/orders");
+                    setMenuOpen(null);
+                  }}
+                  className="  text-[15px] text-gray-500"
+                >
+                  Orders
+                </h1>
               </div>
               <div
                 onClick={() => {

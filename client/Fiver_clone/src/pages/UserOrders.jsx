@@ -20,7 +20,7 @@ export const UserOrders = () => {
   );
   const { userDetails, freelancer } = useSelector((state) => state.auth);
 
-  // Debug logging
+
   useEffect(() => {
     console.log("=== UserOrders Debug Info ===");
     console.log("userDetails:", userDetails);
@@ -45,13 +45,13 @@ export const UserOrders = () => {
     freelancerDetailsMap,
   ]);
 
-  // Fetch all gigs
+
   useEffect(() => {
     console.log("Dispatching getAllGigs...");
     dispatch(getAllGigs());
   }, [dispatch]);
 
-  // Fetch user orders
+
   useEffect(() => {
     if (userDetails?.id) {
       console.log("Dispatching getOrdersByBuyer with ID:", userDetails.id);
@@ -61,7 +61,7 @@ export const UserOrders = () => {
     }
   }, [dispatch, userDetails]);
 
-  // Fetch freelancer details for all unique seller IDs
+  
   useEffect(() => {
     if (userOrders && Array.isArray(userOrders)) {
       const uniqueSellerIds = [...new Set(userOrders.map(order => order.sellerId))];
@@ -75,7 +75,7 @@ export const UserOrders = () => {
     }
   }, [dispatch, userOrders, freelancerDetailsMap]);
 
-  // Update freelancer details map when new freelancer data comes in
+  
   useEffect(() => {
     if (freelancer && freelancer.id) {
       setFreelancerDetailsMap(prev => ({
@@ -146,7 +146,7 @@ export const UserOrders = () => {
     },
   ];
 
-  // Loading state
+
   if (userOrdersLoading || allGigLoading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -160,7 +160,7 @@ export const UserOrders = () => {
     );
   }
 
-  // Error state
+
   if (userOrdersError || allGigError) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -180,7 +180,7 @@ export const UserOrders = () => {
     );
   }
 
-  // Empty state
+
   if (!userOrders || userOrders.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -208,7 +208,7 @@ export const UserOrders = () => {
         Order History
       </h1>
 
-      {/* Tab Navigation - Mobile Responsive */}
+
       <div className="mb-6">
         <div className="flex overflow-x-auto scrollbar-hide space-x-1 bg-gray-100 p-1 rounded-lg">
           {tabs.map((tab) => (
@@ -228,7 +228,7 @@ export const UserOrders = () => {
         </div>
       </div>
 
-      {/* Orders List */}
+
       <div className="space-y-4 sm:space-y-6">
         {filteredOrders.length === 0 ? (
           <div className="text-center py-8">
@@ -245,7 +245,7 @@ export const UserOrders = () => {
                 key={order.id}
                 className="bg-white border border-gray-200 rounded-lg shadow-sm"
               >
-                {/* Order Header - Mobile Responsive */}
+             
                 <div className="border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
                   <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:justify-between sm:items-center">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
@@ -259,7 +259,7 @@ export const UserOrders = () => {
                         })}
                       </span>
                     </div>
-                    {/* Contact Freelancer Button - Mobile Responsive */}
+                    
                     {getFreelancerById(order?.sellerId)?.email && (
                       <a
                         href={`mailto:${getFreelancerById(order?.sellerId).email}`}

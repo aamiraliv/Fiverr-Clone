@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import api from "../../../service/api";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
@@ -32,6 +32,10 @@ const INITIAL_STATE = {
   freelancer: null,
   freelancerLoading: false,
   freelancerError: null,
+
+  buyerDetails: null,
+
+  
 };
 
 export const registerUser = createAsyncThunk(
@@ -134,6 +138,21 @@ export const getFreelancerDetails = createAsyncThunk(
   async (userID, { rejectWithValue }) => {
     try {
       const response = await api.get(`/auth/freelancer/${userID}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
+export const getUserByIdDetails = createAsyncThunk(
+  "auth/getUserByIdDetails",
+  async (userID, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/auth/userbyid/${userID}`);
+      if (!response.data) {
+        throw new Error("User not found");
+      }
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -300,7 +319,10 @@ const authSlice = createSlice({
         state.freelancer = null;
         state.freelancerError =
           action.payload || "Failed to fetch freelancer details";
-      });
+      })
+      .addCase(getUserByIdDetails.fulfilled, (state, action) => {
+        state.buyerDetails = action.payload;
+      })
   },
 });
 

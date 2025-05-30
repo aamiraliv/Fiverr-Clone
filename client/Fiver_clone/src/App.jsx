@@ -14,6 +14,8 @@ import GigPreview from "./pages/GigPreview";
 import OrderCheckout from "./pages/OrderCheckout";
 import PaymentPage from "./pages/PaymentPage";
 import { UserOrders } from "./pages/UserOrders";
+import { SellerOrders } from "./pages/SellerOrders";
+import FreelancerRoute from "./utils/FreelancerRoute";
 
 const router = createBrowserRouter([
   {
@@ -52,19 +54,28 @@ const router = createBrowserRouter([
             element: <UserOrders />,
           },
           {
-            element: <Dashboard />,
+            element: <FreelancerRoute />,
             children: [
               {
-                path: "/dashboard",
-                element: <DashboardPage />,
-              },
-              {
-                path: "/dashboard/gig",
-                element: <Gig />,
-              },
-              {
-                path: "/gigform",
-                element: <GigForm />,
+                element: <Dashboard />,
+                children: [
+                  {
+                    path: "/dashboard",
+                    element: <DashboardPage />,
+                  },
+                  {
+                    path: "/dashboard/gig",
+                    element: <Gig />,
+                  },
+                  {
+                    path: "/dashboard/orders",
+                    element: <SellerOrders />,
+                  },
+                  {
+                    path: "/gigform",
+                    element: <GigForm />,
+                  },
+                ],
               },
             ],
           },
