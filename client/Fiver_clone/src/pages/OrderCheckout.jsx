@@ -151,7 +151,7 @@ export default function OrderCheckout() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading order details...</p>
         </div>
       </div>
@@ -238,7 +238,7 @@ export default function OrderCheckout() {
                     value={requirements}
                     onChange={(e) => setRequirements(e.target.value)}
                     placeholder="Please provide detailed information about what you need..."
-                    className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    className="w-full h-32 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2  focus:border-transparent resize-none"
                   />
                   <p className="text-xs text-gray-500 mt-1">
                     Be as specific as possible to ensure the best results

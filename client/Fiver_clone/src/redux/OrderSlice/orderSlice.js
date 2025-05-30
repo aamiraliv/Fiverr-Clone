@@ -12,6 +12,14 @@ const INITAIL_STATE = {
 
   orderHistory: [],
   loading: false,
+
+  userOrders: [],
+  userOrdersError: null,
+  userOrdersLoading: false,
+
+  sellerOrders: [],
+  sellerOrdersError: null,
+  sellerOrdersLoading: false,
 };
 
 export const placeOrder = createAsyncThunk(
@@ -49,6 +57,37 @@ export const confirmOrderPayment = createAsyncThunk(
       const response = await api.post(`/order/confirm/${orderId}`, {
         paymentIntentId,
       });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
+    }
+  }
+);
+
+export const getOrdersByBuyer = createAsyncThunk(
+  "order/getOrdersByBuyer",
+  async (buyerId, thunkAPI) => {
+    try {
+      const response = await api.get(`/order/buyer/${buyerId}`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
+    }
+  }
+);
+
+export const getOrdersBySeller = createAsyncThunk(
+  "order/getOrdersBySeller",
+  async (freelancerId, thunkAPI) => {
+    try {
+      const response = await api.get(`/order/seller/${freelancerId}`);
+      if (response.data.length === 0) {
+        return thunkAPI.rejectWithValue("No orders found for this freelancer");
+      }
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -104,6 +143,32 @@ const orderSlice = createSlice({
       .addCase(getOrderById.rejected, (state, action) => {
         state.loading = false;
         state.placeOrderError = action.payload;
+      })
+      .addCase(getOrdersByBuyer.pending, (state) => {
+        state.userOrdersLoading = true;
+        state.userOrdersError = null;
+      })
+      .addCase(getOrdersByBuyer.fulfilled, (state, action) => {
+        state.userOrdersLoading = false;
+        state.userOrders = action.payload;
+        state.userOrdersError = null;
+      })
+      .addCase(getOrdersByBuyer.rejected, (state, action) => {
+        state.userOrdersLoading = false;
+        state.userOrdersError = action.payload;
+      })
+      .addCase(getOrdersBySeller.pending, (state) => {
+        state.sellerOrdersLoading = true;
+        state.sellerOrdersError = null;
+      })
+      .addCase(getOrdersBySeller.fulfilled, (state, action) => {
+        state.sellerOrdersLoading = false;
+        state.sellerOrders = action.payload;
+        state.sellerOrdersError = null;
+      })
+      .addCase(getOrdersBySeller.rejected, (state, action) => {
+        state.sellerOrdersLoading = false;
+        state.sellerOrdersError = action.payload;
       });
   },
 });

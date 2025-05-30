@@ -13,7 +13,7 @@ import Gig from "./pages/Gig";
 import GigPreview from "./pages/GigPreview";
 import OrderCheckout from "./pages/OrderCheckout";
 import PaymentPage from "./pages/PaymentPage";
-
+import { UserOrders } from "./pages/UserOrders";
 
 const router = createBrowserRouter([
   {
@@ -41,11 +41,15 @@ const router = createBrowserRouter([
           },
           {
             path: "/checkout/:id",
-            element: <OrderCheckout />
+            element: <OrderCheckout />,
           },
           {
             path: "/checkout/payment/:id/:orderId",
-            element: <PaymentPage />
+            element: <PaymentPage />,
+          },
+          {
+            path: "/userorders",
+            element: <UserOrders />,
           },
           {
             element: <Dashboard />,

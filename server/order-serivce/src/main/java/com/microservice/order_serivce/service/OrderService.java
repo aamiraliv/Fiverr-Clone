@@ -104,7 +104,7 @@ public class OrderService {
         order.setPaymentStatus(paymentStatus);
 
         if ("succeeded".equals(paymentStatus)) {
-            order.setStatus(OrderStatus.COMPLETED);
+            order.setStatus(OrderStatus.IN_PROGRESS);
         }else if ("requires_payment_method".equals(paymentStatus)) {
             order.setStatus(OrderStatus.PENDING);
             throw new RuntimeException("Payment method required. Please provide a valid payment method.");

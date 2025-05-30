@@ -156,17 +156,19 @@ export const UserNavbar = () => {
           </div>
         )}
       </div>
-      {role === "FREELANCER" && (
-        <div className="hidden lg:flex gap-5 items-center justify-center cursor-pointer relative">
-          <p className=" text-[16px] font-medium text-[#62646A]">Orders</p>
+
+      <div className="hidden lg:flex gap-5 items-center justify-center cursor-pointer relative">
+        <p onClick={()=> navigate("/userorders")} className=" text-[16px] font-medium text-[#62646A]">Orders</p>
+        {role === "FREELANCER" && (
           <p
             onClick={() => navigate("/dashboard")}
             className=" text-[16px] font-medium text-green-500"
           >
             Switch to Selling
           </p>
-        </div>
-      )}
+        )}
+      </div>
+
       <div className="flex gap-6 items-center justify-center text-gray-500">
         <button
           onClick={() => handleClick(1)}

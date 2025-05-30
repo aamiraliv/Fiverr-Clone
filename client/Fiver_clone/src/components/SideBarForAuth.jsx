@@ -48,9 +48,9 @@ export const CustomSidebarForAuth = () => {
           {" "}
           Billing and Payment{" "}
         </MenuItem>
-        {role === "FREELANCER" && (
-          <MenuItem className="text-gray-800 font-grotesk"> Order </MenuItem>
-        )}
+
+        <MenuItem className="text-gray-800 font-grotesk"> Order </MenuItem>
+
         {role === "FREELANCER" && (
           <MenuItem className="text-green-500 font-grotesk">
             {" "}
