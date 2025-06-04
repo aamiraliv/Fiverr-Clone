@@ -3,8 +3,9 @@ import { SellerOrderCard } from "../components/SellerOrderCard";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getAllGigs } from "../redux/GigSlice/gigSlice";
-import { getOrdersBySeller } from "../redux/OrderSlice/orderSlice";
+import { getOrdersBySeller, updateOrderStatus } from "../redux/OrderSlice/orderSlice";
 import { getUserByIdDetails } from "../redux/AuthSlice/authSlice";
+import toast from "react-hot-toast";
 
 export const SellerOrders = () => {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ export const SellerOrders = () => {
   const [activeTab, setActiveTab] = useState("All Order");
   const [buyerDetailsMap, setBuyerDetailsMap] = useState({});
 
-  const { sellerOrders, sellerOrdersError, sellerOrdersLoading } = useSelector(
+  const { sellerOrders, sellerOrdersError, sellerOrdersLoading  } = useSelector(
     (state) => state.order
   );
   const { allGigs, allGigLoading, allGigError } = useSelector(
@@ -67,7 +68,8 @@ export const SellerOrders = () => {
       uniqueBuyerIds.forEach((buyerId) => {
         if (buyerId && !buyerDetailsMap[buyerId]) {
           console.log(`Dispatching getBuyerDetails for ID: ${buyerId}`);
-          dispatch(getUserByIdDetails(buyerId));
+          dispatch(getUserByIdDetails(buyerId))
+          
         }
       });
     }
@@ -97,10 +99,27 @@ export const SellerOrders = () => {
   };
 
   const handleStatusUpdate = (orderId, newStatus) => {
-    console.log(`Updating order ${orderId} status to ${newStatus}`);
-    // TODO: Dispatch action to update order status
-    // dispatch(updateOrderStatus({ orderId, status: newStatus }));
-  };
+  console.log(`Updating order ${orderId} status to ${newStatus}`);
+  dispatch(updateOrderStatus({ orderId, status: newStatus }));
+
+  const toastId = toast.success(`Order status updated to ${newStatus}`, {
+    duration: 3000,
+    position: "top-center",
+    style: {
+      fontSize: "14px",
+      padding: "8px 16px",
+      background: "#f0fff4",
+      color: "#065f46",
+      border: "1px solid #bbf7d0",
+    },
+  });
+
+  setTimeout(() => {
+    toast.dismiss(toastId); 
+    window.location.reload(); 
+  }, 3000); 
+};
+
 
   const getFilteredOrders = () => {
     if (!sellerOrders || !Array.isArray(sellerOrders)) return [];
@@ -245,7 +264,6 @@ export const SellerOrders = () => {
                 key={order.id}
                 className="bg-white border border-gray-200 rounded-lg shadow-sm"
               >
-                {/* Order Header */}
                 <div className="border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
                   <div className="flex flex-col space-y-2 sm:space-y-0 sm:flex-row sm:justify-between sm:items-center">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">

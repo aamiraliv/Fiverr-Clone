@@ -388,7 +388,7 @@ function OrderSuccess({ gig, freelancer, order }) {
                 {/* Action Buttons */}
                 <div className="space-y-4">
                   <button
-                    onClick={() => (window.location.href = "/orders")}
+                    onClick={() => (window.location.href = "/userorders")}
                     className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 px-6 rounded-2xl font-semibold hover:from-emerald-700 hover:to-green-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2"
                   >
                     <Zap className="w-5 h-5" />

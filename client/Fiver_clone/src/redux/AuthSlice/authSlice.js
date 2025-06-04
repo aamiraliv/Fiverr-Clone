@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../../../service/api";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
@@ -55,6 +55,7 @@ export const logoutUser = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       await api.post("/auth/logout");
+
       return true;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -279,6 +280,7 @@ const authSlice = createSlice({
         state.userLoading = false;
       })
       .addCase(getCurrentUser.rejected, (state) => {
+        
         state.userError = state.error || "user not found";
         state.isAuth = false;
       })

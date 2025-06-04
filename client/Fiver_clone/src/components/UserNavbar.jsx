@@ -22,6 +22,13 @@ export const UserNavbar = () => {
   const dropdownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
+
+  // Search related states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState(null);
+
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
@@ -35,8 +42,76 @@ export const UserNavbar = () => {
     setMenuOpen(null);
   };
 
+  const API_BASE_URL = "http://localhost:8080/api/gig";
+
+  const searchGigs = async (query) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/search?query=${encodeURIComponent(query)}`
+      );
+
+      if (response.ok) {
+        const results = await response.json();
+        setSearchResults(results.slice(0, 8));
+      } else {
+        console.error("Search failed:", response.statusText);
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSearchInputChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    const timeout = setTimeout(() => {
+      searchGigs(value);
+    }, 300);
+
+    setSearchTimeout(timeout);
+  };
+
+  const handleSearchResultClick = (gig) => {
+    navigate(`/gigpreview/${gig.id}`);
+    setSearchOpen(false);
+    setSearchTerm("");
+    setSearchResults([]);
+  };
+
+  // const handleSearchButtonClick = () => {
+  //   if (searchTerm.trim()) {
+  //     navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+  //     setSearchOpen(false);
+  //   }
+  // };
+
+  // const handleSearchKeyPress = (e) => {
+  //   if (e.key === "Enter") {
+  //     handleSearchButtonClick();
+  //   }
+  // };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setSearchOpen(false);
+      }
+
       if (
         menuOpen === 1 &&
         bellRef.current &&
@@ -63,6 +138,14 @@ export const UserNavbar = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [menuOpen]);
+
+  useEffect(() => {
+    return () => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+    };
+  }, [searchTimeout]);
 
   const handleLogout = async () => {
     try {
@@ -115,50 +198,149 @@ export const UserNavbar = () => {
           Aiverr<span className=" text-green-500">.</span>
         </h1>
       </div>
+
       <div
         className=" hidden relative lg:flex items-center  h-auto min-w-[500px]"
         ref={dropdownRef}
       >
         <input
-          onClick={() => setSearchOpen(!searchOpen)}
+          value={searchTerm}
+          onChange={handleSearchInputChange}
+          onFocus={() => setSearchOpen(true)}
+          // onKeyPress={handleSearchKeyPress}
           type="text"
           placeholder="What service are you looking for?"
           className="flex gap-4 items-center justify-center w-[250px] lg:w-full  h-[40px] bg-gray-100 rounded-md px-4 py-2 outline-none border border-black text-[12px] lg:text-sm "
         />
-        <div className=" absolute hidden top-0 right-0 lg:flex items-center justify-center w-[50px] h-[40px] rounded-r-md bg-black/90 text-white cursor-pointer ">
+        <div
+          // onClick={handleSearchButtonClick}
+          className=" absolute hidden top-0 right-0 lg:flex items-center justify-center w-[50px] h-[40px] rounded-r-md bg-black/90 text-white cursor-pointer hover:bg-black transition-colors"
+        >
           <Search size={20} />
         </div>
-        {searchOpen && (
-          <div className="absolute right-0 top-12 w-full bg-white rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
-            <div className="px-4 py-2 text-sm cursor-pointer hover:bg-green-100">
-              hello
-            </div>
-            <div className="px-4 py-2 text-sm cursor-pointer hover:bg-green-100">
-              hello
-            </div>
-            <div className="px-4 py-2 text-sm cursor-pointer hover:bg-green-100">
-              hello
-            </div>
-            <div className="px-4 py-2 text-sm cursor-pointer hover:bg-green-100">
-              hello
-            </div>
-            {/* {categories.map((item, index) => (
-              <div
-                key={index}
-                className={`px-4 py-2 text-sm cursor-pointer hover:bg-green-100 ${
-                  item === value ? "bg-green-50 font-medium text-green-600" : ""
-                }`}
-                onClick={() => handleSelect(item)}
-              >
-               {item}
+
+        {searchOpen && searchTerm && (
+          <div className="absolute right-0 top-12 w-full bg-white rounded-md shadow-lg z-10 max-h-60 overflow-y-auto border border-gray-200">
+            {isSearching ? (
+              <div className="px-4 py-3 text-sm text-gray-500 flex items-center gap-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-green-500"></div>
+                Searching...
               </div>
-            ))} */}
+            ) : searchResults.length > 0 ? (
+              <>
+                {searchResults.map((gig) => (
+                  <div
+                    key={gig.id}
+                    className="px-3 py-3 cursor-pointer hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 border-b border-gray-100 last:border-b-0 transition-all duration-200 group"
+                    onClick={() => handleSearchResultClick(gig)}
+                  >
+                    <div className="flex items-center gap-3">
+                      {/* Thumbnail Image */}
+                      <div className="flex-shrink-0">
+                        <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                          {gig.thumbnailUrl ? (
+                            <img
+                              src={gig.thumbnailUrl}
+                              alt={gig.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                e.target.style.display = "none";
+                                e.target.nextSibling.style.display = "flex";
+                              }}
+                            />
+                          ) : null}
+                          <div
+                            className={`w-full h-full flex items-center justify-center text-gray-400 ${
+                              gig.thumbnailUrl ? "hidden" : "flex"
+                            }`}
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            
+                            <span className="inline-flex items-center bg-green-100 text-green-800 px-2 py-1 rounded-md text-xs font-medium mt-1">
+                              {gig.title}
+                            </span>
+                          </div>
+
+                          
+                          {gig.price && (
+                            <div className="flex-shrink-0 text-right">
+                              <p className="text-sm font-bold text-green-600">
+                                ${gig.price}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+              
+                      <div className="flex-shrink-0 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {searchResults.length === 8 && (
+                  <div
+                    className="px-4 py-3 text-sm cursor-pointer hover:bg-gray-50 text-center text-green-600 font-medium border-t border-gray-200"
+                    // onClick={handleSearchButtonClick}
+                  >
+                    View all results for "{searchTerm}"
+                  </div>
+                )}
+              </>
+            ) : searchTerm.length > 0 ? (
+              <div className="px-4 py-3 text-sm text-gray-500 text-center">
+                No results found for "{searchTerm}"
+                <div
+                  className="text-green-600 cursor-pointer hover:underline mt-1"
+                  onClick={() => setSearchTerm("")}
+                >
+                  Clear search
+                </div>
+              </div>
+            ) : null}
           </div>
         )}
       </div>
 
       <div className="hidden lg:flex gap-5 items-center justify-center cursor-pointer relative">
-        <p onClick={()=> navigate("/userorders")} className=" text-[16px] font-medium text-[#62646A]">Orders</p>
+        <p
+          onClick={() => navigate("/userorders")}
+          className=" text-[16px] font-medium text-[#62646A]"
+        >
+          Orders
+        </p>
         {role === "FREELANCER" && (
           <p
             onClick={() => navigate("/dashboard")}

@@ -163,9 +163,9 @@ export const SellerOrderCard = ({ order, gigDetails, buyerDetails, onStatusUpdat
             </div>
           </div>
 
-          {/* Status Update Buttons and Action Buttons */}
+          
           <div className="flex flex-col gap-3 pt-2">
-            {/* Status Update Buttons */}
+           
             {availableStatusUpdates.length > 0 && (
               <div className="flex flex-col sm:flex-row gap-2">
                 <span className="text-sm text-gray-600 font-medium">Update Status:</span>
@@ -184,7 +184,7 @@ export const SellerOrderCard = ({ order, gigDetails, buyerDetails, onStatusUpdat
               </div>
             )}
 
-            {/* Action Buttons */}
+            
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               {order.status === 'IN_PROGRESS' && (
                 <button className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors">

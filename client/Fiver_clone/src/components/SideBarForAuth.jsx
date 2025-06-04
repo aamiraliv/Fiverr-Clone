@@ -43,7 +43,6 @@ export const CustomSidebarForAuth = () => {
     <Sidebar className="px-2 py-4">
       <Menu>
         <MenuItem className="text-gray-800 font-grotesk"> Profile </MenuItem>
-        <MenuItem className="text-gray-800 font-grotesk"> Dashboard </MenuItem>
         <MenuItem className="text-gray-800 font-grotesk">
           {" "}
           Billing and Payment{" "}
@@ -58,11 +57,23 @@ export const CustomSidebarForAuth = () => {
         </MenuItem>
 
         {role === "FREELANCER" && (
-          <MenuItem className="text-green-500 font-grotesk">
+          <MenuItem
+            onClick={() => navigate("/dashboard")}
+            className="text-green-500 font-grotesk"
+          >
             {" "}
             Switch to Seller{" "}
           </MenuItem>
         )}
+        {role === "FREELANCER" && (
+          <SubMenu className="text-gray-800 font-grotesk" label="Your Business">
+            <MenuItem onClick={()=> navigate("/dashboard/gig")}> Gigs </MenuItem>
+            <MenuItem onClick={()=> navigate("dashboard/orders")}> Orders </MenuItem>
+            <MenuItem onClick={()=> navigate("/user")}> Profile </MenuItem>
+            <MenuItem> Earnings </MenuItem>
+          </SubMenu>
+        )}
+
         <MenuItem className="text-gray-800 font-grotesk font-semibold">
           {" "}
           General{" "}

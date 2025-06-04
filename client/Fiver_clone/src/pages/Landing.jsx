@@ -5,25 +5,35 @@ import { MasonaryGrid } from "../components/MasonaryGrid";
 import masonary from "../../json/masonary";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { getAllGigs } from "../redux/GigSlice/gigSlice";
+import { useEffect, useMemo } from "react";
+import { filterGigs, getAllGigs } from "../redux/GigSlice/gigSlice";
 
 export const Landing = () => {
   const dispatch = useDispatch();
-  const { allGigs } = useSelector(
+  const { allGigs, filteredGigs } = useSelector(
     (state) => state.gig
   );
-  // const navigate = useNavigate();
 
   useEffect(() => {
     try {
       dispatch(getAllGigs());
+      dispatch(filterGigs("programming"));
     } catch (error) {
       console.log(error);
     }
   }, [dispatch]);
 
-  console.log(allGigs);
+  // Memoized latest gigs to prevent unnecessary re-sorting
+  const latestGigs = useMemo(() => {
+    if (!allGigs || allGigs.length === 0) return [];
+    
+    return [...allGigs].sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+  }, [allGigs]);
+
+  console.log("Latest Gigs:", latestGigs);
+  console.log("All Gigs:", allGigs);
 
   return (
     <div className="flex flex-col gap-4">
@@ -123,11 +133,11 @@ export const Landing = () => {
         </div>
         <div className="Gigs-you-may-like  flex flex-col gap-8 mt-16">
           <h1 className="font-semibold text-black text-xl lg:text-2xl">
-            Gigs you may like{" "}
+            Latest Gigs{" "}
           </h1>
           <div className=" relative">
             <GigCard
-              data={gigs}
+              data={latestGigs}
               nextBtn={".next-btn2"}
               prevBtn={".prev-btn2"}
             />
@@ -151,7 +161,7 @@ export const Landing = () => {
 
           <div className=" relative">
             <GigCard
-              data={gigs}
+              data={filteredGigs}
               nextBtn={".next-btn3"}
               prevBtn={".prev-btn3"}
             />

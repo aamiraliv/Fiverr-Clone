@@ -7,6 +7,7 @@ import com.microsevice.auth_service.dto.AuthResponse;
 import com.microsevice.auth_service.model.User;
 import com.microsevice.auth_service.repository.UserRepository;
 import com.microsevice.auth_service.service.AuthService;
+import com.microsevice.auth_service.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class AuthController {
 
     @Autowired
     private UserRepository repository;
+
+    @Autowired
+    private JwtService jwtService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody User user) {
@@ -111,12 +115,13 @@ public class AuthController {
         return service.existsById(id);
     }
 
-//    @PutMapping("/validate")
-//    public ResponseEntity<?> ValidteToken(@RequestHeader("Authorization") String token){
-//        if (jwtUtil.validateToken(token.replace("Bearer ", ""))){
-//            return ResponseEntity.ok("valid token");
-//        }
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid token");
-//    }
+    @GetMapping("/validate")
+    public ResponseEntity<?> ValidteToken(@CookieValue(value = "refreshToken" , required = false) String refreshToken){
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No refresh token found.");
+        }
+
+        return ResponseEntity.ok("Refresh token is valid.");
+    }
 
 }

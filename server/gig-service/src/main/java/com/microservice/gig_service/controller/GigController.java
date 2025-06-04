@@ -2,9 +2,11 @@ package com.microservice.gig_service.controller;
 
 import com.microservice.gig_service.model.Gig;
 import com.microservice.gig_service.model.GigDTO;
+import com.microservice.gig_service.repository.GigRepository;
 import com.microservice.gig_service.service.GigService;
 import com.microservice.gig_service.service.MediaUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,9 @@ public class GigController {
 
     @Autowired
     private GigService service;
+
+    @Autowired
+    private GigRepository gigRepository;
 
     @Autowired
     private MediaUploadService uploadService;
@@ -78,4 +83,6 @@ public class GigController {
     public boolean doesGigExist(@PathVariable Long id) {
         return service.existsById(id);
     }
+
+
 }

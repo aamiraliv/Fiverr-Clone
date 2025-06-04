@@ -17,6 +17,10 @@ const INITAIL_STATE = {
   allGigs: [],
   allGigLoading: false,
   allGigError: null,
+
+  filteredGigs: [],
+  filteredGigsLoading: false,
+  filteredGigsError: null,
 };
 
 export const createGig = createAsyncThunk(
@@ -122,6 +126,39 @@ export const uploadImage = createAsyncThunk(
   }
 );
 
+export const filterGigs = createAsyncThunk(
+  "gig/filterGigs",
+  async (filter, { rejectWithValue }) => {
+    try {
+      const gigsResponse = await api.get(`gig/filter?category=${filter}`);
+      const gigs = gigsResponse.data;
+
+      const userIds = [...new Set(gigs.map((gig) => gig.userId))];
+
+      const userDetailsPromises = userIds.map((userId) =>
+        api.get(`/auth/userbyid/${userId}`)
+      );
+
+      const userResponses = await Promise.all(userDetailsPromises);
+
+      const userMap = {};
+      userResponses.forEach((response) => {
+        const user = response.data;
+        userMap[user.id] = user;
+      });
+
+      const gigsWithUserDetails = gigs.map((gig) => ({
+        ...gig,
+        userDetails: userMap[gig.userId] || null,
+      }));
+
+      return gigsWithUserDetails;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || error.message);
+    }
+  }
+);
+
 const gigSlice = createSlice({
   name: "gig",
   initialState: INITAIL_STATE,
@@ -175,6 +212,18 @@ const gigSlice = createSlice({
       .addCase(getAllGigs.rejected, (state, action) => {
         state.allGigError = action.payload;
         state.allGigLoading = false;
+      })
+      .addCase(filterGigs.pending, (state) => {
+        state.filteredGigsLoading = true;
+        state.filteredGigsError = null;
+      })
+      .addCase(filterGigs.fulfilled, (state, action) => {
+        state.filteredGigsLoading = false;
+        state.filteredGigs = action.payload;
+      })
+      .addCase(filterGigs.rejected, (state, action) => {
+        state.filteredGigsLoading = false;
+        state.filteredGigsError = action.payload;
       });
   },
 });

@@ -20,6 +20,8 @@ const INITAIL_STATE = {
   sellerOrders: [],
   sellerOrdersError: null,
   sellerOrdersLoading: false,
+
+  statusUpdated: false,
 };
 
 export const placeOrder = createAsyncThunk(
@@ -57,6 +59,23 @@ export const confirmOrderPayment = createAsyncThunk(
       const response = await api.post(`/order/confirm/${orderId}`, {
         paymentIntentId,
       });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message
+      );
+    }
+  }
+);
+
+export const updateOrderStatus = createAsyncThunk(
+  "order/updateOrderStatus ",
+  async ({ orderId, status }, thunkAPI) => {
+    try {
+      const response = await api.put(`/freelancer/order/${orderId}/status?status=${status}`);
+      if (!response.data) {
+        return thunkAPI.rejectWithValue("Order not found or status update failed");
+      }
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -169,7 +188,10 @@ const orderSlice = createSlice({
       .addCase(getOrdersBySeller.rejected, (state, action) => {
         state.sellerOrdersLoading = false;
         state.sellerOrdersError = action.payload;
-      });
+      })
+      .addCase(updateOrderStatus.fulfilled, (state) => {
+        state.statusUpdated = true;
+      })
   },
 });
 

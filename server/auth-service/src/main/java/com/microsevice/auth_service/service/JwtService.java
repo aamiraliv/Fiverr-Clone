@@ -73,7 +73,7 @@ public class JwtService {
         }
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         Date expiration = Jwts.parser()
                 .setSigningKey(getKey())
                 .build()

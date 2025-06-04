@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { Home } from "./pages/Home";
@@ -16,6 +16,11 @@ import PaymentPage from "./pages/PaymentPage";
 import { UserOrders } from "./pages/UserOrders";
 import { SellerOrders } from "./pages/SellerOrders";
 import FreelancerRoute from "./utils/FreelancerRoute";
+import useAutoRefreshToken from "./utils/useAutoRefreshToken";
+import { isRefreshTokenAvailable } from "./utils/checkCookies";
+import { getCurrentUser, logoutUser } from "./redux/AuthSlice/authSlice";
+import { useDispatch } from "react-redux";
+import { persistor } from "./redux/store";
 
 const router = createBrowserRouter([
   {
@@ -86,6 +91,11 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
+  const dispatch = useDispatch();
+  useEffect(()=>{
+    dispatch(getCurrentUser());
+  }, [dispatch]);
+  useAutoRefreshToken();
   return (
     <>
       <RouterProvider router={router} />;
