@@ -21,6 +21,7 @@ import { isRefreshTokenAvailable } from "./utils/checkCookies";
 import { getCurrentUser, logoutUser } from "./redux/AuthSlice/authSlice";
 import { useDispatch } from "react-redux";
 import { persistor } from "./redux/store";
+import GigsDisplayPage from "./pages/GigsDisplayPage";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
           {
             path: "/user",
             element: <UserProfile />,
+          },
+          {
+            path:"/allgigs",
+            element: <GigsDisplayPage />,
           },
           {
             path: "/gigpreview/:id",
