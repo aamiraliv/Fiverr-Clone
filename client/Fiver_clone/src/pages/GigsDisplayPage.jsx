@@ -3,7 +3,7 @@ import CategoryCard from "../components/CategoryCard";
 import GigCardSingle from "../components/GigCardSingle";
 import { useDispatch, useSelector } from "react-redux";
 import { filterGigs, getAllGigs } from "../redux/GigSlice/gigSlice";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import programming from "../assets/programming-tech-thin.56382a2.svg";
 import graphics from "../assets/graphics-design-thin.ff38893.svg";
 import digital from "../assets/digital-marketing-thin.68edb44.svg";
@@ -20,8 +20,15 @@ const GigsDisplayPage = () => {
     useSelector((state) => state.gig);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (activeCategory === null) {
+      dispatch(getAllGigs());
+    }
+  }, [activeCategory, dispatch]);
+
   const currentGigs = activeCategory === null ? allGigs : filteredGigs;
-  const currentLoading = activeCategory === null ? allGigLoading : filteredGigsLoading;
+  const currentLoading =
+    activeCategory === null ? allGigLoading : filteredGigsLoading;
 
   const categories = [
     {
@@ -143,19 +150,25 @@ const GigsDisplayPage = () => {
             Browse by Category
           </h2>
 
-          <div
-            onClick={handleShowAll}
-            className={`flex-shrink-0 px-4 py-2 rounded-full border transition-all duration-200 cursor-pointer ${
-              activeCategory === null
-                ? "bg-green-500 text-white border-green-500"
-                : "bg-white text-gray-700 border-gray-200 hover:border-green-300"
-            }`}
-          >
-            <span className="text-sm font-medium whitespace-nowrap">
-              All Categories
-            </span>
-          </div>
           <div className="hidden lg:flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+            <div
+              onClick={handleShowAll}
+              className={`w-[120px] h-[120px] flex-shrink-0 bg-white rounded-2xl shadow-sm p-4 overflow-hidden border transition-all duration-200 cursor-pointer ${
+                activeCategory === null
+                  ? "border-green-500 bg-gradient-radial from-green-500/20 from-10% to-white shadow-md"
+                  : "border-gray-200 hover:bg-gradient-radial hover:from-green-500/10 hover:from-10% hover:to-white hover:shadow-md"
+              }`}
+            >
+              <div className="flex flex-col gap-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg flex items-center justify-center">
+                  🏠
+                </div>
+                <div className="font-semibold text-gray-800 text-[12px] leading-tight">
+                  All Categories
+                </div>
+              </div>
+            </div>
+
             {categories.map((category, idx) => (
               <CategoryCard
                 key={idx}
@@ -165,7 +178,21 @@ const GigsDisplayPage = () => {
               />
             ))}
           </div>
+
           <div className="lg:hidden flex gap-3 overflow-x-auto scrollbar-hide pb-2">
+            <div
+              onClick={handleShowAll}
+              className={`flex-shrink-0 px-4 py-2 rounded-full border transition-all duration-200 cursor-pointer ${
+                activeCategory === null
+                  ? "bg-green-500 text-white border-green-500"
+                  : "bg-white text-gray-700 border-gray-200 hover:border-green-300"
+              }`}
+            >
+              <span className="text-sm font-medium whitespace-nowrap">
+                All Categories
+              </span>
+            </div>
+
             {categories.map((category, idx) => (
               <div
                 key={idx}
@@ -195,11 +222,11 @@ const GigsDisplayPage = () => {
                 : "All Services"}
             </h2>
             <div className="text-sm text-gray-500">
-              {filteredGigs.length} services available
+              {currentGigs.length} services available
             </div>
           </div>
 
-          {filteredGigsLoading && (
+          {currentLoading && (
             <div className="w-full flex justify-center items-center h-64">
               <div className="flex flex-col items-center gap-3">
                 <Loader className="animate-spin" size={32} />
@@ -208,31 +235,30 @@ const GigsDisplayPage = () => {
             </div>
           )}
 
-          {!filteredGigsLoading &&
-            (!filteredGigs || filteredGigs.length === 0) && (
-              <div className="w-full flex justify-center items-center h-64">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                    No services found
-                  </h3>
-                  <p className="text-gray-500">
-                    Try selecting a different category or check back later
-                  </p>
-                </div>
+          {!currentLoading && (!currentGigs || currentGigs.length === 0) && (
+            <div className="w-full flex justify-center items-center h-64">
+              <div className="text-center">
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                  No services found
+                </h3>
+                <p className="text-gray-500">
+                  Try selecting a different category or check back later
+                </p>
               </div>
-            )}
+            </div>
+          )}
 
-          {!filteredGigsLoading && filteredGigs && filteredGigs.length > 0 && (
+          {!currentLoading && currentGigs && currentGigs.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredGigs.map((gig, idx) => (
+              {currentGigs.map((gig, idx) => (
                 <GigCardSingle key={gig.id || idx} item={gig} />
               ))}
             </div>
           )}
         </div>
 
-        {!filteredGigsLoading && filteredGigs && filteredGigs.length > 0 && (
+        {!currentLoading && currentGigs && currentGigs.length > 0 && (
           <div className="flex justify-center">
             <button className="px-8 py-3 bg-white border border-gray-200 rounded-lg font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200">
               Load More Services

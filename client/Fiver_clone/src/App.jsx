@@ -17,10 +17,8 @@ import { UserOrders } from "./pages/UserOrders";
 import { SellerOrders } from "./pages/SellerOrders";
 import FreelancerRoute from "./utils/FreelancerRoute";
 import useAutoRefreshToken from "./utils/useAutoRefreshToken";
-import { isRefreshTokenAvailable } from "./utils/checkCookies";
-import { getCurrentUser, logoutUser } from "./redux/AuthSlice/authSlice";
+import { getCurrentUser } from "./redux/AuthSlice/authSlice";
 import { useDispatch } from "react-redux";
-import { persistor } from "./redux/store";
 import GigsDisplayPage from "./pages/GigsDisplayPage";
 
 const router = createBrowserRouter([

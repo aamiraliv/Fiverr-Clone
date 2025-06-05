@@ -7,12 +7,12 @@ import { MdKeyboardArrowRight } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo } from "react";
 import { filterGigs, getAllGigs } from "../redux/GigSlice/gigSlice";
+import { useNavigate } from "react-router-dom";
 
 export const Landing = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { allGigs, filteredGigs } = useSelector(
-    (state) => state.gig
-  );
+  const { allGigs, filteredGigs } = useSelector((state) => state.gig);
 
   useEffect(() => {
     try {
@@ -23,14 +23,18 @@ export const Landing = () => {
     }
   }, [dispatch]);
 
-  // Memoized latest gigs to prevent unnecessary re-sorting
   const latestGigs = useMemo(() => {
     if (!allGigs || allGigs.length === 0) return [];
-    
+
     return [...allGigs].sort((a, b) => {
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
   }, [allGigs]);
+
+  const HandleNavigate = () => {
+    navigate("/allgigs");
+    window.scrollTo(0, 0);
+  };
 
   console.log("Latest Gigs:", latestGigs);
   console.log("All Gigs:", allGigs);
@@ -112,17 +116,26 @@ export const Landing = () => {
       </div>
       <div className="flex flex-col gap-4 mt-12 p-8">
         <div className="Based-on-what-you-might-be-looking-for flex flex-col gap-8">
-          <h1 className=" relative font-semibold text-black text-xl lg:text-2xl">
-            Based on what you might be looking for
-            <div className="z-10 absolute flex right-0 top-10 lg:top-0 items-center gap-3">
-              <button className="prev-btn flex items-center justify-center transform w-8 h-8 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out">
-                <IoIosArrowBack size={20} />
-              </button>
-              <button className="next-btn flex items-center justify-center transform w-8 h-8 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out ">
-                <IoIosArrowForward size={20} />
-              </button>
-            </div>
-          </h1>
+          <div className=" flex justify-between items-center">
+            <h1 className=" relative font-semibold text-black text-xl lg:text-2xl">
+              Based on what you might be looking for
+            </h1>
+            <p
+              onClick={HandleNavigate}
+              className="flex items-center underline lg:text-sm font-semibold text-gray-500 cursor-pointer hover:text-black transition duration-300 ease-in-out"
+            >
+              Show All <MdKeyboardArrowRight size={20} />
+            </p>
+          </div>
+          <div className="z-10 absolute flex right-0 top-10 lg:top-0 items-center gap-3">
+            <button className="prev-btn flex items-center justify-center transform w-8 h-8 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out">
+              <IoIosArrowBack size={20} />
+            </button>
+            <button className="next-btn flex items-center justify-center transform w-8 h-8 rounded-full text-black/50 font-medium bg-white shadow-md hover:bg-gray-200 transition duration-300 ease-in-out ">
+              <IoIosArrowForward size={20} />
+            </button>
+          </div>
+
           <div>
             <GigCard
               data={allGigs}
@@ -132,9 +145,17 @@ export const Landing = () => {
           </div>
         </div>
         <div className="Gigs-you-may-like  flex flex-col gap-8 mt-16">
-          <h1 className="font-semibold text-black text-xl lg:text-2xl">
-            Latest Gigs{" "}
-          </h1>
+          <div className=" flex justify-between items-center">
+            <h1 className="font-semibold text-black text-xl lg:text-2xl">
+              Latest Gigs{" "}
+            </h1>
+            <p
+              onClick={HandleNavigate}
+              className="flex items-center underline lg:text-sm font-semibold text-gray-500 cursor-pointer hover:text-black transition duration-300 ease-in-out"
+            >
+              Show All <MdKeyboardArrowRight size={20} />
+            </p>
+          </div>
           <div className=" relative">
             <GigCard
               data={latestGigs}
@@ -154,7 +175,10 @@ export const Landing = () => {
             <h1 className="font-semibold text-black text-xl lg:text-2xl">
               Most popular Gigs in Website Development
             </h1>
-            <p className="flex items-center underline lg:text-sm font-semibold text-gray-500 cursor-pointer">
+            <p
+              onClick={HandleNavigate}
+              className="flex items-center underline lg:text-sm font-semibold text-gray-500 cursor-pointer hover:text-black transition duration-300 ease-in-out"
+            >
               Show All <MdKeyboardArrowRight size={20} />
             </p>
           </div>
