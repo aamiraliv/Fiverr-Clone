@@ -101,7 +101,7 @@ const App = () => {
   useAutoRefreshToken();
   return (
     <>
-      <RouterProvider router={router} />;
+      <RouterProvider router={router} />
       <Toaster position="top-center" reverseOrder={false} />
     </>
   );

@@ -86,5 +86,5 @@ export const Footer = () => {
         </svg>
       </div>
     </div>
-  );
-};
+  )
+}
